@@ -1,0 +1,452 @@
+site;quadrat;ID_quadrat;marquage;ID_ind;phenoS1;tailleS1;phenoS2;tailleS2;phenoS3;tailleS3;nbfleurs;nbfruits;predation
+Vigne au Renard;4;VaR.Q4;18;VaR.Q4.18;j;11;nf;12,5;j;12;0;0;1
+Vigne au Renard;4;VaR.Q4;180;VaR.Q4.180;j;10;j;11,5;j;11,5;0;0;0
+Vigne au Renard;4;VaR.Q4;19;VaR.Q4.19;nf;26;nf;27;nf;23;0;0;1
+Vigne au Renard;4;VaR.Q4;29;VaR.Q4.29;j;19;j;0;j;0;0;0;1
+Vigne au Renard;4;VaR.Q4;54;VaR.Q4.54;nf;22;nf;22,2;nf;26,4;0;0;0
+Vigne au Renard;4;VaR.Q4;55;VaR.Q4.55;f;29;ff;30,1;ff;34;1;0;0
+Vigne au Renard;4;VaR.Q4;63;VaR.Q4.63;nf;28;nf;29,5;nf;28,1;0;0;1
+Vigne au Renard;4;VaR.Q4;81;VaR.Q4.81;j;14;j;15;j;15;0;0;0
+Vigne au Renard;4;VaR.Q4;20;VaR.Q4.20;NA;NA;j;14;j;14,5;0;0;0
+Vigne au Renard;4;VaR.Q4;50;VaR.Q4.50;NA;NA;j;10,5;j;9,3;0;0;1
+Vigne au Renard;8;VaR.Q8;21;VaR.Q8.21;nf;33;f;39,6;F;41,5;1;1;0
+Vigne au Renard;8;VaR.Q8;31;VaR.Q8.31;nf;14,4;nf;19,6;nf;20,4;0;0;1
+Vigne au Renard;8;VaR.Q8;34;VaR.Q8.34;nf;23;nf;16,5;nf;15,5;0;0;1
+Vigne au Renard;8;VaR.Q8;36;VaR.Q8.36;j;13;nf;4;j;0;0;0;1
+Vigne au Renard;8;VaR.Q8;57;VaR.Q8.57;nf;25,2;f;39,5;F;41,9;1;1;0
+Vigne au Renard;8;VaR.Q8;60;VaR.Q8.60;nf;25,5;f;41,9;F;44;1;1;0
+Vigne au Renard;8;VaR.Q8;63;VaR.Q8.63;nf;11;nf;14,5;nf;14,5;0;0;1
+Vigne au Renard;8;VaR.Q8;76;VaR.Q8.76;nf;20;nf;24,2;j;0;0;0;1
+Vigne au Renard;8;VaR.Q8;84;VaR.Q8.84;nf;20,9;nf;27;nf;29,6;0;0;0
+Vigne au Renard;8;VaR.Q8;88;VaR.Q8.88;nf;10;nf;12,4;nf;14,5;0;0;1
+Vigne au Renard;8;VaR.Q8;94;VaR.Q8.94;nf;11,8;nf;16;nf;15,6;0;0;1
+Vigne au Renard;8;VaR.Q8;1;VaR.Q8.1;j;10;j;12;NA;NA;NA;NA;NA
+Vigne au Renard;2;VaR.Q2;3;VaR.Q2.3;j;15;j;16;j;15,5;0;0;1
+Vigne au Renard;2;VaR.Q2;12;VaR.Q2.12;nf;24;nf;25,7;nf;24,7;0;0;1
+Vigne au Renard;2;VaR.Q2;13;VaR.Q2.13;j;19,8;nf;21,5;nf;21,5;0;0;0
+Vigne au Renard;2;VaR.Q2;17;VaR.Q2.17;nf;24,2;nf;26;j;0;0;0;1
+Vigne au Renard;2;VaR.Q2;24;VaR.Q2.24;nf;28;nf;29;nf;29,5;0;0;0
+Vigne au Renard;2;VaR.Q2;35;VaR.Q2.35;nf;30,6;nf;32;nf;33,5;0;0;0
+Vigne au Renard;2;VaR.Q2;40;VaR.Q2.40;nf;28,1;nf;34;nf;22,5;0;0;1
+Vigne au Renard;2;VaR.Q2;60;VaR.Q2.60;nf;15;nf;17;nf;18;0;0;0
+Vigne au Renard;2;VaR.Q2;80;VaR.Q2.80;nf;21,9;nf;9;nf;8;0;0;1
+Vigne au Renard;2;VaR.Q2;99;VaR.Q2.99;nf;27,9;nf;33,4;nf;36,5;0;0;0
+Vigne au Renard;2;VaR.Q2;11;VaR.Q2.11;nf;17;nf;18,5;nf;23,6;0;0;0
+Vigne au Renard;9;VaR.Q9;2;VaR.Q9.2;nf;14,9;nf;25,8;nf;28,2;0;0;0
+Vigne au Renard;9;VaR.Q9;3;VaR.Q9.3;j;15,8;j;7,3;j;17,1;0;0;1
+Vigne au Renard;9;VaR.Q9;7;VaR.Q9.7;nf;14,6;nf;16;nf;16,8;0;0;0
+Vigne au Renard;9;VaR.Q9;24;VaR.Q9.24;nf;22;nf;27;nf;29,1;0;0;0
+Vigne au Renard;9;VaR.Q9;48;VaR.Q9.48;nf;17,4;nf;16,5;nf;15,7;0;0;1
+Vigne au Renard;9;VaR.Q9;84;VaR.Q9.84;nf;19;nf;22,5;nf;23;0;0;0
+Vigne au Renard;9;VaR.Q9;87;VaR.Q9.87;nf;15;nf;18;nf;20,2;0;0;0
+Vigne au Renard;9;VaR.Q9;1;VaR.Q9.1;j;12;j;12;nf;14,6;0;0;0
+Vigne au Renard;1;VaR.Q1;6;VaR.Q1.6;nf;14,1;j;13,5;j;13,1;0;0;1
+Vigne au Renard;1;VaR.Q1;13;VaR.Q1.13;j;12;j;15,4;j;15,9;0;0;0
+Vigne au Renard;1;VaR.Q1;17;VaR.Q1.17;nf;31,2;nf;39,5;nf;35,4;0;0;1
+Vigne au Renard;1;VaR.Q1;46;VaR.Q1.46;nf;30;nf;30;nf;30,5;0;0;0
+Vigne au Renard;7;VaR.Q7;36;VaR.Q7.36;j;17,8;j;18;j;18,4;0;0;0
+Vigne au Renard;7;VaR.Q7;79;VaR.Q7.79;j;19;j;19,5;j;19,5;0;0;0
+Vigne au Renard;10;VaR.Q10;12;VaR.Q10.12;nf;19;nf;29;nf;24,6;0;0;1
+Vigne au Renard;10;VaR.Q10;14;VaR.Q10.14;j;16,4;j;16,5;j;16,9;0;0;0
+Vigne au Renard;6;VaR.Q6;57;VaR.Q6.57;nf;21;nf;23;nf;23;0;0;0
+Combe Michaut;2;CM.Q2;40;CM.Q2.40;nf;22;nf;28,7;F;35;1;1;0
+Combe Michaut;2;CM.Q2;80;CM.Q2.80;j;12,5;nf;18,8;nf;18,5;0;0;1
+Combe Michaut;4;CM.Q4;5;CM.Q4.5;j;7;j;10;j;12;0;0;0
+Combe Michaut;4;CM.Q4;13;CM.Q4.13;nf;17;nf;18,5;nf;18,5;0;0;0
+Combe Michaut;4;CM.Q4;19;CM.Q4.19;j;13;nf;14;j;12,5;0;0;1
+Combe Michaut;4;CM.Q4;29;CM.Q4.29;j;10,5;nf;14,5;nf;16;0;0;0
+Combe Michaut;4;CM.Q4;41;CM.Q4.41;j;8;nf;13,5;nf;17;0;0;0
+Combe Michaut;4;CM.Q4;45;CM.Q4.45;j;9;f;16,9;ff;15;2;0;0
+Combe Michaut;4;CM.Q4;54;CM.Q4.54;j;10;nf;13,5;nf;11;0;0;1
+Combe Michaut;4;CM.Q4;55;CM.Q4.55;j;7,5;j;14;j;10;0;0;1
+Combe Michaut;4;CM.Q4;83;CM.Q4.83;j;13;nf;18;nf;18,5;0;0;0
+Combe Michaut;4;CM.Q4;63;CM.Q4.63;j;10;nf;15;nf;16,5;0;0;0
+Combe Michaut;4;CM.Q4;81;CM.Q4.81;j;12,5;nf;20,4;nf;26;0;0;0
+Combe Michaut;4;CM.Q4;11;CM.Q4.11;NA;NA;nf;17;NA;NA;NA;NA;NA
+Combe Michaut;4;CM.Q4;20;CM.Q4.20;NA;NA;NA;NA;j;10;0;0;0
+Combe Michaut;1;CM.Q1;0;CM.Q1.0;nf;9;nf;10,6;nf;7,5;0;0;1
+Combe Michaut;1;CM.Q1;1;CM.Q1.1;j;3;j;4;j;4,3;0;0;0
+Combe Michaut;1;CM.Q1;2;CM.Q1.2;j;4,5;j;7;j;7,7;0;0;0
+Combe Michaut;1;CM.Q1;6;CM.Q1.6;j;14,4;f;30;ff;30,5;1;0;0
+Combe Michaut;1;CM.Q1;7;CM.Q1.7;j;7,3;nf;15;nf;24;0;0;0
+Combe Michaut;1;CM.Q1;8;CM.Q1.8;j;6;nf;14;nf;12,5;0;0;1
+Combe Michaut;1;CM.Q1;12;CM.Q1.12;nf;7;nf;10,5;nf;11;0;0;0
+Combe Michaut;1;CM.Q1;13;CM.Q1.13;j;12,3;nf;14,7;nf;15;0;0;0
+Combe Michaut;1;CM.Q1;16;CM.Q1.16;nf;5;nf;8,5;nf;8;0;0;1
+Combe Michaut;1;CM.Q1;17;CM.Q1.17;j;12;nf;17,2;nf;30;0;0;0
+Combe Michaut;1;CM.Q1;23;CM.Q1.23;nf;14;nf;14;nf;18;0;0;0
+Combe Michaut;1;CM.Q1;24;CM.Q1.24;j;8,7;nf;12;nf;16,5;0;0;0
+Combe Michaut;1;CM.Q1;28;CM.Q1.28;nf;10,5;nf;13;NA;NA;NA;NA;NA
+Combe Michaut;1;CM.Q1;32;CM.Q1.32;nf;14;nf;20;nf;19;0;0;1
+Combe Michaut;1;CM.Q1;34;CM.Q1.34;j;13;nf;15;nf;17,4;0;0;0
+Combe Michaut;1;CM.Q1;41;CM.Q1.41;j;10,5;nf;16,5;nf;16;0;0;1
+Combe Michaut;1;CM.Q1;43;CM.Q1.43;j;13;nf;13,5;nf;15,1;0;0;0
+Combe Michaut;1;CM.Q1;45;CM.Q1.45;j;8;nf;14;nf;10;0;0;1
+Combe Michaut;1;CM.Q1;46;CM.Q1.46;j;10,5;ff;20;ff;16;1;0;0
+Combe Michaut;1;CM.Q1;50;CM.Q1.50;j;9;nf;15;ff;14;1;0;0
+Combe Michaut;1;CM.Q1;54;CM.Q1.54;nf;18;nf;30;ff;34;1;0;0
+Combe Michaut;1;CM.Q1;57;CM.Q1.57;nf;20;nf;26;nf;26;0;0;0
+Combe Michaut;1;CM.Q1;62;CM.Q1.62;nf;12;nf;10,5;nf;12,2;0;0;0
+Combe Michaut;1;CM.Q1;61;CM.Q1.61;j;8;nf;13;nf;14,5;0;0;0
+Combe Michaut;1;CM.Q1;66;CM.Q1.66;j;9;nf;13;nf;13;0;0;0
+Combe Michaut;1;CM.Q1;68;CM.Q1.68;j;13,5;nf;21;ff;28;1;0;0
+Combe Michaut;1;CM.Q1;69;CM.Q1.69;nf;14;nf;13,5;nf;14,1;0;0;1
+Combe Michaut;1;CM.Q1;74;CM.Q1.74;j;7;j;9;j;9;0;0;0
+Combe Michaut;1;CM.Q1;75;CM.Q1.75;nf;15;nf;16,5;nf;18,5;0;0;0
+Combe Michaut;1;CM.Q1;79;CM.Q1.79;j;11;nf;14;nf;17,1;0;0;0
+Combe Michaut;1;CM.Q1;80;CM.Q1.80;nf;14;nf;14;nf;15,5;0;0;0
+Combe Michaut;1;CM.Q1;97;CM.Q1.97;j;11,8;nf;16;nf;15,5;0;0;1
+Combe Michaut;1;CM.Q1;4;CM.Q1.4;NA;NA;j;8;j;8;0;0;0
+Combe Michaut;1;CM.Q1;33;CM.Q1.33;NA;NA;j;12;j;11,3;0;0;0
+Combe Michaut;1;CM.Q1;36;CM.Q1.36;NA;NA;nf;20;nf;33;0;0;0
+Combe Michaut;1;CM.Q1;64;CM.Q1.64;NA;NA;j;13;j;14,1;0;0;0
+Combe Michaut;1;CM.Q1;14;CM.Q1.14;NA;NA;nf;10,5;nf;11;0;0;0
+Combe Michaut;1;CM.Q1;18;CM.Q1.18;NA;NA;j;11;nf;18;0;0;0
+Combe Michaut;1;CM.Q1;85;CM.Q1.85;NA;NA;j;7,7;j;10;0;0;0
+Combe Michaut;1;CM.Q1;55;CM.Q1.55;NA;NA;j;7,5;j;8,7;0;0;0
+Combe Michaut;1;CM.Q1;49;CM.Q1.49;NA;NA;j;7,6;j;7,3;0;0;1
+Combe Michaut;1;CM.Q1;52;CM.Q1.52;NA;NA;j;6,9;j;7,6;0;0;0
+Combe Michaut;1;CM.Q1;26;CM.Q1.26;NA;NA;NA;NA;nf;15;0;0;0
+Combe Michaut;1;CM.Q1;160;CM.Q1.160;NA;NA;NA;NA;ff;18;1;0;0
+Combe Michaut;1;CM.Q1;65;CM.Q1.65;NA;NA;NA;NA;nf;14,7;0;0;0
+Combe Michaut;1;CM.Q1;10;CM.Q1.10;NA;NA;NA;NA;nf;9;0;0;0
+Combe Michaut;1;CM.Q1;51;CM.Q1.51;NA;NA;NA;NA;j;9,5;0;0;0
+Combe Michaut;1;CM.Q1;56;CM.Q1.56;NA;NA;NA;NA;j;18,5;0;0;0
+Combe Michaut;1;CM.Q1;100;CM.Q1.100;NA;NA;NA;NA;nf;9;0;0;0
+Combe Michaut;11;CM.Q11;2;CM.Q11.2;j;4,5;nf;9,4;nf;8,5;0;0;1
+Combe Michaut;11;CM.Q11;5;CM.Q11.5;j;13;nf;16,1;nf;20,5;0;0;0
+Combe Michaut;11;CM.Q11;8;CM.Q11.8;j;9;nf;25;nf;24,5;0;0;0
+Combe Michaut;11;CM.Q11;13;CM.Q11.13;j;9;nf;19,4;nf;18;0;0;1
+Combe Michaut;11;CM.Q11;69;CM.Q11.69;nf;14;nf;23;nf;23;0;0;0
+Combe Michaut;11;CM.Q11;84;CM.Q11.84;j;11;nf;23,9;nf;24;0;0;0
+Combe Michaut;5;CM.Q5;0;CM.Q5.0;j;5,2;j;6;j;6;0;0;1
+Combe Michaut;5;CM.Q5;1;CM.Q5.1;j;3;j;8;j;9,3;0;0;0
+Combe Michaut;5;CM.Q5;2;CM.Q5.2;j;4,5;nf;8,3;nf;9;0;0;0
+Combe Michaut;5;CM.Q5;3;CM.Q5.3;j;7;nf;7,5;nf;9,6;0;0;1
+Combe Michaut;5;CM.Q5;4;CM.Q5.4;j;7;nf;11;nf;11;0;0;0
+Combe Michaut;5;CM.Q5;5;CM.Q5.5;j;9;nf;10;nf;10;0;0;0
+Combe Michaut;5;CM.Q5;6;CM.Q5.6;nf;9;nf;9,5;nf;9,2;0;0;1
+Combe Michaut;5;CM.Q5;7;CM.Q5.7;j;5;j;8;nf;10;0;0;0
+Combe Michaut;5;CM.Q5;8;CM.Q5.8;nf;9;nf;10,2;j;10,5;0;0;0
+Combe Michaut;5;CM.Q5;9;CM.Q5.9;j;11;nf;11,5;nf;11,7;0;0;0
+Combe Michaut;5;CM.Q5;10;CM.Q5.10;j;7;j;7;nf;13;0;0;0
+Combe Michaut;5;CM.Q5;11;CM.Q5.11;j;12;nf;13,5;nf;14;0;0;0
+Combe Michaut;5;CM.Q5;15;CM.Q5.15;j;7;nf;17,5;nf;10;0;0;1
+Combe Michaut;5;CM.Q5;16;CM.Q5.16;j;5;nf;21;nf;23,5;0;0;0
+Combe Michaut;5;CM.Q5;17;CM.Q5.17;j;7;nf;18;nf;22,1;0;0;0
+Combe Michaut;5;CM.Q5;25;CM.Q5.25;j;14,5;nf;24;nf;26,7;0;0;0
+Combe Michaut;5;CM.Q5;28;CM.Q5.28;j;6,5;j;13;j;13,3;0;0;0
+Combe Michaut;5;CM.Q5;30;CM.Q5.30;j;9,7;nf;19;nf;20;0;0;0
+Combe Michaut;5;CM.Q5;35;CM.Q5.35;j;12;nf;17;nf;17,1;0;0;1
+Combe Michaut;5;CM.Q5;40;CM.Q5.40;nf;6;nf;6;nf;7;0;0;0
+Combe Michaut;5;CM.Q5;48;CM.Q5.48;j;14;nf;19;nf;18,5;0;0;1
+Combe Michaut;5;CM.Q5;53;CM.Q5.53;j;11,5;nf;19;nf;20,5;0;0;0
+Combe Michaut;5;CM.Q5;60;CM.Q5.60;nf;11;nf;8,5;nf;10,9;0;0;1
+Combe Michaut;5;CM.Q5;61;CM.Q5.61;j;11;nf;18;ff;18,3;1;0;0
+Combe Michaut;5;CM.Q5;62;CM.Q5.62;j;10;nf;11,5;nf;13;0;0;0
+Combe Michaut;5;CM.Q5;63;CM.Q5.63;nf;16;nf;17;nf;24,2;0;0;0
+Combe Michaut;5;CM.Q5;69;CM.Q5.69;j;12;nf;12,5;nf;12;0;0;1
+Combe Michaut;5;CM.Q5;72;CM.Q5.72;j;14;nf;17;nf;19,5;0;0;0
+Combe Michaut;5;CM.Q5;74;CM.Q5.74;nf;9;nf;10,5;nf;8,5;0;0;1
+Combe Michaut;5;CM.Q5;83;CM.Q5.83;f;20;f;36;F;36;1;1;0
+Combe Michaut;5;CM.Q5;88;CM.Q5.88;j;6;nf;12;nf;16,5;0;0;0
+Combe Michaut;5;CM.Q5;94;CM.Q5.94;j;10;nf;15,2;nf;16;0;0;0
+Combe Michaut;5;CM.Q5;96;CM.Q5.96;j;10;nf;15,5;nf;15;0;0;1
+Combe Michaut;5;CM.Q5;97;CM.Q5.97;nf;14;nf;20;nf;21,5;0;0;0
+Combe Michaut;5;CM.Q5;101;CM.Q5.101;j;4;j;6;j;8,5;0;0;0
+Combe Michaut;5;CM.Q5;102;CM.Q5.102;nf;9;nf;11;nf;12,4;0;0;0
+Combe Michaut;5;CM.Q5;103;CM.Q5.103;nf;9;nf;9;nf;11;0;0;0
+Combe Michaut;5;CM.Q5;104;CM.Q5.104;nf;12;nf;13,5;nf;15,1;0;0;0
+Combe Michaut;5;CM.Q5;108;CM.Q5.108;nf;14;nf;19,5;nf;16,1;0;0;1
+Combe Michaut;5;CM.Q5;110;CM.Q5.110;j;9,4;j;10,2;j;9,5;0;0;1
+Combe Michaut;5;CM.Q5;115;CM.Q5.115;j;6,8;j;7,1;j;8,1;0;0;0
+Combe Michaut;5;CM.Q5;120;CM.Q5.120;nf;12;nf;12,5;nf;13,9;0;0;0
+Combe Michaut;5;CM.Q5;162;CM.Q5.162;j;10;j;11;j;12;0;0;0
+Combe Michaut;5;CM.Q5;13;CM.Q5.13;NA;NA;nf;14;NA;NA;NA;NA;NA
+Combe Michaut;5;CM.Q5;20;CM.Q5.20;NA;NA;nf;7,5;nf;8,5;0;0;1
+Combe Michaut;5;CM.Q5;150;CM.Q5.150;NA;NA;j;7,2;nf;13,5;0;0;0
+Combe Michaut;5;CM.Q5;70;CM.Q5.70;NA;NA;NA;NA;nf;7,5;0;0;0
+Combe Michaut;5;CM.Q5;14;CM.Q5.14;NA;NA;NA;NA;nf;15,5;0;0;0
+Combe Michaut;5;CM.Q5;12;CM.Q5.12;NA;NA;NA;NA;nf;20;0;0;0
+Combe Michaut;5;CM.Q5;76;CM.Q5.76;NA;NA;NA;NA;j;5;0;0;0
+Combe Michaut;9;CM.Q9;48;CM.Q9.48;nf;12;nf;13,1;nf;13,5;0;0;0
+Combe Michaut;9;CM.Q9;20;CM.Q9.20;j;12,4;j;14,7;j;15,5;0;0;0
+Combe Michaut;9;CM.Q9;31;CM.Q9.31;nf;12;nf;16;nf;17;0;0;0
+Combe Michaut;9;CM.Q9;50;CM.Q9.50;j;7;j;8;j;8,5;0;0;0
+Combe Michaut;9;CM.Q9;3;CM.Q9.3;NA;NA;nf;7,8;nf;10,1;0;0;0
+Combe Michaut;9;CM.Q9;35;CM.Q9.35;NA;NA;NA;NA;nf;12;0;0;0
+Combe Michaut;8;CM.Q8;1;CM.Q8.1;j;10;j;10,9;nf;11;0;0;0
+Combe Michaut;8;CM.Q8;2;CM.Q8.2;j;7;nf;11;nf;10,2;0;0;1
+Combe Michaut;8;CM.Q8;3;CM.Q8.3;j;7;nf;9,8;nf;13,2;0;0;0
+Combe Michaut;8;CM.Q8;9;CM.Q8.9;j;5,8;nf;14;nf;24;0;0;0
+Combe Michaut;8;CM.Q8;16;CM.Q8.16;j;13;nf;16,5;nf;16,5;0;0;0
+Combe Michaut;8;CM.Q8;17;CM.Q8.17;j;10,4;nf;15,6;nf;18,1;0;0;0
+Combe Michaut;8;CM.Q8;21;CM.Q8.21;f;31;f;33,5;F;34;1;1;0
+Combe Michaut;8;CM.Q8;26;CM.Q8.26;nf;10,6;nf;13,1;nf;13,6;0;0;0
+Combe Michaut;8;CM.Q8;30;CM.Q8.30;nf;9,4;nf;13,8;nf;14,1;0;0;0
+Combe Michaut;8;CM.Q8;31;CM.Q8.31;j;16;f;43,4;F;45,2;2;2;0
+Combe Michaut;8;CM.Q8;36;CM.Q8.36;j;10;nf;14,5;nf;15,2;0;0;0
+Combe Michaut;8;CM.Q8;39;CM.Q8.39;j;11,4;nf;20,5;nf;23,2;0;0;1
+Combe Michaut;8;CM.Q8;46;CM.Q8.46;j;8;nf;17;nf;22;0;0;0
+Combe Michaut;8;CM.Q8;54;CM.Q8.54;nf;15;nf;16,7;nf;18,2;0;0;1
+Combe Michaut;8;CM.Q8;56;CM.Q8.56;j;9,8;nf;14,7;nf;17;0;0;0
+Combe Michaut;8;CM.Q8;57;CM.Q8.57;nf;23;nf;26,1;nf;26;0;0;1
+Combe Michaut;8;CM.Q8;58;CM.Q8.58;nf;15;nf;19,2;nf;21,2;0;0;0
+Combe Michaut;8;CM.Q8;59;CM.Q8.59;j;10;nf;12,6;nf;15,6;0;0;0
+Combe Michaut;8;CM.Q8;60;CM.Q8.60;f;27;f;38,7;F;38,8;2;1;0
+Combe Michaut;8;CM.Q8;63;CM.Q8.63;nf;19;nf;23;nf;20;0;0;1
+Combe Michaut;8;CM.Q8;69;CM.Q8.69;j;20,9;nf;26,4;nf;29;0;0;0
+Combe Michaut;8;CM.Q8;76;CM.Q8.76;f;23;f;37,5;F;38,1;2;1;0
+Combe Michaut;8;CM.Q8;84;CM.Q8.84;nf;15;nf;24,5;nf;26,6;0;0;1
+Combe Michaut;8;CM.Q8;87;CM.Q8.87;j;8;j;10,2;j;10,4;0;0;0
+Combe Michaut;8;CM.Q8;94;CM.Q8.94;f;31;f;33,5;F;33;1;1;0
+Combe Michaut;8;CM.Q8;95;CM.Q8.95;j;10;nf;13,2;nf;15,1;0;0;0
+Combe Michaut;8;CM.Q8;98;CM.Q8.98;j;10;nf;13,9;ff;17,5;1;0;0
+Combe Michaut;8;CM.Q8;100;CM.Q8.100;j;9;nf;13;nf;13,8;0;0;0
+Combe Michaut;8;CM.Q8;5;CM.Q8.5;nf;12;nf;14;nf;15,4;0;0;0
+Combe Michaut;8;CM.Q8;0;CM.Q8.0;NA;NA;j;7;nf;14,7;0;0;0
+Combe Michaut;8;CM.Q8;4;CM.Q8.4;NA;NA;NA;NA;nf;16,1;0;0;0
+Combe Michaut;8;CM.Q8;20;CM.Q8.20;NA;NA;NA;NA;nf;18;0;0;0
+Combe Michaut;8;CM.Q8;99;CM.Q8.99;NA;NA;NA;NA;nf;5;0;0;1
+Combe Michaut;7;CM.Q7;11;CM.Q7.11;j;13,4;j;14,5;j;13;0;0;1
+Combe Michaut;7;CM.Q7;25;CM.Q7.25;nf;13;nf;21;nf;24;0;0;0
+Combe Michaut;7;CM.Q7;31;CM.Q7.31;j;9,3;nf;17,1;nf;20;0;0;0
+Combe Michaut;7;CM.Q7;36;CM.Q7.36;nf;17;f;39,5;ff;28;2;0;1
+Combe Michaut;7;CM.Q7;48;CM.Q7.48;nf;13;nf;27,3;nf;24;0;0;1
+Combe Michaut;7;CM.Q7;49;CM.Q7.49;nf;21;nf;26;nf;30;0;0;0
+Combe Michaut;7;CM.Q7;60;CM.Q7.60;nf;14,8;nf;14,9;nf;14;0;0;1
+Combe Michaut;7;CM.Q7;71;CM.Q7.71;nf;14;nf;22,4;nf;22;0;0;1
+Combe Michaut;7;CM.Q7;79;CM.Q7.79;j;9;nf;11,6;j;13;0;0;0
+Combe Michaut;6;CM.Q6;4;CM.Q6.4;j;8,8;nf;17,4;nf;18;0;0;0
+Combe Michaut;6;CM.Q6;23;CM.Q6.23;nf;8,6;nf;19,5;F;28;1;1;0
+Combe Michaut;6;CM.Q6;24;CM.Q6.24;nf;10;f;13,5;ff;14;1;0;1
+Combe Michaut;6;CM.Q6;30;CM.Q6.30;nf;16;nf;17;nf;16,5;0;0;1
+Combe Michaut;6;CM.Q6;40;CM.Q6.40;j;11;nf;14;nf;14;0;0;0
+Combe Michaut;6;CM.Q6;42;CM.Q6.42;j;8,6;nf;14,5;nf;19;0;0;0
+Combe Michaut;6;CM.Q6;53;CM.Q6.53;nf;17,4;f;30,9;F;31,5;2;1;0
+Combe Michaut;6;CM.Q6;54;CM.Q6.54;nf;9;nf;14;nf;13;0;0;1
+Combe Michaut;6;CM.Q6;55;CM.Q6.55;j;12;nf;15,5;nf;18;0;0;0
+Combe Michaut;6;CM.Q6;57;CM.Q6.57;nf;13,7;nf;15,4;nf;13,5;0;0;1
+Combe Michaut;6;CM.Q6;58;CM.Q6.58;nf;14,7;nf;28;ff;28;1;0;0
+Combe Michaut;6;CM.Q6;86;CM.Q6.86;nf;7;nf;11,5;nf;12;0;0;0
+Combe Michaut;6;CM.Q6;97;CM.Q6.97;nf;11,2;nf;15,5;nf;14;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;12;TCb.Q9.12;nf;22,8;nf;24,2;nf;26,7;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;20;TCb.Q9.20;j;14;j;11,3;j;10,5;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;21;TCb.Q9.21;nf;26,2;nf;27,1;nf;26,9;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;22;TCb.Q9.22;j;9,2;j;10;j;10,5;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;29;TCb.Q9.29;nf;15,1;nf;20,9;nf;21;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;31;TCb.Q9.31;nf;16,1;nf;18;nf;17;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;34;TCb.Q9.34;nf;23;nf;25,5;nf;23,5;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;36;TCb.Q9.36;nf;25,9;nf;26,8;nf;27,8;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;57;TCb.Q9.57;nf;23;nf;23,5;nf;24,2;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;60;TCb.Q9.60;nf;30,2;nf;33,4;nf;33,5;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;61;TCb.Q9.61;nf;18,1;nf;20,5;nf;21;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;63;TCb.Q9.63;nf;22,5;nf;22,6;nf;21,1;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;68;TCb.Q9.68;j;14,1;j;15;j;15;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;72;TCb.Q9.72;j;9,1;j;10;j;10;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;76;TCb.Q9.76;nf;27,1;nf;33;nf;31;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;77;TCb.Q9.77;j;8;j;3;j;6,6;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;84;TCb.Q9.84;nf;17,9;nf;19,8;nf;22,1;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;88;TCb.Q9.88;nf;22,2;nf;29,4;nf;30,5;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;92;TCb.Q9.92;nf;23,6;nf;25;nf;25,5;0;0;0
+Tête Cendrée Bas;9;TCb.Q9;94;TCb.Q9.94;j;19,9;j;26,2;nf;24,4;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;172;TCb.Q9.172;j;12,9;j;13,6;j;12;0;0;1
+Tête Cendrée Bas;9;TCb.Q9;30;TCb.Q9.30;j;7;j;9,8;j;4;0;0;1
+Tête Cendrée Bas;7;TCb.Q7;17;TCb.Q7.17;nf;14,5;nf;21;nf;22;0;0;0
+Tête Cendrée Bas;7;TCb.Q7;46;TCb.Q7.46;j;12,5;j;15;j;15;0;0;0
+Tête Cendrée Bas;7;TCb.Q7;100;TCb.Q7.100;j;5;j;13;j;17;0;0;0
+Tête Cendrée Bas;7;TCb.Q7;13;TCb.Q7.13;j;9;nf;17,5;nf;20,5;0;0;0
+Tête Cendrée Bas;7;TCb.Q7;4;TCb.Q7.4;NA;NA;nf;16,5;nf;22;0;0;0
+Tête Cendrée Haut;5;TCh.Q5;62;TCh.Q5.62;j;12;j;14,3;j;13,5;0;0;1
+Tête Cendrée Haut;5;TCh.Q5;27;TCh.Q5.27;j;9;nf;17,1;nf;18;0;0;0
+Tête Cendrée Haut;5;TCh.Q5;8;TCh.Q5.8;j;10;nf;15,5;nf;17,8;0;0;0
+Tête Cendrée Haut;5;TCh.Q5;94;TCh.Q5.94;j;13,7;nf;18,5;nf;20,5;0;0;0
+Tête Cendrée Haut;5;TCh.Q5;96;TCh.Q5.96;j;11;nf;17,6;nf;21;0;0;0
+Tête Cendrée Haut;5;TCh.Q5;42;TCh.Q5.42;j;14,1;nf;20,6;nf;22,4;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;0;TCh.Q3.0;j;5,4;j;6;j;5;0;0;1
+Tête Cendrée Haut;3;TCh.Q3;1;TCh.Q3.1;j;5;j;5,5;j;5,5;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;2;TCh.Q3.2;j;9;nf;13;nf;15;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;3;TCh.Q3.3;nf;16;nf;20;nf;20,8;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;6;TCh.Q3.6;j;5;nf;8;j;9,1;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;7;TCh.Q3.7;j;10;j;7,5;j;10,2;0;0;1
+Tête Cendrée Haut;3;TCh.Q3;9;TCh.Q3.9;j;6,5;j;7,4;j;9;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;10;TCh.Q3.10;j;7;j;7,2;j;8,5;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;12;TCh.Q3.12;j;5;j;10,7;j;10,8;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;31;TCh.Q3.31;nf;12,1;nf;14,2;nf;15,5;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;36;TCh.Q3.36;j;10;j;12,5;j;13;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;40;TCh.Q3.40;nf;16,2;nf;18;nf;18,9;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;49;TCh.Q3.49;j;5,5;j;15,5;j;16,2;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;68;TCh.Q3.68;j;11,6;j;14,5;j;8;0;0;1
+Tête Cendrée Haut;3;TCh.Q3;78;TCh.Q3.78;nf;14;nf;17,5;nf;16,6;0;0;1
+Tête Cendrée Haut;3;TCh.Q3;89;TCh.Q3.89;j;9;nf;14;nf;13;0;0;1
+Tête Cendrée Haut;3;TCh.Q3;5;TCh.Q3.5;NA;NA;j;6;j;6,5;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;11;TCh.Q3.11;NA;NA;j;9;j;9,9;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;15;TCh.Q3.15;NA;NA;j;7;nf;11,6;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;8;TCh.Q3.8;NA;NA;j;8;j;9,1;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;4;TCh.Q3.4;NA;NA;j;6;j;6,2;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;14;TCh.Q3.14;NA;NA;j;10;NA;NA;NA;NA;NA
+Tête Cendrée Haut;3;TCh.Q3;50;TCh.Q3.50;NA;NA;NA;NA;nf;13,5;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;20;TCh.Q3.20;NA;NA;NA;NA;j;6;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;66;TCh.Q3.66;NA;NA;NA;NA;j;9,6;0;0;0
+Tête Cendrée Haut;3;TCh.Q3;73;TCh.Q3.73;NA;NA;NA;NA;j;5;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;0;TCh.Q1.0;nf;11;nf;13,5;nf;14,6;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;1;TCh.Q1.1;nf;17;j;13;nf;13,5;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;6;TCh.Q1.6;j;7;j;11;nf;15;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;16;TCh.Q1.16;j;12;j;13,9;j;15;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;10;TCh.Q1.10;nf;14;nf;15,2;nf;16,4;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;12;TCh.Q1.12;j;7;j;10,5;j;11,5;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;13;TCh.Q1.13;j;8,5;j;13,5;j;13;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;14;TCh.Q1.14;j;15;j;12,7;j;14,1;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;17;TCh.Q1.17;j;10;j;12,5;j;12;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;20;TCh.Q1.20;j;10;j;10;j;11;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;41;TCh.Q1.41;j;12;nf;16;nf;16,1;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;45;TCh.Q1.45;nf;17;nf;20,5;nf;17,3;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;46;TCh.Q1.46;j;16,5;nf;16;j;16,4;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;50;TCh.Q1.50;nf;23;nf;27;nf;27;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;54;TCh.Q1.54;nf;20;nf;20,8;nf;12,8;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;65;TCh.Q1.65;nf;14;nf;22,8;nf;23,1;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;66;TCh.Q1.66;nf;16;nf;15;NA;NA;NA;NA;NA
+Tête Cendrée Haut;1;TCh.Q1;74;TCh.Q1.74;nf;11;j;14;j;16;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;78;TCh.Q1.78;j;11,5;nf;13;nf;15,5;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;79;TCh.Q1.79;j;7;nf;10,4;nf;12,1;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;97;TCh.Q1.97;nf;11,5;nf;13,4;nf;14,1;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;100;TCh.Q1.100;j;12;j;13;j;12,3;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;101;TCh.Q1.101;j;9,8;j;11,5;j;12,2;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;102;TCh.Q1.102;j;9,8;nf;14,3;nf;16,2;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;105;TCh.Q1.105;j;9;j;9;j;10;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;107;TCh.Q1.107;j;15,2;j;12;j;13,5;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;108;TCh.Q1.108;nf;16;nf;22;nf;26,4;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;109;TCh.Q1.109;j;12;j;12,4;j;15,1;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;110;TCh.Q1.110;j;8,5;j;9,3;j;12,3;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;7;TCh.Q1.7;NA;NA;nf;11,5;nf;15;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;11;TCh.Q1.11;NA;NA;nf;19;nf;16;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;52;TCh.Q1.52;NA;NA;j;9;j;7;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;71;TCh.Q1.71;NA;NA;nf;7;nf;14,5;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;4;TCh.Q1.4;NA;NA;j;6;j;11;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;30;TCh.Q1.30;NA;NA;j;10;j;13;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;35;TCh.Q1.35;NA;NA;nf;13,5;nf;15,6;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;140;TCh.Q1.140;j;6;j;7,4;j;8,4;0;0;1
+Tête Cendrée Haut;1;TCh.Q1;3;TCh.Q1.3;NA;NA;NA;NA;j;7;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;5;TCh.Q1.5;NA;NA;NA;NA;j;11,7;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;0;TCh.Q1.00;NA;NA;NA;NA;nf;14,6;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;40;TCh.Q1.40;NA;NA;NA;NA;j;11;0;0;0
+Tête Cendrée Haut;1;TCh.Q1;37;TCh.Q1.37;NA;NA;NA;NA;nf;13;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;1;TCh.Q2.1;j;9;j;9,5;j;8,5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;11;TCh.Q2.11;nf;12;nf;13,2;nf;13,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;2;TCh.Q2.2;j;6,4;j;7;j;6;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;3;TCh.Q2.3;nf;16;j;6,9;j;7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;4;TCh.Q2.4;j;8;j;6,5;j;10;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;6;TCh.Q2.6;j;7;j;7;j;8,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;7;TCh.Q2.7;j;5,2;j;7;j;8,4;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;13;TCh.Q2.13;j;9,8;nf;11;nf;8,9;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;15;TCh.Q2.15;j;6;j;6,3;j;16,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;16;TCh.Q2.16;j;14,1;nf;14,5;nf;14;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;26;TCh.Q2.26;nf;17,1;nf;19,5;nf;18,2;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;35;TCh.Q2.35;j;14,8;nf;15,2;nf;13,6;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;37;TCh.Q2.37;j;19,2;j;9,5;nf;9;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;40;TCh.Q2.40;nf;16;nf;16,5;nf;16;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;57;TCh.Q2.57;j;13,1;nf;14,5;j;14,1;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;74;TCh.Q2.74;j;11,5;nf;12;nf;12,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;80;TCh.Q2.80;j;10,7;j;12;j;9,7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;86;TCh.Q2.86;j;13,8;j;16;j;14;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;99;TCh.Q2.99;j;8,1;j;10;j;9,1;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;100;TCh.Q2.100;j;9,1;j;15;j;13;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;101;TCh.Q2.101;j;9,2;j;10,5;j;10,8;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;102;TCh.Q2.102;j;7,5;nf;6,9;j;7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;103;TCh.Q2.103;j;5,8;nf;8;nf;8,6;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;105;TCh.Q2.105;j;4,8;nf;6,5;j;6;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;106;TCh.Q2.106;j;10;j;14,5;j;13,5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;107;TCh.Q2.107;nf;10;nf;10,5;nf;11,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;108;TCh.Q2.108;j;6;j;7;j;6,5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;109;TCh.Q2.109;j;6;j;8;j;7,6;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;110;TCh.Q2.110;j;13,8;j;14;j;14,9;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;111;TCh.Q2.111;j;8;j;10,2;j;9,2;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;112;TCh.Q2.112;j;7;j;8,2;j;8;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;113;TCh.Q2.113;j;7,1;j;10,5;j;9,3;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;114;TCh.Q2.114;j;8,5;j;8;j;9;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;115;TCh.Q2.115;j;7;j;10;j;9;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;116;TCh.Q2.116;j;6;j;5;j;5,4;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;117;TCh.Q2.117;j;11,5;j;9;NA;NA;NA;NA;NA
+Tête Cendrée Haut;2;TCh.Q2;124;TCh.Q2.124;nf;13;nf;13,5;nf;13,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;130;TCh.Q2.130;j;7;j;8;j;7,4;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;138;TCh.Q2.138;nf;13,2;j;7,9;nf;13,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;140;TCh.Q2.140;j;8;j;8;j;8;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;142;TCh.Q2.142;nf;;j;13,2;j;11,7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;160;TCh.Q2.160;j;10,2;j;9,5;j;9,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;165;TCh.Q2.165;j;7;j;10,5;j;10,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;171;TCh.Q2.171;nf;11,7;nf;16;nf;18,4;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;180;TCh.Q2.180;j;7;j;9,5;j;7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;0;TCh.Q2.00;j;4,4;j;6,5;j;6,8;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;14;TCh.Q2.14;NA;NA;j;11;j;11,1;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;21;TCh.Q2.21;NA;NA;nf;10;nf;10,8;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;60;TCh.Q2.60;NA;NA;nf;9;nf;12,1;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;45;TCh.Q2.45;NA;NA;nf;27,5;F;36,6;1;1;0
+Tête Cendrée Haut;2;TCh.Q2;5;TCh.Q2.5;NA;NA;j;6;j;5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;70;TCh.Q2.70;NA;NA;j;10,5;j;12;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;50;TCh.Q2.50;NA;NA;j;8;j;10,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;55;TCh.Q2.55;NA;NA;j;5;NA;NA;NA;NA;1
+Tête Cendrée Haut;2;TCh.Q2;150;TCh.Q2.150;NA;NA;nf;11;nf;10,5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;122;TCh.Q2.122;NA;NA;nf;13;nf;18;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;90;TCh.Q2.90;NA;NA;nf;14;nf;13,5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;8;TCh.Q2.8;NA;NA;nf;7,3;nf;6,7;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;17;TCh.Q2.17;NA;NA;NA;NA;j;3,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;18;TCh.Q2.18;NA;NA;NA;NA;j;4,5;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;65;TCh.Q2.65;NA;NA;NA;NA;nf;19;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;95;TCh.Q2.95;NA;NA;NA;NA;j;9;0;0;0
+Tête Cendrée Haut;2;TCh.Q2;12;TCh.Q2.12;NA;NA;NA;NA;j;5;0;0;1
+Tête Cendrée Haut;2;TCh.Q2;67;TCh.Q2.67;NA;NA;NA;NA;j;5,1;0;0;0
+Val Clavin;4;VC.Q4;5;VC.Q4.5;nf;18;nf;8;nf;19,5;0;0;1
+Val Clavin;4;VC.Q4;8;VC.Q4.8;nf;17,2;nf;30;NA;NA;NA;NA;NA
+Val Clavin;4;VC.Q4;12;VC.Q4.12;nf;24,8;f;39,5;ff;43;2;0;0
+Val Clavin;4;VC.Q4;13;VC.Q4.13;nf;12,1;nf;28;ff;31,4;1;0;0
+Val Clavin;4;VC.Q4;15;VC.Q4.15;j;7;nf;27,1;ff;43;2;0;0
+Val Clavin;4;VC.Q4;19;VC.Q4.19;nf;22;nf;26;NA;NA;NA;NA;NA
+Val Clavin;4;VC.Q4;20;VC.Q4.20;nf;21,8;f;43;F;44;2;0;0
+Val Clavin;4;VC.Q4;25;VC.Q4.25;f;23,9;f;21,8;ff;32;1;0;1
+Val Clavin;4;VC.Q4;29;VC.Q4.29;nf;21,9;f;35,8;ff;36,5;1;0;0
+Val Clavin;4;VC.Q4;41;VC.Q4.41;j;27;f;43;ff;37,1;1;0;1
+Val Clavin;4;VC.Q4;45;VC.Q4.45;nf;19;nf;18,4;NA;NA;NA;NA;NA
+Val Clavin;4;VC.Q4;49;VC.Q4.49;f;39,2;f;46,1;F;46;2;2;0
+Val Clavin;4;VC.Q4;50;VC.Q4.50;nf;17;nf;22,8;nf;26,3;0;0;0
+Val Clavin;4;VC.Q4;54;VC.Q4.54;nf;20,9;f;37,1;F;41,1;2;1;0
+Val Clavin;4;VC.Q4;55;VC.Q4.55;nf;17,6;f;36,5;ff;38;2;0;0
+Val Clavin;4;VC.Q4;63;VC.Q4.63;nf;14,1;f;26;ff;23;1;0;1
+Val Clavin;4;VC.Q4;68;VC.Q4.68;nf;23,4;f;35,4;ff;37;1;0;0
+Val Clavin;4;VC.Q4;72;VC.Q4.72;nf;19,8;f;38;ff;32;1;0;1
+Val Clavin;4;VC.Q4;74;VC.Q4.74;j;13;nf;25,5;nf;27,2;0;0;0
+Val Clavin;4;VC.Q4;77;VC.Q4.77;nf;31,6;f;43,5;F;44,2;2;1;0
+Val Clavin;4;VC.Q4;81;VC.Q4.81;nf;17,4;f;33;ff;26,5;1;0;1
+Val Clavin;4;VC.Q4;83;VC.Q4.83;nf;18;nf;21;j;21,1;0;0;1
+Val Clavin;4;VC.Q4;99;VC.Q4.99;nf;25,6;f;45,8;ff;45,5;2;0;0
+Val Clavin;4;VC.Q4;35;VC.Q4.35;NA;NA;nf;28,4;F;43;2;2;0
+Val Clavin;4;VC.Q4;11;VC.Q4.11;NA;NA;nf;21,5;nf;21,7;0;0;0
+Val Clavin;4;VC.Q4;30;VC.Q4.30;NA;NA;nf;21;nf;26,5;0;0;0
+Val Clavin;4;VC.Q4;31;VC.Q4.31;NA;NA;nf;23,4;nf;31,8;0;0;0
+Val Clavin;4;VC.Q4;101;VC.Q4.101;NA;NA;NA;NA;nf;25,6;0;0;0
+Val Clavin;4;VC.Q4;102;VC.Q4.102;NA;NA;NA;NA;nf;22;0;0;0
+Val Clavin;4;VC.Q4;100;VC.Q4.100;NA;NA;NA;NA;nf;28,1;0;0;0
+Val Clavin;4;VC.Q4;40;VC.Q4.40;NA;NA;NA;NA;nf;26;0;0;0
+Val Clavin;4;VC.Q4;32;VC.Q4.32;NA;NA;NA;NA;nf;22;0;0;0
+Val Clavin;4;VC.Q4;22;VC.Q4.22;NA;NA;NA;NA;nf;24,5;0;0;0
+Val Clavin;4;VC.Q4;150;VC.Q4.150;NA;NA;NA;NA;j;22;0;0;0
+Val Clavin;5;VC.Q5;8;VC.Q5.8;nf;25;nf;28,4;nf;30,1;0;0;0
+Val Clavin;5;VC.Q5;10;VC.Q5.10;nf;9;NA;NA;NA;NA;NA;NA;1
+Val Clavin;5;VC.Q5;42;VC.Q5.42;nf;22;f;28,5;F;39,5;2;1;0
+Val Clavin;5;VC.Q5;62;VC.Q5.62;nf;15,6;nf;24,6;nf;27,7;0;0;0
+Val Clavin;5;VC.Q5;94;VC.Q5.94;nf;24,8;f;41,5;F;41,2;1;1;0
+Val Clavin;5;VC.Q5;96;VC.Q5.96;nf;31;f;49,5;F;53,5;2;1;0
+Val Clavin;3;VC.Q3;36;VC.Q3.36;nf;17,9;nf;19,2;j;18,5;0;0;1
+Val Clavin;1;VC.Q1;4;VC.Q1.4;nf;10;nf;8;nf;9;0;0;1
+Val Clavin;1;VC.Q1;6;VC.Q1.6;j;20;j;22;j;22,5;0;0;0
+Val Clavin;1;VC.Q1;13;VC.Q1.13;nf;31;nf;32;nf;29;0;0;1
+Val Clavin;1;VC.Q1;17;VC.Q1.17;nf;20;nf;23;nf;19,5;0;0;1
+Val Clavin;1;VC.Q1;46;VC.Q1.46;f;34;f;45;ff;51;1;0;0
+Val Clavin;1;VC.Q1;75;VC.Q1.75;nf;26;j;28;j;20;0;0;1
+Val Clavin;1;VC.Q1;97;VC.Q1.97;nf;27;nf;27;nf;29,5;0;0;0
+Val Clavin;1;VC.Q1;21;VC.Q1.21;NA;NA;nf;15;nf;15;0;0;0
+Val Clavin;1;VC.Q1;60;VC.Q1.60;NA;NA;j;13;j;14;0;0;0
+Val Clavin;1;VC.Q1;16;VC.Q1.16;NA;NA;NA;NA;nf;15;0;0;0
+Val Clavin;1;VC.Q1;8;VC.Q1.8;NA;NA;NA;NA;j;14;0;0;0
+Val Clavin;1;VC.Q1;1;VC.Q1.1;NA;NA;NA;NA;nf;19;0;0;0
+Val Clavin;1;VC.Q1;24;VC.Q1.24;NA;NA;NA;NA;nf;9;0;0;0
+Val Clavin;1;VC.Q1;62;VC.Q1.62;NA;NA;NA;NA;nf;11;0;0;0
