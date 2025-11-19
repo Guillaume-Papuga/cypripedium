@@ -5,23 +5,134 @@ format: html
 editor: visual
 ---
 
-## Quarto
-
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
-
-## Running Code
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+## Chargement des packages
 
 ```{r}
-1 + 1
+library(tidyverse)
 ```
 
-You can add options to executable code like this
+## Ouverture des tableaux de données
+
+```{r}
+recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
+```
+
+###Visualisation des données ####Pour chaque strate de recouvrement
+
+***Strate muscilagineuse***
 
 ```{r}
 #| echo: false
-2 * 2
+ggplot(recouvrement, aes(x = Quadrat, y = S_muscinale, color = Site))+
+  geom_line()
+
 ```
 
-The `echo: false` option disables the printing of code (only output is displayed).
+***Strate herbacéee***
+
+```{r}
+#| echo: false
+ggplot(recouvrement, aes(x = Quadrat, y = S_herbacee, color = Site))+
+  geom_line()
+
+```
+
+***Strate arbustive basse***
+
+```{r}
+#| echo: false
+ggplot(recouvrement, aes(x = Quadrat, y = S_arbustive_basse, color = Site))+
+  geom_line()
+
+```
+
+***Strate arbustive haute***
+
+```{r}
+#| echo: false
+ggplot(recouvrement, aes(x = Quadrat, y = S_arbustive_haute, color = Site))+
+  geom_line()
+
+```
+
+***Strate arborescente***
+
+```{r}
+#| echo: false
+ggplot(recouvrement, aes(x = Quadrat, y = S_arborescente, color = Site))+
+  geom_line()
+```
+
+## Transformation strates en facteur
+
+```{r}
+recouvrement_par_strate <- recouvrement %>%
+  pivot_longer(
+    cols = c(-Site, -Quadrat, -ID_Quadrat, starts_with("S_")),
+    names_to = "Strate",
+    values_to = "Recouvrement"
+  ) %>% 
+  arrange(Strate)
+  
+```
+
+###Visualisation des données 
+####Pour chaque site
+
+***Combe Michaut***
+
+```{r}
+#| echo: false
+recouvrement_par_strate %>% 
+  filter(Site == "Combe Michaut") %>%
+  ggplot(aes(x = factor(Quadrat), y = Recouvrement, color = Strate))+
+  geom_point(position= "dodge") 
+
+```
+
+***Val Clavin***
+
+```{r}
+#| echo: false
+recouvrement_par_strate %>% 
+  filter(Site == "Val Clavin") %>%
+  ggplot(aes(x = factor(Quadrat), y = Recouvrement, color = Strate))+
+  geom_point(position= "dodge") 
+
+```
+
+***Vigne au Renard***
+
+```{r}
+#| echo: false
+recouvrement_par_strate %>% 
+  filter(Site == "Vigne au Renard") %>%
+  ggplot(aes(x = factor(Quadrat), y = Recouvrement, color = Strate))+
+  geom_point(position= "dodge") 
+
+```
+
+***Tete cendree haut***
+
+```{r}
+#| echo: false
+recouvrement_par_strate %>% 
+  filter(Site == "Tete cendree haut") %>%
+  ggplot(aes(x = factor(Quadrat), y = Recouvrement, color = Strate))+
+  geom_point(position= "dodge") 
+
+```
+
+####Pour tous les sites
+```{r}
+#| echo: false
+ggplot(recouvrement_par_strate, aes(x = Strate, y = Recouvrement, color = Site))+
+  geom_boxplot(position= "dodge") 
+
+```
+
+
+
+
+
+
