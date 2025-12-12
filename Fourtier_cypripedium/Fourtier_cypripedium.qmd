@@ -9,6 +9,8 @@ editor: visual
 
 ```{r}
 library(tidyverse)
+library(MASS)
+library(ade4)
 ```
 
 ## Ouverture des tableaux de données
@@ -76,8 +78,7 @@ recouvrement_par_strate <- recouvrement %>%
   
 ```
 
-###Visualisation des données 
-####Pour chaque site
+###Visualisation des données ####Pour chaque site
 
 ***Combe Michaut***
 
@@ -124,6 +125,7 @@ recouvrement_par_strate %>%
 ```
 
 ####Pour tous les sites
+
 ```{r}
 #| echo: false
 ggplot(recouvrement_par_strate, aes(x = Strate, y = Recouvrement, color = Site))+
@@ -131,8 +133,42 @@ ggplot(recouvrement_par_strate, aes(x = Strate, y = Recouvrement, color = Site))
 
 ```
 
+```{r}
+afd_recouvrement<-lda(Site~S_muscinale      +S_herbacee+S_arbustive_basse+S_arbustive_haute+S_arborescente   , data = recouvrement)
 
+#on centre et norme les données
+newdata<-as.data.frame(scale(recouvrement[,4:8])) 
+names(newdata)
+attach(recouvrement)
+afd2<-lda(Site~S_muscinale      +S_herbacee+S_arbustive_basse+S_arbustive_haute+S_arborescente   , data = newdata)
+afd2
+plot(afd2)
+manova <- manova(as.matrix(recouvrement[,4:8])~Site)
+summary(manova, "Pillai")
+summary(manova, "Wilks")
 
+pred<-predict(afd2)
+names(pred)
+table(Site,pred$class)
 
+#- Validation par jacknife en utilisant CV=T
 
+afd2= lda(Site~S_muscinale      +S_herbacee+S_arbustive_basse+S_arbustive_haute+S_arborescente   , data = newdata, CV=TRUE)
+names(afd2)
+table(Site, afd2$class)
 
+afd3=discrimin(dudi.pca(recouvrement[,4:8],scannf=F, nf = 3),factor(Site)) # se base sur une ACP centrée réduite et permet d'avoir des coéfficients standardisés 
+names(afd3)
+afd3$eig # interpréter les ratios variabilité intergroupes/variabilité intragroupe
+sqrt(afd3$eig/(1+afd3$eig))
+
+# NB : la fonction discrimin () est différente de LDA : réalise une ACP sur les barycentres des groupes de l'ACP initial. 
+
+s.arrow(afd3$fa) # projection des variables sur les fonctions discriminantes = coef standardisés
+
+s.class(afd3$li, factor(Site)) # projection des individus regroupés en fonction des groupes d'appartendance
+
+rand=rtest(afd3,1000) # MANOVA non paramétrique (test de Pillai non paramétrique)
+plot(rand)
+
+```

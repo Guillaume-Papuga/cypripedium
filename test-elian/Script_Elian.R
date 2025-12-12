@@ -5,6 +5,9 @@ library(tidyverse)
 # Lire le fichier (adapter le chemin et le séparateur si besoin)
 
 data <- read.delim("detections_individuelles_verifsTC+LD_18dec.csv", sep = ";", header = TRUE)
+unique(data$site)
+data$site <- trimws(data$site)
+unique(data$site)
 
 # Nettoyage de base : on garde 1 ligne par quadrat unique dans chaque session et site
 
@@ -34,7 +37,6 @@ presence_complet <- complet %>% left_join(presence_long, by = c("site", "session
 # 5️⃣ Visualisation
 
 ggplot(presence_complet, aes(x = as.factor(numero_quadrat), y = as.factor(session), fill = as.factor(present))) + geom_tile(color = "white") + scale_fill_manual(values = c("0" = "grey85", "1" = "steelblue"), labels = c("Absent", "Présent"), name = "Présence du quadrat") + facet_wrap(~ site, scales = "free_x") + labs(title = "Présence / absence des quadrats par session et site", x = "Numéro de quadrat", y = "Session") + theme_minimal() + theme( axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), panel.grid = element_blank() )
-
 
 ##Tablea session x site x quadrat x observateur
 
