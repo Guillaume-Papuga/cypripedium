@@ -5,7 +5,7 @@ format: html
 editor: visual
 ---
 
-## Chargement des packages
+# Chargement des packages
 
 ```{r}
 library(tidyverse)
@@ -13,13 +13,21 @@ library(MASS)
 library(ade4)
 ```
 
-## Ouverture des tableaux de données
+# Ouverture des tableaux de données
 
 ```{r}
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
+
+verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
+#Problème d'espace à régler pour verification
+unique(verification$site)
+verification$site <- trimws(verification$site)
+unique(verification$site)
+
 ```
 
-###Visualisation des données ####Pour chaque strate de recouvrement
+#Analyse tableau recouvrements végétaux
+###Pour chaque strate de recouvrement
 
 ***Strate muscilagineuse***
 
@@ -65,7 +73,7 @@ ggplot(recouvrement, aes(x = Quadrat, y = S_arborescente, color = Site))+
   geom_line()
 ```
 
-## Transformation strates en facteur
+###Transformation strates en facteur
 
 ```{r}
 recouvrement_par_strate <- recouvrement %>%
@@ -78,7 +86,8 @@ recouvrement_par_strate <- recouvrement %>%
   
 ```
 
-###Visualisation des données ####Pour chaque site
+####Visualisation des données 
+#####Pour chaque site
 
 ***Combe Michaut***
 
@@ -124,7 +133,8 @@ recouvrement_par_strate %>%
 
 ```
 
-####Pour tous les sites
+#####Pour tous les sites
+######Boxplot
 
 ```{r}
 #| echo: false
@@ -132,6 +142,8 @@ ggplot(recouvrement_par_strate, aes(x = Strate, y = Recouvrement, color = Site))
   geom_boxplot(position= "dodge") 
 
 ```
+
+######AFD
 
 ```{r}
 afd_recouvrement<-lda(Site~S_muscinale      +S_herbacee+S_arbustive_basse+S_arbustive_haute+S_arborescente   , data = recouvrement)
@@ -172,3 +184,190 @@ rand=rtest(afd3,1000) # MANOVA non paramétrique (test de Pillai non paramétriq
 plot(rand)
 
 ```
+
+
+#Analyse tableau vérification
+
+```{r}
+ggplot(verification, aes(x = juv, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Présence des juvéniles", y = "Nombre d'occurences")
+```
+
+```{r}
+ggplot(verification, aes(x = non_fleuri, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Présence des non fleuris", y = "Nombre d'occurences")
+```
+
+```{r}
+ggplot(verification, aes(x = fleur, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Présence des fleurs", y = "Nombre d'occurences")
+```
+
+
+```{r}
+ggplot(verification, aes(x = fleurs_fanees, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Présence des fleurs fanées", y = "Nombre d'occurences")
+```
+
+```{r}
+ggplot(verification, aes(x = fruit, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Présence des fruits", y = "Nombre d'occurences")
+```
+
+```{r}
+ggplot(verification, aes(x = adequation, fill = site))+
+  geom_bar(position = "dodge") +
+  facet_wrap(~ session)+
+  labs(x = "Adéquation des observations avec le contrôleur", y = "Nombre d'occurences")
+```
+
+```{r}
+ggplot(verification, aes(x = adequation, fill = observateur))+
+  geom_boxplot(position = "dodge")+
+  labs(x = "Adéquation des observations avec le contrôleur", y = "Observateur")
+```
+
+##Transformation phenologie en facteur
+```{r}
+verification2 <- verification %>% 
+  pivot_longer(
+    cols = c(juv, non_fleuri, fleur, fleurs_fanees, fruit),
+    names_to = "phenologie",
+    values_to = "presence"
+  )
+
+desired_order <- c("juv", "non_fleuri", "fleur", "fleurs_fanees", "fruit")
+verification2$phenologie <- factor(verification2$phenologie,
+                                   levels = desired_order)
+
+```
+
+###Analyses phénologie
+```{r}
+ggplot(verification2, aes(x = presence, fill = site))+
+  geom_bar(position = "dodge")+
+  facet_grid(session~phenologie)
+
+
+```
+
+```{r}
+verification2 %>% 
+  filter(presence == 1) %>% 
+ggplot(aes(x = presence, fill = site))+
+  geom_bar(position = "dodge")+
+  facet_grid(session~phenologie)
+
+
+```
+###Analyse adéquation
+```{r}
+verification3 <- verification %>% 
+  group_by(observateur) %>% 
+  count(adequation) %>% 
+  pivot_wider(
+    names_from = adequation,
+    values_from = n,
+    names_glue = "{ifelse(adequation == 1, 'id_valide', 'id_fausse')}"
+  ) %>% 
+  replace_na(list(id_fausse = 0,
+                  id_valide = 0)) %>% 
+    mutate(tx_erreur = id_fausse / (id_valide + id_fausse),
+           id_total = id_fausse + id_valide)
+
+#Deux observateurs avec adéquation NA
+verification %>% 
+  filter(is.na(adequation))
+
+ggplot(data = verification3, aes(x = tx_erreur, y = id_total, color = ))+
+  geom_point()
+cor.test(verification3$tx_erreur, verification3$id_total)
+cor.test(verification3$tx_erreur, verification3$id_total, method = "spearman")
+
+```
+####Taux d'erreur par observateur
+
+```{r}
+ggplot(verification3, aes(x = tx_erreur, y = observateur)) +
+  geom_segment(aes(x = 0, xend = tx_erreur, y = observateur, yend = observateur), color = "grey70") +
+  geom_point(size = 4, color = "tomato") +
+  labs(x = "Taux d'erreur", y = "Observateur") +
+  theme_minimal()
+
+ggplot(verification3, aes(x = tx_erreur, y = observateur)) +
+  geom_segment(aes(x = 0, xend = tx_erreur,
+                   y = observateur, yend = observateur),
+               color = "grey70") +
+  geom_point(aes(size = id_total), color = "tomato") +
+  geom_text(aes(label = id_total), 
+            nudge_x = 0.02,
+            size = 2) +
+  scale_size_continuous(name = "Nombre d'observations")+
+  labs(x = "Taux d'erreur", y = "Observateur") +
+  theme_minimal()
+
+```
+
+####Taux d'erreur par observateur en fonction du site
+
+```{r}
+verification4 <- verification %>% 
+  left_join(verification3, by = "observateur")
+
+ggplot(data = verification4, aes(x = tx_erreur, y = id_total))+
+  geom_point()+
+  facet_wrap(~site)
+```
+
+####Taux d'erreur par site
+
+```{r}
+verification5 <- verification %>% 
+  group_by(site) %>% 
+  count(adequation) %>% 
+  pivot_wider(
+    names_from = adequation,
+    values_from = n,
+    names_glue = "{ifelse(adequation == 1, 'id_valide', 'id_fausse')}"
+  ) %>% 
+  replace_na(list(id_fausse = 0,
+                  id_valide = 0)) %>% 
+    mutate(tx_erreur = id_fausse / (id_valide + id_fausse),
+           id_total = id_fausse + id_valide)
+
+ggplot(data = verification5, aes(x = tx_erreur, y=id_total, color = site))+
+  geom_point()
+
+```
+
+```{r}
+verification6 <- verification %>% 
+  group_by(site, numero_quadrat) %>% 
+  count(adequation) %>% 
+  pivot_wider(
+    names_from = adequation,
+    values_from = n,
+    names_glue = "{ifelse(adequation == 1, 'id_valide', 'id_fausse')}"
+  ) %>% 
+  replace_na(list(id_fausse = 0,
+                  id_valide = 0)) %>% 
+    mutate(tx_erreur = id_fausse / (id_valide + id_fausse),
+           id_total = id_fausse + id_valide)
+
+ggplot(data = verification6, aes(x = tx_erreur, y=id_total))+
+  geom_point()+
+  facet_wrap(~site)
+
+```
+
+
