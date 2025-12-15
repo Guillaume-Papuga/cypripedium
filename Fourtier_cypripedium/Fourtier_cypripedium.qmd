@@ -30,6 +30,10 @@ unique(verification$site)
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
 unique(data_original$site)
 
+experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
+experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
+
+
 ```
 
 #Analyse tableau recouvrements végétaux
@@ -412,6 +416,52 @@ ggplot(data = verification7, aes(x = session, y = tx_erreur))+
 
 ```
 
+####Taux d'erreur comparé à autonotation
+```{r}
+experience <- experience %>%
+  mutate(score_moyen = rowMeans(across(A:E)))
+
+experience <- experience %>%
+  mutate(score_moyen = rowMeans(across(A:E)))
+experience <- experience %>%
+  mutate(score_moyen = rowMeans(across(A:E), na.rm = TRUE))
+
+# Tri du plus compétent au moins compétent
+experience %>%
+  arrange(desc(score_moyen))
+
+# Poids de fiabilité (normalisé entre 0 et 1)
+experience <- experience %>%
+  mutate(fiabilite = score_moyen / 10,
+         risque_erreur = 1 - fiabilite)
+
+experience <- experience %>%
+  rowwise() %>%
+  mutate(ecart_type = sd(c_across(A:E))) %>%
+  ungroup()
+
+experience <- experience %>%
+  arrange(desc(risque_erreur)) %>%
+  mutate(ID.observateur = factor(ID.observateur, levels = ID.observateur))
+
+
+ggplot(experience, aes(x = ID.observateur, y = risque_erreur, fill = sexe)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("f" = "red", "m" = "blue")) +
+  theme_minimal() +
+  labs(title = "Risque d’erreur estimé par observateur",
+       x = "Observateur", y = "Risque d’erreur (1 - fiabilité)")+geom_errorbar(
+         aes(
+           ymin = risque_erreur - (ecart_type/10),
+           ymax = risque_erreur + (ecart_type/10)
+         ),
+         width = 0.2,
+         linewidth = 0.6
+       )
+
+
+
+```
 
 
 #Analyse tableau Taille et phéno verif LD
