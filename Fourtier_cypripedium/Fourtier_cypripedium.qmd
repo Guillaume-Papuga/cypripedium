@@ -17,12 +17,16 @@ library(ade4)
 
 ```{r}
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
+unique(recouvrement$Site)
 
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
 #Problème d'espace à régler pour verification
 unique(verification$site)
 verification$site <- trimws(verification$site)
 unique(verification$site)
+
+data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
+unique(data_original$site)
 
 ```
 
@@ -261,6 +265,7 @@ ggplot(verification2, aes(x = presence, fill = site))+
 
 ```
 
+
 ```{r}
 verification2 %>% 
   filter(presence == 1) %>% 
@@ -369,5 +374,53 @@ ggplot(data = verification6, aes(x = tx_erreur, y=id_total))+
   facet_wrap(~site)
 
 ```
+
+#Analyse tableau Taille et phéno verif LD
+```{r}
+transition_pheno <- data_original %>% 
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3)
+
+trans_12 <- transition_pheno %>%
+  filter(!is.na(phenoS1), !is.na(phenoS2)) %>%
+  count(from = phenoS1, to = phenoS2)
+
+trans_23 <- transition_pheno %>%
+  filter(!is.na(phenoS2), !is.na(phenoS3)) %>%
+  count(from = phenoS2, to = phenoS3)
+
+library(ggalluvial)
+
+transition_pheno2 <- data_original %>% 
+  dplyr::select(site, ID_ind, phenoS1, phenoS2, phenoS3)
+
+transition_pheno2 <- transition_pheno %>% 
+  pivot_longer(
+    cols = c(phenoS1, phenoS2, phenoS3),
+    names_to = "session",
+    values_to = "phenologie"
+  )
+
+ggplot(transition_pheno2,
+       aes(x = session,
+           stratum = phenologie,
+           alluvium = ID_ind,
+           fill = phenologie)) +
+  geom_flow(alpha = 0.2,  color = "black", linewidth = 0.1) +
+  geom_stratum() +
+  scale_x_discrete(breaks = c(1, 2, 3),
+                     labels = c("Session 1", "Session 2", "Session 3")) +
+  labs(
+    x = "Session",
+    y = "Number of individuals",
+    fill = "Phenology",
+    title = "Phenological transitions by individual"
+  ) +
+  facet_wrap()
+  theme_minimal()
+
+
+```
+
+
 
 
