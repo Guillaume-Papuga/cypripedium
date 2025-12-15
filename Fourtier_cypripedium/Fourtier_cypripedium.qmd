@@ -11,6 +11,8 @@ editor: visual
 library(tidyverse)
 library(MASS)
 library(ade4)
+library(ggalluvial)
+
 ```
 
 # Ouverture des tableaux de données
@@ -375,6 +377,43 @@ ggplot(data = verification6, aes(x = tx_erreur, y=id_total))+
 
 ```
 
+####Taux d'erreur par observateur en fonction des sessions
+```{r}
+verification7 <- verification %>% 
+  group_by(observateur, session) %>% 
+  count(adequation) %>% 
+  pivot_wider(
+    names_from = adequation,
+    values_from = n,
+    names_glue = "{ifelse(adequation == 1, 'id_valide', 'id_fausse')}"
+  ) %>% 
+  replace_na(list(id_fausse = 0,
+                  id_valide = 0)) %>% 
+    mutate(tx_erreur = id_fausse / (id_valide + id_fausse),
+           id_total = id_fausse + id_valide)
+
+
+ggplot(verification7, aes(x = tx_erreur, y = observateur)) +
+  geom_segment(aes(x = 0, xend = tx_erreur,
+                   y = observateur, yend = observateur),
+               color = "grey70") +
+  geom_point(aes(size = id_total), color = "tomato") +
+  geom_text(aes(label = id_total), 
+            nudge_x = 0.02,
+            size = 2) +
+  scale_size_continuous(name = "Nombre d'observations")+
+  labs(x = "Taux d'erreur", y = "Observateur") +
+  facet_wrap(~session)
+
+
+ggplot(data = verification7, aes(x = session, y = tx_erreur))+
+  geom_line(aes(color=observateur))
+
+
+```
+
+
+
 #Analyse tableau Taille et phéno verif LD
 ```{r}
 transition_pheno <- data_original %>% 
@@ -388,19 +427,17 @@ trans_23 <- transition_pheno %>%
   filter(!is.na(phenoS2), !is.na(phenoS3)) %>%
   count(from = phenoS2, to = phenoS3)
 
-library(ggalluvial)
-
 transition_pheno2 <- data_original %>% 
   dplyr::select(site, ID_ind, phenoS1, phenoS2, phenoS3)
 
-transition_pheno2 <- transition_pheno %>% 
+transition_pheno3 <- transition_pheno2 %>% 
   pivot_longer(
     cols = c(phenoS1, phenoS2, phenoS3),
     names_to = "session",
     values_to = "phenologie"
   )
 
-ggplot(transition_pheno2,
+ggplot(transition_pheno3,
        aes(x = session,
            stratum = phenologie,
            alluvium = ID_ind,
@@ -415,9 +452,7 @@ ggplot(transition_pheno2,
     fill = "Phenology",
     title = "Phenological transitions by individual"
   ) +
-  facet_wrap()
-  theme_minimal()
-
+  facet_wrap(~site)
 
 ```
 
