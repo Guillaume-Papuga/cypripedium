@@ -2,8 +2,9 @@
 title: "Rédaction_V1"
 format: html
 editor: visual
+execute-dir: project
 ---
-# -------------------------------
+
 # Chargement des packages
 
 ```{r}
@@ -15,6 +16,7 @@ library(ggalluvial)
 ```
 
 # -------------------------------
+
 # Ouverture des tableaux de données
 
 ```{r}
@@ -37,6 +39,7 @@ experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f"
 ```
 
 # -------------------------------
+
 # I\_ Analyses préliminaires
 
 ## I_i Relation taille et phénologie
@@ -141,16 +144,18 @@ s.arrow(afd3$fa)
 
 # Projection des individus selon leur groupe
 s.class(afd3$li, factor(recouvrement$Site))
-4
 ```
 
 # -------------------------------
+
 # II\_ Analyse de la variation dans le temps
 
 ## II_i Effet de la session
 
 ### Effet de la session sur la taille
-Taille ~ session
+
+Taille \~ session
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -203,7 +208,8 @@ ggplot(taille_stats, aes(x = session, y = mean_taille, fill = session)) +
 
 ### Effet de la session sur la phénologie
 
-phénologie ~ session
+phénologie \~ session
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -267,12 +273,17 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
 ```
 
 # -------------------------------
+
 # III\_ Analyse de la variation dans l'espace
+
 # --------------------
+
 ## III_i Effet du site
+
 ### Effet du site sur la taille
 
-Taille ~ site
+Taille \~ site
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -323,7 +334,8 @@ ggplot(taille_stats, aes(x = site, y = mean_taille)) +
 
 ### Effet du site sur la taille selon la session
 
-Taille ~ site + session
+Taille \~ site + session
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -376,7 +388,8 @@ ggplot(stats_long, aes(x = site, y = mean, fill = taille_type)) +
 
 ### Effet du site sur la phénologie
 
-phénologie ~ site
+phénologie \~ site
+
 ```{r}
 library(ggplot2)
 library(dplyr)
@@ -432,11 +445,13 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
 
 ```
 
-
 # --------------------
+
 ## III_ii Effet de la strate
+
 ### Effet de la strate sur la taille
-Taille ~ strate
+
+Taille \~ strate
 
 ```{r}
 library(dplyr)
@@ -490,7 +505,8 @@ ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
 ```
 
 ### Effet de la strate sur la phénologie
-phénologie ~ strate
+
+phénologie \~ strate
 
 ```{r}
 library(dplyr)
@@ -559,11 +575,11 @@ a_3<- anova(rda_pheno, by="axis") # axes significatifs
 
 ```
 
-La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p < 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
+La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p \< 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
 
 # -------------------------------
-#IV\_ Niveau des observateurs 
 
+#IV\_ Niveau des observateurs
 
 ```{r}
 
@@ -630,6 +646,5 @@ ggplot(data_erreur_score, aes(x = score_moyen, y = tx_erreur)) +
 ```
 
 # -------------------------------
-#V\_ Probabilité de détection 
-# -------------------------------
-#IV\_ CMR 
+
+#V\_ Probabilité de détection \# ------------------------------- #IV\_ CMR
