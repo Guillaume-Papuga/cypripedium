@@ -632,4 +632,4 @@ ggplot(data_erreur_score, aes(x = score_moyen, y = tx_erreur)) +
 # -------------------------------
 #V\_ Probabilité de détection 
 # -------------------------------
-#IV\_ CMR
+#IV\_ CMR 
