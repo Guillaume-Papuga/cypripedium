@@ -463,6 +463,5 @@ ggplot(data, aes(x = ID.observateur, y = risque_erreur, fill = sexe)) +
          linewidth = 0.6
        )
 
-#
 
 
