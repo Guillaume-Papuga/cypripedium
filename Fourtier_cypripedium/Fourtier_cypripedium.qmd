@@ -506,6 +506,146 @@ ggplot(transition_pheno3,
 
 ```
 
+#Analyse proba de détection
+```{r}
+
+#ajout information session à l'ID individuel####
+#pour tableau vérification des observateurs
+verification2<- verification %>% 
+  mutate(id_ind_fin = paste(ID_ind, session, sep = ".")) %>% 
+  dplyr::select(id_ind_fin, everything())
+#pour tableau des évaluateurs
+##mettre stade phéno en ligne et non en colonne 
+data_original2 <- data_original %>%
+  dplyr::select(-tailleS1, -tailleS2, -tailleS3, -nbfleurs, -nbfruits, -predation) %>% 
+  pivot_longer(
+    cols = c(phenoS1, phenoS2, phenoS3),
+    names_to = "session",
+    values_to = "phenologie_verif"
+  )%>% 
+   mutate(session = case_when(
+    session == "phenoS1" ~ 1,
+    session == "phenoS2" ~ 2,
+    session == "phenoS3" ~ 3
+  )
+   ) %>% 
+  mutate(phenologie_verif
+         = case_when(
+    phenologie_verif == "j" ~ "juv",
+    phenologie_verif == "nf" ~ "non_fleuri",
+    phenologie_verif == "f" ~ "fleur",
+    phenologie_verif == "ff" ~ "fleurs_fanees",
+    phenologie_verif == "F" ~"fruit"
+  ))
+
+##mettre taille en ligne et non en colonne
+data_original3 <- data_original %>% 
+  dplyr::select(tailleS1, tailleS2, tailleS3) %>% 
+  pivot_longer(
+    cols = c(tailleS1, tailleS2, tailleS3),
+    names_to = "session",
+    values_to = "taille"
+  ) %>% 
+   mutate(session = case_when(
+    session == "tailleS1" ~ 1,
+    session == "tailleS2" ~ 2,
+    session == "tailleS3" ~ 3
+  )
+   )
+
+#enlever session car déjà présent sur autre data frame
+data_original3 <- data_original3 %>% 
+  dplyr::select(-session)
+
+#ajout des deux tableaux + enlever lignes sans info  à cause d'observation d'un individu à partir de session 2 ou 3
+data_original4 <- cbind(data_original2, data_original3) %>% 
+  filter(!is.na(taille)) #enlever lignes avec pas d'infos
+
+#vérifier si manque des informations par rapport à phénologie
+data_original4 %>% 
+  filter(is.na(phenologie_verif))
+
+#ajout variable individuelle complète
+data_original_obs <- data_original4 %>% 
+  mutate(id_ind_fin = paste(ID_ind, session, sep = ".")) %>% 
+  dplyr::select(id_ind_fin, everything())
+
+#prendre en compte stade phéno observé par utilisateur
+verification3 <- verification2 %>% 
+  pivot_longer(
+    cols = c(juv, non_fleuri, fleur, fleurs_fanees, fruit),
+    names_to = "phenologie",
+    values_to = "presence"
+  )  
+  
+#garder seulement st phéno observé par utilisateur
+verification_obs <- verification3 %>% 
+  filter(presence == 1)
+  
+#Vérifier nb individus
+str(unique(verification_obs$id_ind_fin))
+str(unique(data_original_obs$id_ind_fin))
+str(data_original_obs$id_ind_fin)
+str(verification_obs$id_ind_fin)
+#à priori 66 individus jamais vus par observateurs
+
+#extraire liste de tous les individus
+nb_individu <- data.frame(id_ind_fin = data_original_obs$id_ind_fin)
+
+#extraire liste individus dans test de détection
+nb_ind_obs <- data.frame(id_ind_fin = unique(verification_obs$id_ind_fin))
+
+#individus manquants
+nb_individu_manquant <- nb_individu %>% 
+  anti_join(nb_ind_obs, by = "id_ind_fin")
+
+#reprendre données originales sur les valeurs manquantes
+nb_individu_manquant_original <- data_original_obs %>% 
+  semi_join(nb_individu_manquant, by = "id_ind_fin") 
+  
+
+#joindre à ces données manquantes les valeurs du tableau observateur
+nb_individu_manquant_final <- nb_individu_manquant_original %>% 
+  left_join(verification_obs, by = "id_ind_fin") %>% 
+  dplyr::select(-ends_with(".y")) %>% 
+  rename_with(~ sub("\\.x$", "", .x), ends_with(".x"))
+
+#Joindre au fichier original les informations des évaluateurs
+data_verification_original <- verification_obs %>% 
+  left_join(data_original_obs, by = "id_ind_fin") %>% 
+  dplyr::select(-ends_with(".y")) %>% 
+  rename_with(~ sub("\\.x$", "", .x), ends_with(".x"))
+
+#mettre les colomnes dans le bon ordre
+nb_individu_manquant_final <- nb_individu_manquant_final %>% 
+  dplyr::select(id_ind_fin, session, site, date, numero_quadrat, ID_quadrat, marquage, ID_ind, observateur, adequation, phenologie, presence, quadrat, phenologie_verif, taille)
+
+#joindre ces données manquantes à tableau observateurs
+tab_detection <- rbind(data_verification_original, nb_individu_manquant_final)
+
+#créer nouvelle valeur adéquation
+tab_detection <- tab_detection %>% 
+  mutate(adequation_reel = if_else(
+    phenologie == phenologie_verif, 1, 0
+  ),
+  comparaison_adequation = if_else(
+    adequation_reel==adequation, 1, 0
+  )
+  )
+
+#Taux d'erreur dans note d'adéquation
+sum(tab_detection$comparaison_adequation == 0, na.rm = T) / nrow(tab_detection)
+
+#vérifier nombre d'observateurs par session et par quadrat
+nb_verif_quadrat <- verification %>% 
+  group_by(session, site, numero_quadrat) %>% 
+  count()
+
+nb_obs_quadrat <- tab_detection %>% 
+  group_by(session, site, numero_quadrat) %>% 
+  count()
+
+```
 
 
 
