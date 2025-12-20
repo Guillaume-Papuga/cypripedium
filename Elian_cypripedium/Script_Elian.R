@@ -465,3 +465,29 @@ ggplot(data, aes(x = ID.observateur, y = risque_erreur, fill = sexe)) +
 
 
 
+
+
+
+
+
+
+
+
+library(RMark)
+
+read.csv("tes_donnees.csv")
+
+library(dplyr)
+
+data <- data %>%
+  mutate(
+    etat = case_when(
+      juv == 1            ~ "A",
+      non_fleuri == 1     ~ "B",
+      fleur == 1          ~ "C",
+      fleurs_fanees == 1  ~ "D",
+      fruit == 1          ~ "E",
+      TRUE                ~ "0"
+    )
+  )
+
