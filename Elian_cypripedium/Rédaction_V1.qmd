@@ -644,13 +644,11 @@ ggplot(data_erreur_score, aes(x = score_moyen, y = tx_erreur)) +
 
 
 ```
+
 # -------------------------------
-#V\_ Probabilité de détection
-# -------------------------------
-#IV\_ CMR
-# ---------------------
-##IV_i Analyse des transitions phénologiques avec MARK
-###IV_i.i  Toutes transitions
+
+#V\_ Probabilité de détection \# ------------------------------- #IV\_ CMR \# --------------------- ##IV_i Analyse des transitions phénologiques avec MARK ###IV_i.i Toutes transitions
+
 ```{r}
 # -------------------------------
 # Packages nécessaires
@@ -774,7 +772,7 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
 
-###IV_i.ii  Transitions session 1 → 2
+###IV_i.ii Transitions session 1 → 2
 
 ```{r}
 ###MARK Session 1-2 ----
@@ -1015,4 +1013,5 @@ for(i in 1:5){
 dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
+
 # -------------------------------
