@@ -163,7 +163,7 @@ library(ggplot2)
 
 # Transformer les données en format long
 taille_long <- data_original %>%
-  select(tailleS1, tailleS2, tailleS3) %>%
+  dplyr::select(tailleS1, tailleS2, tailleS3) %>%
   pivot_longer(
     cols = everything(),
     names_to = "session",
@@ -173,7 +173,7 @@ taille_long <- data_original %>%
     # remplacer les "," par "." et convertir en numérique
     taille = as.numeric(gsub(",", ".", taille)),
     # renommer les sessions
-    session = recode(session, "tailleS1"="S1", "tailleS2"="S2", "tailleS3"="S3")
+    session = dplyr::recode(session, "tailleS1"="S1", "tailleS2"="S2", "tailleS3"="S3")
   )
 
 # Calcul de la moyenne, écart-type et IC 95%
@@ -217,7 +217,7 @@ library(ggplot2)
 
 # Transformer les données en format long : session = S1, S2, S3
 pheno_long <- data_original %>%
-  select(phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(phenoS1, phenoS2, phenoS3) %>%
   pivot_longer(
     cols = everything(),
     names_to = "session",
@@ -291,7 +291,7 @@ library(ggplot2)
 
 # Transformer les données en format long pour toutes les tailles
 taille_long <- data_original %>%
-  select(site, tailleS1, tailleS2, tailleS3) %>%
+  dplyr::select(site, tailleS1, tailleS2, tailleS3) %>%
   pivot_longer(
     cols = c(tailleS1, tailleS2, tailleS3),
     names_to = "session",
@@ -397,7 +397,7 @@ library(tidyr)
 
 # Transformer les phénos en format long en gardant les NA
 pheno_long <- data_original %>%
-  select(site, phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(site, phenoS1, phenoS2, phenoS3) %>%
   pivot_longer(
     cols = c(phenoS1, phenoS2, phenoS3),
     names_to = "pheno_type",
@@ -469,7 +469,7 @@ data_joined <- data_joined %>%
     tailleS1 = as.numeric(gsub(",", ".", tailleS1)),
     tailleS2 = as.numeric(gsub(",", ".", tailleS2)),
     tailleS3 = as.numeric(gsub(",", ".", tailleS3)),
-    taille_moyenne = rowMeans(select(., tailleS1, tailleS2, tailleS3), na.rm = TRUE)
+    taille_moyenne = rowMeans(dplyr::select(., tailleS1, tailleS2, tailleS3), na.rm = TRUE)
   )
 
 # Transformer les strates en format long pour facettes
@@ -481,7 +481,7 @@ recouvrement_long <- data_joined %>%
   )
 
 # Formule pour afficher R² et p-value
-eqn <- stat_poly_eq(
+eqn <- ggpmisc::stat_poly_eq(
   aes(label = paste(..eq.label.., ..rr.label.., ..p.value.label.., sep = "~~~")),
   formula = y ~ x,
   parse = TRUE,
@@ -515,7 +515,7 @@ library(vegan)
 
 # Phénologie en format long
 pheno_long <- data_original %>%
-  select(ID_quadrat, phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(ID_quadrat, phenoS1, phenoS2, phenoS3) %>%
   pivot_longer(
     cols = starts_with("pheno"),
     names_to = "session",
@@ -541,7 +541,7 @@ data_rda <- pheno_tab %>%
 
 # Variables explicatives (recouvrement)
 X <- data_rda %>%
-  select(
+  dplyr::select(
     S_muscinale,
     S_herbacee,
     S_arbustive_basse,
@@ -550,13 +550,13 @@ X <- data_rda %>%
   )
 
 Y <- data_rda %>%
-  select(j, nf, f, ff, F, `NA`)
+  dplyr::select(j, nf, f, ff, F, `NA`)
 
 # Hellinger (très recommandé)
 Y_hel <- decostand(Y, method = "hellinger")
 
 X <- data_rda %>%
-  select(
+  dplyr::select(
     S_muscinale,
     S_herbacee,
     S_arbustive_basse,
@@ -669,7 +669,7 @@ data<- data_original
 phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
 
 phenology_data_numeric <- data %>%
-  select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
   mutate(
     phenoS1 = phenology_codes[phenoS1],
     phenoS2 = phenology_codes[phenoS2],
@@ -796,7 +796,7 @@ data<- data_original
 phenology_codes <- c("j" = "1", "nf" = "2", "f" = "3", "ff" = "4", "F" = "5")
 
 phenology_data_numeric <- data %>%
-  select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
   # Supprimer les lignes avec NA dans phénoS1 ou phénoS2 ou phénoS3
   filter(!is.na(phenoS1) & !is.na(phenoS2) & !is.na(phenoS3)) %>%
   mutate(
@@ -844,7 +844,7 @@ ms_model$results$real
 # 6. Calcul empirique des transitions session 1 → 2
 # -------------------------------
 phenology_s1_s2 <- phenology_data_numeric %>%
-  select(ID_ind, phenoS1, phenoS2)  # seulement sessions 1 et 2
+  dplyr::select(ID_ind, phenoS1, phenoS2)  # seulement sessions 1 et 2
 
 # Calcul des transitions
 transitions <- phenology_s1_s2 %>%
@@ -917,7 +917,7 @@ data<- data_original
 phenology_codes <- c("j" = "1", "nf" = "2", "f" = "3", "ff" = "4", "F" = "5")
 
 phenology_data_numeric <- data %>%
-  select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
   # Supprimer les lignes avec NA dans phénoS2 ou phénoS3 (session 2→3)
   filter(!is.na(phenoS2) & !is.na(phenoS3)) %>%
   mutate(
@@ -965,7 +965,7 @@ ms_model$results$real
 # 6. Calcul empirique des transitions session 2 → 3
 # -------------------------------
 phenology_s2_s3 <- phenology_data_numeric %>%
-  select(ID_ind, phenoS2, phenoS3)
+  dplyr::select(ID_ind, phenoS2, phenoS3)
 
 # Calcul des transitions
 transitions <- phenology_s2_s3 %>%
