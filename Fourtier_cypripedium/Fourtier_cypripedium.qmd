@@ -42,6 +42,7 @@ data_original <- data_original %>%
 unique(data_original$site)
 
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
+#Ajout de l'information du sexe des observateurs (à partir de recherches internet)
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
 
 
@@ -372,6 +373,8 @@ ggplot(data = verification5, aes(x = tx_erreur, y=id_total, color = site))+
 
 ```
 
+#Taux d'erreur par site et par quadrat
+
 ```{r}
 verification6 <- verification %>% 
   group_by(site, numero_quadrat) %>% 
@@ -424,7 +427,8 @@ ggplot(verification7, aes(x = tx_erreur, y = observateur)) +
 ggplot(data = verification7, aes(x = session, y = tx_erreur))+
   geom_line(aes(color=observateur))
 
-
+ggplot(data = verification7, aes(x = as.factor(session), y = tx_erreur))+
+  geom_boxplot()
 ```
 
 ####Taux d'erreur comparé à autonotation
@@ -472,6 +476,19 @@ ggplot(experience, aes(x = ID.observateur, y = risque_erreur, fill = sexe)) +
 
 
 
+```
+
+
+#COmparaison tx d'erreur et auutonotation
+
+```{r}
+experience2 <- experience %>% 
+  inner_join(verification3, by = join_by("Observateur" == "observateur"))
+
+ggplot(data = experience2, aes( x = risque_erreur, y = tx_erreur))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(x = "Risque d'erreur basé sur autonotation", y = "Taux d'erreur d'attribution de la phénologie")
 ```
 
 
@@ -871,6 +888,52 @@ proc <- process.data(
   nocc = nocc,
   strata.labels = c("j", "nf", "f", "F", "ff")
 )
+```
+
+#Taux d'erreur réel observateurs
+
+```{r}
+tx_erreur <- tab_complet %>% 
+  group_by(observateur) %>% 
+  summarise(nb_ind = n(), nb_detect = sum(detection, na.rm = TRUE),
+            tx_detect = nb_detect/nb_ind)
+
+tx_erreur_fin <- experience2 %>% 
+  inner_join(tx_erreur, by = join_by("Observateur" == "observateur"))
+
+ggplot(data = tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(x = "Taux d'erreur d'attribution de phénologie",
+       y = "taux de non détection")
+cor.test(tx_erreur_fin$tx_detect, tx_erreur_fin$tx_erreur, method = "spearman")
+
+ggplot(data = tx_erreur_fin, aes( x = risque_erreur, y = tx_erreur))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(x = "Risque d'erreur basé sur autonotation", y = "Taux d'erreur d'attribution de la phénologie")
+
+ggplot(data = tx_erreur_fin, aes( x = risque_erreur, y = 1 - tx_detect))+
+  geom_point()+
+  geom_smooth(method = "lm")+
+  labs(x = "Risque d'erreur basé sur autonotation", y = "Taux de non détection")
+
+model1_autonotation <- lm(risque_erreur ~ tx_erreur + tx_detect, data = tx_erreur_fin)
+
+summary(model1_autonotation)
+anova(model1_autonotation)
+library(car)
+vif(model1_autonotation)
+
+model2_autonotation <- lm(risque_erreur ~ tx_detect, data = tx_erreur_fin)
+summary(model2_autonotation)
+anova(model2_autonotation)
+
+model3_autonotation <- lm(risque_erreur ~ tx_erreur, data = tx_erreur_fin)
+summary(model3_autonotation)
+anova(model3_autonotation)
+
+AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 ```
 
 
