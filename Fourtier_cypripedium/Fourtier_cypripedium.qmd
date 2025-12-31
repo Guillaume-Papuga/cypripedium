@@ -29,6 +29,17 @@ unique(verification$site)
 
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
 unique(data_original$site)
+#enlever les accents
+data_original <- data_original %>% 
+  mutate(site
+         = case_when(
+    site == "Combe Michaut" ~ "Combe Michaut",
+    site == "Tête Cendrée Bas" ~ "Tete Cendree Bas",
+    site == "Tête Cendrée Haut" ~ "Tete Cendree Haut",
+    site == "Vigne au Renard" ~ "Vigne au Renard",
+    site == "Val Clavin" ~ "Val Clavin"
+  ))
+unique(data_original$site)
 
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
@@ -570,7 +581,7 @@ data_original_obs <- data_original4 %>%
   mutate(id_ind_fin = paste(ID_ind, session, sep = ".")) %>% 
   dplyr::select(id_ind_fin, everything())
 
-#prendre en compte stade phéno observé par utilisateur
+#prendre en compte stade phéno observé par observateur
 verification3 <- verification2 %>% 
   pivot_longer(
     cols = c(juv, non_fleuri, fleur, fleurs_fanees, fruit),
@@ -578,7 +589,7 @@ verification3 <- verification2 %>%
     values_to = "presence"
   )  
   
-#garder seulement st phéno observé par utilisateur
+#garder seulement st phéno observé par observateur
 verification_obs <- verification3 %>% 
   filter(presence == 1)
   
@@ -639,13 +650,227 @@ sum(tab_detection$comparaison_adequation == 0, na.rm = T) / nrow(tab_detection)
 #vérifier nombre d'observateurs par session et par quadrat
 nb_verif_quadrat <- verification %>% 
   group_by(session, site, numero_quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  )
+nrow(nb_verif_quadrat)
+nb_verif_quadrat <- nb_verif_quadrat %>% 
+  mutate(site = case_when(
+    site == "Combe Michaut" ~ "CM",
+    site == "Tete Cendree Bas" ~ "TCb",
+    site == "Tete Cendree Haut" ~ "TCh",
+    site == "Vigne au Renard" ~ "VaR",
+    site == "Val Clavin" ~ "VC"
+  ),
+  ID = "Q")
+
+nb_verif_quadrat <- nb_verif_quadrat %>% 
+  mutate(id_quadrat = paste(ID, numero_quadrat, sep = ""),
+         id_quadrat_fin = paste(site, id_quadrat, session, sep =".")) %>% 
+  dplyr::select(id_quadrat_fin, everything())
+
+nb_obs_quadrat <- data_original_obs %>% 
+  group_by(session, site, quadrat) %>% 
+  count()
+nrow(nb_obs_quadrat)
+
+nb_quadrat_final <- tab_detection %>% 
+  group_by(session, site, quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  ) %>% 
+  filter(!is.na(quadrat))
+nrow(nb_quadrat_final)
+
+nb_quadrat_manquant <- nb_individu_manquant_final %>% 
+  group_by(session, ID_quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  )
+nrow(nb_quadrat_manquant)
+#individus manquants dans 27 quadras
+
+nb_quadrat_manquant <- nb_quadrat_manquant %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  dplyr::select(id_quadrat_fin, everything())
+
+test <- nb_quadrat_manquant %>% 
+  anti_join(nb_verif_quadrat, by = "id_quadrat_fin")
+
+#On a bien tous les quadra d'observés juste pas tous les individus
+
+str(tab_detection)
+
+#Pour le moment j'ai un tableau avec tous les individus observés mais je n'ai pas l'info sur individus non observés par observateurs
+#il me faut à chaque fois le nb de quadrats observés par observateurs pour calculer le nombre d'observateurs par quadrat
+verification_obs_quadrat <- verification %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  group_by(id_quadrat_fin, observateur) %>% 
   count()
 
-nb_obs_quadrat <- tab_detection %>% 
-  group_by(session, site, numero_quadrat) %>% 
-  count()
+#Ajouter à tableau détection id_quadrat_fin
+tab_detection <- tab_detection %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = "."))
+
+#Vérifier que pas de NA crées
+tab_detection[is.na(tab_detection$id_quadrat_fin), ]
+
+#Calculer le nombre d'individus par quadrat
+nb_indiv_quadrat <- data_original_obs %>% 
+    mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  group_by(id_quadrat_fin) %>% 
+  summarise(
+    nb_individus = n_distinct(ID_ind),
+    .groups = "drop"
+  )
+
+#Maintenant je compare ce nombre au nombre observé par mes observateurs
+difference_ind <- verification_obs_quadrat %>% 
+  full_join(nb_indiv_quadrat, by = "id_quadrat_fin")
+
+#Taux de detection par observateur
+difference_ind <- difference_ind %>% 
+  mutate(detection = n/nb_individus)
+
+#sortir les identifiants de tous les individus possibles
+individus_par_quadrat <- tab_detection %>%
+  distinct(id_quadrat_fin, ID_ind)
+
+#combinaisons de tous les individus possibles avec les observateurs
+grille_complete <- difference_ind %>%
+  dplyr::select(id_quadrat_fin, observateur) %>%
+  distinct() %>%
+  left_join(individus_par_quadrat, by = "id_quadrat_fin", relationship = "many-to-many")
+
+#ajouter les informations de detection dans ma grille complete
+tab_complet <- grille_complete %>%
+  left_join(
+    tab_detection %>%
+      mutate(detection = 1) %>%
+      dplyr::select(id_quadrat_fin, observateur, ID_ind, detection),
+    by = c("id_quadrat_fin", "observateur", "ID_ind")
+  ) %>%
+  mutate(
+    detection = ifelse(is.na(detection), 0, detection)
+  )
+
+#Vérifier que ça a marché en comparant le nombre de détections calculées vs le nombre de détection par quadrat
+tab_complet %>%
+  group_by(id_quadrat_fin, observateur) %>%
+  summarise(
+    n_detectes = sum(detection),
+    .groups = "drop"
+  ) %>%
+  left_join(difference_ind, by = c("id_quadrat_fin", "observateur")) %>% 
+  filter(n_detectes != n)
+
+#récuperer les informations biologiques par individus
+infos_individus <- tab_detection %>%
+  dplyr::select(
+    ID_ind,
+    id_quadrat_fin,
+    phenologie_verif,
+    site,
+    quadrat,
+    session,
+    taille
+  ) %>%
+  distinct()
+
+#Vérifier que j'ai bien une info par individu
+infos_individus %>%
+  count(ID_ind, id_quadrat_fin) %>%
+  filter(n > 1)
+
+#Ajouter ces informations à mon tableau de détection
+tab_complet <- tab_complet %>%
+  left_join(
+    infos_individus,
+    by = c("ID_ind", "id_quadrat_fin")
+  )
+
 
 ```
+#Préparation jeu de données pour crdms pour analyse dynamique des pops####
+#Point méthodologique
+Le Multistate va être utilisé pour prendre en compte transitions phhénologiques des individus
+Le robust design pour prendre en compte variations entre sessions étant des périodes primaires et en même temps prendre en compte plusieurs observations dans chaque session (observateurs) étant notre période secondaire.
+Le closed correspond au fait qu'on ne considère pas de variations des paramètres démographiques au sein de notre période secondaire
 
+#La variable site ne va pas être utilisé en état car il n'y a probablement pas de migrations entre sites (les plantes ne bougeant pas) mais comme covariable car chaque site peut influencer la survie des individus et n'a pas la même densité d'individus
+
+La variable taille va aussi être utilisé comme covariable car elle peut influencer la détection (à voir si on la met car en pratique très liée à stade phénologiques...)
+
+```{r}
+#Résumer la phénologie en lettres pour crdms
+unique(tab_complet$phenologie_verif)
+#filtrer pour garder seuelement lignes sans NA
+tab_complet <- tab_complet %>%
+  filter(!is.na(phenologie_verif))
+
+unique(tab_complet$phenologie_verif)
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie = case_when(
+      phenologie_verif == "juv" ~ "j",
+      phenologie_verif == "non_fleuri" ~ "nf",
+      phenologie_verif == "fleur" ~ "f",
+      phenologie_verif == "fruit" ~ "F",
+      phenologie_verif == "fleurs_fanees" ~ "ff",
+      
+    )
+  )
+
+#Donner un chiffre à chaque observateur différent
+tab_complet <- tab_complet %>%
+  group_by(session) %>%
+  mutate(sec = as.integer(factor(observateur))) %>%
+  ungroup()
+
+#Histoire de captures
+ch_tab <- tab_complet %>%
+  arrange(ID_ind, session, sec) %>%
+  mutate(obs = ifelse(detection == 1, state, "0")) %>%
+  group_by(ID_ind, session) %>%
+  summarise(ch_sess = paste0(obs, collapse = ""), .groups = "drop")
+
+#prendre infos covariables
+ind_cov <- tab_complet %>%
+  dplyr::select(ID_ind, session, site, quadrat, taille) %>%
+  distinct()
+
+#ajouter l'info
+ch_data <- left_join(ch_tab, ind_cov, by = c("ID_ind", "session"))
+
+#Concaténer les sessions pour avoir une seule histoire de capture
+ch_data_final <- ch_data %>% 
+  group_by(ID_ind) %>% 
+  summarise(ch=paste(ch_sess, collapse = "", .groups = "drop"))
+
+#Ajouter les covariables fixes
+cov_fixed <- tab_complet %>% 
+  dplyr::select(ID_ind, site, quadrat) %>% 
+  distinct()
+
+ch_data_final <- left_join(ch_data_final, cov_fixed, by = "ID_ind")
+
+#nombre d'occasions secondaires par session
+nocc <- tab_complet %>% 
+  distinct(session, sec) %>% 
+  count(session) %>% 
+  arrange(session) %>% 
+  pull(n)
+
+library(RMark)
+proc <- process.data(
+  ch_data_final,
+  model = "crdms",
+  nocc = nocc,
+  strata.labels = c("j", "nf", "f", "F", "ff")
+)
+```
 
 
