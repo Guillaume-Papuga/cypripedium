@@ -1,0 +1,1619 @@
+---
+title: "Rédaction_V1"
+format: html
+editor: visual
+execute-dir: project
+---
+
+# Chargement des packages
+
+```{r}
+library(tidyverse)
+library(MASS)
+library(ade4)
+library(ggalluvial)
+
+```
+
+# -------------------------------
+
+# Ouverture des tableaux de données
+
+```{r}
+recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
+unique(recouvrement$Site)
+
+verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
+#Problème d'espace à régler pour verification
+unique(verification$site)
+verification$site <- trimws(verification$site)
+unique(verification$site)
+
+data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
+unique(data_original$site)
+#enlever les accents
+data_original <- data_original %>% 
+  mutate(site
+         = case_when(
+    site == "Combe Michaut" ~ "Combe Michaut",
+    site == "Tête Cendrée Bas" ~ "Tete Cendree Bas",
+    site == "Tête Cendrée Haut" ~ "Tete Cendree Haut",
+    site == "Vigne au Renard" ~ "Vigne au Renard",
+    site == "Val Clavin" ~ "Val Clavin"
+  ))
+unique(data_original$site)
+
+experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
+experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
+
+
+```
+
+# -------------------------------
+
+# Compilation tableau complet
+
+```{r}
+
+#ajout information session à l'ID individuel####
+#pour tableau vérification des observateurs
+verification2<- verification %>% 
+  mutate(id_ind_fin = paste(ID_ind, session, sep = ".")) %>% 
+  dplyr::select(id_ind_fin, everything())
+#pour tableau des évaluateurs
+##mettre stade phéno en ligne et non en colonne 
+data_original2 <- data_original %>%
+  dplyr::select(-tailleS1, -tailleS2, -tailleS3, -nbfleurs, -nbfruits, -predation) %>% 
+  pivot_longer(
+    cols = c(phenoS1, phenoS2, phenoS3),
+    names_to = "session",
+    values_to = "phenologie_verif"
+  )%>% 
+   mutate(session = case_when(
+    session == "phenoS1" ~ 1,
+    session == "phenoS2" ~ 2,
+    session == "phenoS3" ~ 3
+  )
+   ) %>% 
+  mutate(phenologie_verif
+         = case_when(
+    phenologie_verif == "j" ~ "juv",
+    phenologie_verif == "nf" ~ "non_fleuri",
+    phenologie_verif == "f" ~ "fleur",
+    phenologie_verif == "ff" ~ "fleurs_fanees",
+    phenologie_verif == "F" ~"fruit"
+  ))
+
+##mettre taille en ligne et non en colonne
+data_original3 <- data_original %>% 
+  dplyr::select(tailleS1, tailleS2, tailleS3) %>% 
+  pivot_longer(
+    cols = c(tailleS1, tailleS2, tailleS3),
+    names_to = "session",
+    values_to = "taille"
+  ) %>% 
+   mutate(session = case_when(
+    session == "tailleS1" ~ 1,
+    session == "tailleS2" ~ 2,
+    session == "tailleS3" ~ 3
+  )
+   )
+
+#enlever session car déjà présent sur autre data frame
+data_original3 <- data_original3 %>% 
+  dplyr::select(-session)
+
+#ajout des deux tableaux + enlever lignes sans info  à cause d'observation d'un individu à partir de session 2 ou 3
+data_original4 <- cbind(data_original2, data_original3) %>% 
+  filter(!is.na(taille)) #enlever lignes avec pas d'infos
+
+#vérifier si manque des informations par rapport à phénologie
+data_original4 %>% 
+  filter(is.na(phenologie_verif))
+
+#ajout variable individuelle complète
+data_original_obs <- data_original4 %>% 
+  mutate(id_ind_fin = paste(ID_ind, session, sep = ".")) %>% 
+  dplyr::select(id_ind_fin, everything())
+
+#prendre en compte stade phéno observé par observateur
+verification3 <- verification2 %>% 
+  pivot_longer(
+    cols = c(juv, non_fleuri, fleur, fleurs_fanees, fruit),
+    names_to = "phenologie",
+    values_to = "presence"
+  )  
+  
+#garder seulement st phéno observé par observateur
+verification_obs <- verification3 %>% 
+  filter(presence == 1)
+  
+#Vérifier nb individus
+str(unique(verification_obs$id_ind_fin))
+str(unique(data_original_obs$id_ind_fin))
+str(data_original_obs$id_ind_fin)
+str(verification_obs$id_ind_fin)
+#à priori 66 individus jamais vus par observateurs
+
+#extraire liste de tous les individus
+nb_individu <- data.frame(id_ind_fin = data_original_obs$id_ind_fin)
+
+#extraire liste individus dans test de détection
+nb_ind_obs <- data.frame(id_ind_fin = unique(verification_obs$id_ind_fin))
+
+#individus manquants
+nb_individu_manquant <- nb_individu %>% 
+  anti_join(nb_ind_obs, by = "id_ind_fin")
+
+#reprendre données originales sur les valeurs manquantes
+nb_individu_manquant_original <- data_original_obs %>% 
+  semi_join(nb_individu_manquant, by = "id_ind_fin") 
+  
+
+#joindre à ces données manquantes les valeurs du tableau observateur
+nb_individu_manquant_final <- nb_individu_manquant_original %>% 
+  left_join(verification_obs, by = "id_ind_fin") %>% 
+  dplyr::select(-ends_with(".y")) %>% 
+  rename_with(~ sub("\\.x$", "", .x), ends_with(".x"))
+
+#Joindre au fichier original les informations des évaluateurs
+data_verification_original <- verification_obs %>% 
+  left_join(data_original_obs, by = "id_ind_fin") %>% 
+  dplyr::select(-ends_with(".y")) %>% 
+  rename_with(~ sub("\\.x$", "", .x), ends_with(".x"))
+
+#mettre les colomnes dans le bon ordre
+nb_individu_manquant_final <- nb_individu_manquant_final %>% 
+  dplyr::select(id_ind_fin, session, site, date, numero_quadrat, ID_quadrat, marquage, ID_ind, observateur, adequation, phenologie, presence, quadrat, phenologie_verif, taille)
+
+#joindre ces données manquantes à tableau observateurs
+tab_detection <- rbind(data_verification_original, nb_individu_manquant_final)
+
+#créer nouvelle valeur adéquation
+tab_detection <- tab_detection %>% 
+  mutate(adequation_reel = if_else(
+    phenologie == phenologie_verif, 1, 0
+  ),
+  comparaison_adequation = if_else(
+    adequation_reel==adequation, 1, 0
+  )
+  )
+
+#Taux d'erreur dans note d'adéquation
+sum(tab_detection$comparaison_adequation == 0, na.rm = T) / nrow(tab_detection)
+
+#vérifier nombre d'observateurs par session et par quadrat
+nb_verif_quadrat <- verification %>% 
+  group_by(session, site, numero_quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  )
+nrow(nb_verif_quadrat)
+nb_verif_quadrat <- nb_verif_quadrat %>% 
+  mutate(site = case_when(
+    site == "Combe Michaut" ~ "CM",
+    site == "Tete Cendree Bas" ~ "TCb",
+    site == "Tete Cendree Haut" ~ "TCh",
+    site == "Vigne au Renard" ~ "VaR",
+    site == "Val Clavin" ~ "VC"
+  ),
+  ID = "Q")
+
+nb_verif_quadrat <- nb_verif_quadrat %>% 
+  mutate(id_quadrat = paste(ID, numero_quadrat, sep = ""),
+         id_quadrat_fin = paste(site, id_quadrat, session, sep =".")) %>% 
+  dplyr::select(id_quadrat_fin, everything())
+
+nb_obs_quadrat <- data_original_obs %>% 
+  group_by(session, site, quadrat) %>% 
+  count()
+nrow(nb_obs_quadrat)
+
+nb_quadrat_final <- tab_detection %>% 
+  group_by(session, site, quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  ) %>% 
+  filter(!is.na(quadrat))
+nrow(nb_quadrat_final)
+
+nb_quadrat_manquant <- nb_individu_manquant_final %>% 
+  group_by(session, ID_quadrat) %>% 
+  summarise(
+    nb_observateurs = n_distinct(observateur),
+    .groups = "drop"
+  )
+nrow(nb_quadrat_manquant)
+#individus manquants dans 27 quadras
+
+nb_quadrat_manquant <- nb_quadrat_manquant %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  dplyr::select(id_quadrat_fin, everything())
+
+test <- nb_quadrat_manquant %>% 
+  anti_join(nb_verif_quadrat, by = "id_quadrat_fin")
+
+#On a bien tous les quadra d'observés juste pas tous les individus
+
+str(tab_detection)
+
+#Pour le moment j'ai un tableau avec tous les individus observés mais je n'ai pas l'info sur individus non observés par observateurs
+#il me faut à chaque fois le nb de quadrats observés par observateurs pour calculer le nombre d'observateurs par quadrat
+verification_obs_quadrat <- verification %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  group_by(id_quadrat_fin, observateur) %>% 
+  count()
+
+#Ajouter à tableau détection id_quadrat_fin
+tab_detection <- tab_detection %>% 
+  mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = "."))
+
+#Vérifier que pas de NA crées
+tab_detection[is.na(tab_detection$id_quadrat_fin), ]
+
+#Calculer le nombre d'individus par quadrat
+nb_indiv_quadrat <- data_original_obs %>% 
+    mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
+  group_by(id_quadrat_fin) %>% 
+  summarise(
+    nb_individus = n_distinct(ID_ind),
+    .groups = "drop"
+  )
+
+#Maintenant je compare ce nombre au nombre observé par mes observateurs
+difference_ind <- verification_obs_quadrat %>% 
+  full_join(nb_indiv_quadrat, by = "id_quadrat_fin")
+
+#Taux de detection par observateur
+difference_ind <- difference_ind %>% 
+  mutate(detection = n/nb_individus)
+
+#sortir les identifiants de tous les individus possibles
+individus_par_quadrat <- tab_detection %>%
+  distinct(id_quadrat_fin, ID_ind)
+
+#combinaisons de tous les individus possibles avec les observateurs
+grille_complete <- difference_ind %>%
+  dplyr::select(id_quadrat_fin, observateur) %>%
+  distinct() %>%
+  left_join(individus_par_quadrat, by = "id_quadrat_fin", relationship = "many-to-many")
+
+#ajouter les informations de detection dans ma grille complete
+tab_complet <- grille_complete %>%
+  left_join(
+    tab_detection %>%
+      mutate(detection = 1) %>%
+      dplyr::select(id_quadrat_fin, observateur, ID_ind, detection),
+    by = c("id_quadrat_fin", "observateur", "ID_ind")
+  ) %>%
+  mutate(
+    detection = ifelse(is.na(detection), 0, detection)
+  )
+
+#Vérifier que ça a marché en comparant le nombre de détections calculées vs le nombre de détection par quadrat
+tab_complet %>%
+  group_by(id_quadrat_fin, observateur) %>%
+  summarise(
+    n_detectes = sum(detection),
+    .groups = "drop"
+  ) %>%
+  left_join(difference_ind, by = c("id_quadrat_fin", "observateur")) %>% 
+  filter(n_detectes != n)
+
+#récuperer les informations biologiques par individus
+infos_individus <- tab_detection %>%
+  dplyr::select(
+    ID_ind,
+    id_quadrat_fin,
+    phenologie_verif,
+    site,
+    quadrat,
+    session,
+    taille
+  ) %>%
+  distinct()
+
+#Vérifier que j'ai bien une info par individu
+infos_individus %>%
+  count(ID_ind, id_quadrat_fin) %>%
+  filter(n > 1)
+
+#Ajouter ces informations à mon tableau de détection
+tab_complet <- tab_complet %>%
+  left_join(
+    infos_individus,
+    by = c("ID_ind", "id_quadrat_fin")
+  )
+
+
+library(dplyr)
+library(stringr)
+
+# 1. Extraire la partie quadrat de tab_complet (tout avant le dernier point)
+tab_complet <- tab_complet %>%
+  mutate(
+    ID_Quadrat_clean = str_replace(id_quadrat_fin, "\\.[0-9]+$", "")
+  )
+
+# 2. Nettoyer recouvrement pour correspondre au format de tab_complet
+recouvrement_clean <- recouvrement %>%
+  mutate(
+    ID_Quadrat_clean = str_replace_all(ID_Quadrat, "_", ".")
+  ) %>%
+  dplyr::select(ID_Quadrat_clean, starts_with("S_"))
+
+# 3. Faire le left_join pour ajouter les colonnes S_ au tableau complet
+tab_complet <- tab_complet %>%
+  left_join(recouvrement_clean, by = "ID_Quadrat_clean")
+
+```
+
+# -------------------------------
+
+# I\_ Analyses préliminaires
+
+## I_i Relation taille et phénologie
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+data_long <- bind_rows(
+  data_original %>% transmute(pheno = phenoS1, taille = tailleS1),
+  data_original %>% transmute(pheno = phenoS2, taille = tailleS2),
+  data_original %>% transmute(pheno = phenoS3, taille = tailleS3)
+)
+data_long <- data_long %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille))
+  ) %>%
+  filter(!is.na(taille), !is.na(pheno))
+
+data_long$pheno <- factor(
+  data_long$pheno,
+  levels = c("j", "nf", "f", "F", "ff")
+)
+
+boxplot(taille ~ pheno,
+        data = data_long,
+        xlab = "Stade phénologique",
+        ylab = "Taille",
+        main = "Taille selon le stade phénologique (sessions confondues)",
+        col = "lightgray")
+```
+
+## I_ii Relation recouvrement végétal et site
+
+```{r}
+# -------------------------------
+# Analyse Factorielle Discriminante (AFD)
+# -------------------------------
+
+# Chargement des packages nécessaires
+library(MASS)        # pour lda()
+library(ade4)        # pour discrimin(), dudi.pca(), s.arrow(), s.class(), rtest()
+
+# -------------------------------
+# 1. LDA sur les données originales
+# -------------------------------
+afd_recouvrement <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = recouvrement
+)
+
+# -------------------------------
+# 2. Centrage et normalisation des variables
+# -------------------------------
+newdata <- as.data.frame(scale(recouvrement[, 4:8]))
+
+# On ajoute la variable de groupe (Site) pour l'analyse
+newdata$Site <- recouvrement$Site
+
+# -------------------------------
+# 3. LDA sur les données centrées-réduites
+# -------------------------------
+afd2 <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = newdata
+)
+
+# -------------------------------
+# 4. MANOVA pour tester les différences entre groupes
+# -------------------------------
+manova_res <- manova(as.matrix(recouvrement[, 4:8]) ~ recouvrement$Site)
+
+# -------------------------------
+# 5. Prédiction avec LDA
+# -------------------------------
+pred <- predict(afd2)
+table(Site = recouvrement$Site, Predicted = pred$class)
+
+# -------------------------------
+# 6. Validation croisée (jackknife)
+# -------------------------------
+afd_cv <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = newdata,
+  CV = TRUE
+)
+table(Site = newdata$Site, Predicted = afd_cv$class)
+
+# -------------------------------
+# 7. AFD basée sur l'ACP centrée-réduite
+# -------------------------------
+pca_res <- dudi.pca(recouvrement[, 4:8], scannf = FALSE, nf = 3)
+afd3 <- discrimin(pca_res, factor(recouvrement$Site)) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
+
+# Exploration des valeurs propres et des coefficients standardisés
+afd3$eig
+sqrt(afd3$eig / (1 + afd3$eig))
+
+# Projection des variables sur les fonctions discriminantes
+# Créer une nouvelle fenêtre graphique (ou plot)
+s.arrow(afd3$fa)  
+
+# Projection des individus selon leur groupe
+s.class(afd3$li, factor(recouvrement$Site))
+```
+
+# -------------------------------
+
+# II\_ Analyse de la variation dans le temps
+
+## II_i Effet de la session
+
+### Effet de la session sur la taille
+
+Taille \~ session
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Transformer les données en format long
+taille_long <- data_original %>%
+  dplyr::select(tailleS1, tailleS2, tailleS3) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "session",
+    values_to = "taille"
+  ) %>%
+  mutate(
+    # remplacer les "," par "." et convertir en numérique
+    taille = as.numeric(gsub(",", ".", taille)),
+    # renommer les sessions
+    session = dplyr::recode(session, "tailleS1"="S1", "tailleS2"="S2", "tailleS3"="S3")
+  )
+
+# Calcul de la moyenne, écart-type et IC 95%
+taille_stats <- taille_long %>%
+  group_by(session) %>%
+  summarise(
+    mean_taille = mean(taille, na.rm = TRUE),
+    sd_taille = sd(taille, na.rm = TRUE),
+    n = sum(!is.na(taille)),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    se = sd_taille / sqrt(n),
+    ci_lower = mean_taille - 1.96 * se,
+    ci_upper = mean_taille + 1.96 * se
+  )
+
+# Histogramme avec IC 95%
+ggplot(taille_stats, aes(x = session, y = mean_taille, fill = session)) +
+  geom_bar(stat = "identity", width = 0.6) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "black") +
+  scale_fill_manual(values = c("S1"="#FF9999", "S2"="#FF4D4D", "S3"="#CC0000")) +
+  labs(
+    title = "Taille moyenne par session",
+    x = "Session",
+    y = "Taille moyenne",
+    fill = "Session"
+  ) +
+  theme_minimal()
+
+```
+
+### Effet de la session sur la phénologie
+
+phénologie \~ session
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Transformer les données en format long : session = S1, S2, S3
+pheno_long <- data_original %>%
+  dplyr::select(phenoS1, phenoS2, phenoS3) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "session",
+    values_to = "pheno"
+  ) %>%
+  # Remplacer NA par un label pour garder comme modalité
+  mutate(pheno = ifelse(is.na(pheno), "NA", as.character(pheno))) %>%
+  # Renommer les sessions plus simplement
+  mutate(session = recode(session,
+                          "phenoS1" = "S1",
+                          "phenoS2" = "S2",
+                          "phenoS3" = "S3"))
+
+# Calcul des effectifs par session et type phénologique
+pheno_stats <- pheno_long %>%
+  group_by(session, pheno) %>%
+  summarise(
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    # IC 95% approximatif (Poisson)
+    se = sqrt(n),
+    ci_lower = pmax(n - 1.96 * se, 0),
+    ci_upper = n + 1.96 * se
+  )
+
+# Définir l'ordre des phénos
+pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
+
+# Graphique avec barres côte à côte et IC 95%
+ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
+                position = position_dodge(width = 0.8), width = 0.2, color = "black") +
+  scale_fill_manual(values = c(
+    "j"  = "#FF9999",
+    "nf" = "#FF4D4D",
+    "f"  = "#CC0000",
+    "ff" = "#990000",
+    "F"  = "#660000",
+    "NA" = "#000000"  # noir pur pour NA
+  )) +
+  labs(
+    title = "Effet de la session (S1, S2, S3) sur la phénologie",
+    x = "Session",
+    y = "Nombre d'individus",
+    fill = "Type phénologique"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+# -------------------------------
+
+# III\_ Analyse de la variation dans l'espace
+
+# --------------------
+
+## III_i Effet du site
+
+### Effet du site sur la taille
+
+Taille \~ site
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+# Transformer les données en format long pour toutes les tailles
+taille_long <- data_original %>%
+  dplyr::select(site, tailleS1, tailleS2, tailleS3) %>%
+  pivot_longer(
+    cols = c(tailleS1, tailleS2, tailleS3),
+    names_to = "session",
+    values_to = "taille"
+  ) %>%
+  mutate(
+    # remplacer les "," par "." et convertir en numérique
+    taille = as.numeric(gsub(",", ".", taille))
+  )
+
+# Calcul de la taille moyenne par site
+taille_stats <- taille_long %>%
+  group_by(site) %>%
+  summarise(
+    mean_taille = mean(taille, na.rm = TRUE),
+    sd_taille = sd(taille, na.rm = TRUE),
+    n = sum(!is.na(taille)),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    se = sd_taille / sqrt(n),
+    ci_lower = mean_taille - 1.96 * se,
+    ci_upper = mean_taille + 1.96 * se
+  )
+
+# Histogramme avec IC 95%
+ggplot(taille_stats, aes(x = site, y = mean_taille)) +
+  geom_bar(stat = "identity", width = 0.7) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "black") +
+  labs(
+    title = "Taille moyenne par site",
+    x = "Site",
+    y = "Taille moyenne",
+    fill = "Site"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
+```
+
+### Effet du site sur la taille selon la session
+
+Taille \~ site + session
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Assurer que les colonnes de taille sont numériques
+data_original <- data_original %>%
+  mutate(
+    tailleS1 = as.numeric(gsub(",", ".", tailleS1)),
+    tailleS2 = as.numeric(gsub(",", ".", tailleS2)),
+    tailleS3 = as.numeric(gsub(",", ".", tailleS3))
+  )
+
+# Calcul des statistiques pour chaque taille
+stats_long <- data_original %>%
+  pivot_longer(cols = c(tailleS1, tailleS2, tailleS3),
+               names_to = "taille_type",
+               values_to = "taille") %>%
+  group_by(site, taille_type) %>%
+  summarise(
+    mean = mean(taille, na.rm = TRUE),
+    sd = sd(taille, na.rm = TRUE),
+    n = sum(!is.na(taille))
+  ) %>%
+  mutate(
+    se = sd / sqrt(n),
+    ci95 = se * qt(0.975, df = n - 1)
+  )
+
+# Définir des couleurs rouges avec différentes opacités
+red_colors <- c("tailleS1" = "#FF6666",  # clair
+                "tailleS2" = "#FF3333",  # moyen
+                "tailleS3" = "#CC0000")  # foncé
+
+# Graphique avec les trois tailles côte à côte par site
+ggplot(stats_long, aes(x = site, y = mean, fill = taille_type)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = mean - ci95, ymax = mean + ci95),
+                position = position_dodge(width = 0.8), width = 0.2) +
+  scale_fill_manual(values = red_colors) +
+  labs(
+    title = "Taille moyenne par site avec IC 95%",
+    y = "Taille moyenne",
+    x = "Site",
+    fill = "Type de taille"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Effet du site sur la phénologie
+
+phénologie \~ site
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+# Transformer les phénos en format long en gardant les NA
+pheno_long <- data_original %>%
+  dplyr::select(site, phenoS1, phenoS2, phenoS3) %>%
+  pivot_longer(
+    cols = c(phenoS1, phenoS2, phenoS3),
+    names_to = "pheno_type",
+    values_to = "pheno"
+  ) %>%
+  # Remplacer NA par un label pour garder comme modalité
+  mutate(pheno = ifelse(is.na(pheno), "NA", as.character(pheno)))
+
+# Calcul des effectifs par site et type phénologique
+pheno_stats <- pheno_long %>%
+  group_by(site, pheno) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  complete(site, pheno, fill = list(n = 0)) %>%  # inclure les combinaisons manquantes
+  mutate(
+    # IC 95% approximatif pour comptages (Poisson)
+    se = sqrt(n),
+    ci_lower = pmax(n - 1.96 * se, 0),
+    ci_upper = n + 1.96 * se
+  )
+
+# Définir l'ordre des phénos
+pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
+
+# Graphique avec barres côte à côte et IC 95%
+ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
+                position = position_dodge(width = 0.8), width = 0.2, color = "black") +
+  scale_fill_manual(values = c(
+    "j"  = "#FF9999",
+    "nf" = "#FF4D4D",
+    "f"  = "#CC0000",
+    "ff" = "#990000",
+    "F"  = "#660000",
+    "NA" = "#000000"  # noir pur pour NA
+  )) +
+  labs(
+    title = "Effet du site sur la phénologie",
+    x = "Site",
+    y = "Nombre d'individus",
+    fill = "Type phénologique"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+# --------------------
+
+## III_ii Effet de la strate
+
+### Effet de la strate sur la taille
+
+Taille \~ strate
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggpmisc)  # pour afficher R² et p-value
+
+# Joindre les données par ID_Quadrat
+data_joined <- data_original %>%
+  left_join(recouvrement, by = c("ID_quadrat" = "ID_Quadrat"))
+
+# Calcul de la taille moyenne par individu
+data_joined <- data_joined %>%
+  mutate(
+    tailleS1 = as.numeric(gsub(",", ".", tailleS1)),
+    tailleS2 = as.numeric(gsub(",", ".", tailleS2)),
+    tailleS3 = as.numeric(gsub(",", ".", tailleS3)),
+    taille_moyenne = rowMeans(dplyr::select(., tailleS1, tailleS2, tailleS3), na.rm = TRUE)
+  )
+
+# Transformer les strates en format long pour facettes
+recouvrement_long <- data_joined %>%
+  pivot_longer(
+    cols = c(S_muscinale, S_herbacee, S_arbustive_basse, S_arbustive_haute, S_arborescente),
+    names_to = "strate",
+    values_to = "recouvrement"
+  )
+
+# Formule pour afficher R² et p-value
+eqn <- ggpmisc::stat_poly_eq(
+  aes(label = paste(..eq.label.., ..rr.label.., ..p.value.label.., sep = "~~~")),
+  formula = y ~ x,
+  parse = TRUE,
+  label.x.npc = "right",
+  label.y.npc = 0.1,
+  size = 3
+)
+
+# Graphique par strate avec couleurs modifiées
+ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
+  geom_point(alpha = 0.7, color = "black") +  # points noirs
+  geom_smooth(method = "lm", se = TRUE, color = "#CC0000", fill = "#FF9999") +  # ligne rouge foncé, IC rouge clair
+  eqn +
+  facet_wrap(~ strate, scales = "free_x") +
+  labs(
+    title = "Taille moyenne en fonction du recouvrement végétal par strate",
+    x = "Recouvrement (%)",
+    y = "Taille moyenne"
+  ) +
+  theme_minimal()
+```
+
+### Effet de la strate sur la phénologie
+
+phénologie \~ strate
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(vegan)
+
+# Phénologie en format long
+pheno_long <- data_original %>%
+  dplyr::select(ID_quadrat, phenoS1, phenoS2, phenoS3) %>%
+  pivot_longer(
+    cols = starts_with("pheno"),
+    names_to = "session",
+    values_to = "pheno"
+  ) %>%
+  mutate(pheno = ifelse(is.na(pheno), "NA", pheno))
+
+# Tableau de contingence (fréquences)
+pheno_tab <- pheno_long %>%
+  group_by(ID_quadrat, pheno) %>%
+  summarise(n = n(), .groups = "drop") %>%
+  pivot_wider(
+    names_from = pheno,
+    values_from = n,
+    values_fill = 0
+  )
+
+# Vérification
+str(pheno_tab)
+
+data_rda <- pheno_tab %>%
+  left_join(recouvrement, by = c("ID_quadrat" = "ID_Quadrat"))
+
+# Variables explicatives (recouvrement)
+X <- data_rda %>%
+  dplyr::select(
+    S_muscinale,
+    S_herbacee,
+    S_arbustive_basse,
+    S_arbustive_haute,
+    S_arborescente
+  )
+
+Y <- data_rda %>%
+  dplyr::select(j, nf, f, ff, F, `NA`)
+
+# Hellinger (très recommandé)
+Y_hel <- decostand(Y, method = "hellinger")
+
+X <- data_rda %>%
+  dplyr::select(
+    S_muscinale,
+    S_herbacee,
+    S_arbustive_basse,
+    S_arbustive_haute,
+    S_arborescente
+  )
+
+rda_pheno <- rda(Y_hel ~ ., data = X)
+
+plot(rda_pheno, scaling = 2)
+
+a_1<- anova(rda_pheno)          # effet global du recouvrement
+a_2<-anova(rda_pheno, by="term") # effet de chaque strate
+a_3<- anova(rda_pheno, by="axis") # axes significatifs
+
+
+```
+
+La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p \< 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
+
+# -------------------------------
+
+#IV\_ Niveau des observateurs
+
+## Adéquation et fiabilité des observateurs
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(car)
+
+# ------------------------------------------------------------
+# 1. Taux d’erreur d’adéquation par observateur
+# ------------------------------------------------------------
+
+verification3 <- verification %>% 
+  group_by(observateur) %>% 
+  count(adequation) %>% 
+  pivot_wider(
+    names_from = adequation,
+    values_from = n,
+    names_glue = "{ifelse(adequation == 1, 'id_valide', 'id_fausse')}"
+  ) %>% 
+  replace_na(list(
+    id_valide = 0,
+    id_fausse = 0
+  )) %>% 
+  mutate(
+    id_total = id_valide + id_fausse,
+    tx_erreur = id_fausse / id_total
+  )
+
+verification3 <- verification3 %>%
+  left_join(
+    experience %>% dplyr::select(Observateur, sexe),
+    by = c("observateur" = "Observateur")
+  )
+
+# Vérification des adéquations manquantes
+verification %>% 
+  filter(is.na(adequation))
+
+# ------------------------------------------------------------
+# 2. Score moyen d’auto-évaluation (A à E)
+# ------------------------------------------------------------
+
+experience <- experience %>%
+  mutate(
+    score_moyen = rowMeans(across(A:E), na.rm = TRUE),
+    fiabilite = score_moyen / 10,
+    risque_erreur = 1 - fiabilite
+  )
+
+# Variabilité intra-observateur
+experience <- experience %>%
+  rowwise() %>%
+  mutate(ecart_type = sd(c_across(A:E), na.rm = TRUE)) %>%
+  ungroup()
+
+# Classement par risque d’erreur
+experience <- experience %>%
+  arrange(desc(risque_erreur)) %>%
+  mutate(ID.observateur = factor(ID.observateur, levels = ID.observateur))
+
+# ------------------------------------------------------------
+# 3. Fusion auto-évaluation / adéquation réelle
+# ------------------------------------------------------------
+
+experience2 <- experience %>% 
+  inner_join(
+    verification3,
+    by = join_by("Observateur" == "observateur")
+  )
+
+
+# ------------------------------------------------------------
+# 4. Taux de détection réel par observateur
+# ------------------------------------------------------------
+
+tx_erreur <- tab_complet %>% 
+  group_by(observateur) %>% 
+  summarise(
+    nb_ind = n(),
+    nb_detect = sum(detection, na.rm = TRUE),
+    tx_detect = nb_detect / nb_ind
+  )
+
+tx_erreur_fin <- experience2 %>% 
+  inner_join(
+    tx_erreur,
+    by = join_by("Observateur" == "observateur")
+  )
+
+# ------------------------------------------------------------
+# 5. Graphiques
+# ------------------------------------------------------------
+
+```
+
+### Erreur d’attribution phénologique vs non-détection
+
+```{r}
+library(ggrepel)
+
+ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
+  geom_point(
+    aes(color = sexe, size = id_total),
+    alpha = 0.8
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "red",
+    fill = "pink",
+    alpha = 0.3
+  ) +
+  geom_text_repel(
+    aes(label = Observateur, color = sexe),
+    size = 3,
+    max.overlaps = Inf,
+    force = 5,
+    box.padding = 0.6,
+    point.padding = 0.5,
+    segment.color = "grey60",
+    segment.size = 0.4
+  ) +
+  scale_color_manual(values = c("f" = "#E41A1C", "m" = "#377EB8")) +
+  scale_size_continuous(range = c(2, 8)) +
+  labs(
+    title = "Relation entre taux d'erreur d'attribution et non-détection",
+    x = "Taux d'erreur d'attribution de la phénologie",
+    y = "Taux de non-détection",
+    color = "Sexe",
+    size = "Nombre d'observations"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+### Autonotation vs erreur d'attribution phénologique
+
+```{r}
+ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
+  geom_point(
+    aes(color = sexe, size = id_total),
+    alpha = 0.8
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "red",
+    fill = "pink",
+    alpha = 0.3
+  ) +
+  geom_text_repel(
+    aes(label = Observateur, color = sexe),
+    size = 3,
+    max.overlaps = Inf,
+    force = 5,
+    box.padding = 0.6,
+    point.padding = 0.5,
+    segment.color = "grey60",
+    segment.size = 0.4
+  ) +
+  scale_color_manual(values = c("f" = "#E41A1C", "m" = "#377EB8")) +
+  scale_size_continuous(range = c(2, 8)) +
+  labs(
+    title = "Relation entre risque d'erreur (auto-évaluation) et erreur d'attribution",
+    x = "Risque d'erreur basé sur l'auto-évaluation",
+    y = "Taux d'erreur d'attribution de la phénologie",
+    color = "Sexe",
+    size = "Nombre d'observations"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+### Autonotation vs non-détection
+
+```{r}
+ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
+  geom_point(
+    aes(color = sexe, size = id_total),
+    alpha = 0.8
+  ) +
+  geom_smooth(
+    method = "lm",
+    se = TRUE,
+    color = "red",
+    fill = "pink",
+    alpha = 0.3
+  ) +
+  geom_text_repel(
+    aes(label = Observateur, color = sexe),
+    size = 3,
+    max.overlaps = Inf,
+    force = 5,
+    box.padding = 0.6,
+    point.padding = 0.5,
+    segment.color = "grey60",
+    segment.size = 0.4
+  ) +
+  scale_color_manual(values = c("f" = "#E41A1C", "m" = "#377EB8")) +
+  scale_size_continuous(range = c(2, 8)) +
+  labs(
+    title = "Relation entre risque d'erreur (auto-évaluation) et non-détection",
+    x = "Risque d'erreur basé sur l'auto-évaluation",
+    y = "Taux de non-détection",
+    color = "Sexe",
+    size = "Nombre d'observations"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
+```
+
+###Analyses complémentaires
+
+```{r}
+# ------------------------------------------------------------
+# Visualisation des 3 axes en 3D 
+# ------------------------------------------------------------
+
+library(plotly)
+
+# Graphique 3D interactif avec taille fixe
+plot_ly(
+  tx_erreur_fin,
+  x = ~tx_erreur,
+  y = ~risque_erreur,
+  z = ~ (1 - tx_detect),
+  type = "scatter3d",
+  mode = "markers+text",
+  text = ~Observateur,
+  textposition = "top center",
+  marker = list(
+    size = 5,  # taille fixe pour tous les points
+    color = ~ifelse(sexe == "f", "#E41A1C", "#377EB8"),
+    opacity = 0.8
+  ),
+  hovertemplate = paste(
+    "<b>%{text}</b><br>",
+    "Sexe: %{customdata[0]}<br>",
+    "Taux erreur: %{x}<br>",
+    "Risque auto: %{y}<br>",
+    "Non-détection: %{z}<br>",
+    "<extra></extra>"
+  ),
+  customdata = tx_erreur_fin[, c("sexe")]
+) %>%
+  layout(
+    scene = list(
+      xaxis = list(title = "Taux d'erreur d'attribution"),
+      yaxis = list(title = "Risque d'erreur (auto-évaluation)"),
+      zaxis = list(title = "Taux de non-détection")
+    ),
+    title = "Graphique 3D interactif des erreurs et non-détection"
+  )
+
+# ------------------------------------------------------------
+# Corrélation
+# ------------------------------------------------------------
+
+cor.test(
+  tx_erreur_fin$tx_detect,
+  tx_erreur_fin$tx_erreur,
+  method = "spearman"
+)
+
+# ------------------------------------------------------------
+# Modèles linéaires
+# ------------------------------------------------------------
+
+model1_autonotation <- lm(
+  risque_erreur ~ tx_erreur + tx_detect,
+  data = tx_erreur_fin
+)
+
+model2_autonotation <- lm(
+  risque_erreur ~ tx_detect,
+  data = tx_erreur_fin
+)
+
+model3_autonotation <- lm(
+  risque_erreur ~ tx_erreur,
+  data = tx_erreur_fin
+)
+
+summary(model1_autonotation)
+anova(model1_autonotation)
+
+summary(model2_autonotation)
+anova(model2_autonotation)
+
+summary(model3_autonotation)
+anova(model3_autonotation)
+
+# ------------------------------------------------------------
+# Comparaison des modèles
+# ------------------------------------------------------------
+
+AIC(model1_autonotation, model2_autonotation, model3_autonotation)
+
+```
+
+#-------------------------------
+#V\_ Probabilité de détection 
+#---------------------
+## V_i GLM
+
+```{r}
+# On a plusieurs strates et on veut seulement une covariable "recouvrement". On utilise donc une ACP pour avec l'inertie sur PC1.
+
+library(stats)
+
+# Extraire juste les colonnes numériques pour la PCA
+recouvrement_num <- recouvrement_mat %>%
+  ungroup() %>%              # enlever le grouping
+  dplyr::select(S_muscinale:S_arborescente) %>%
+  as.data.frame()            # transformer en data.frame pur
+
+# Vérifier
+str(recouvrement_num)
+
+pca <- prcomp(recouvrement_num, scale. = TRUE)
+
+# Ajouter la première composante à ton tableau original
+tab_complet$recouvrement_PC1 <- pca$x[,1]
+
+# GLM
+library(lme4)
+
+glm_model <- glmer(
+  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif + 
+    (1 | ID_ind) + (1 | id_quadrat_fin),
+  data = tab_complet,
+  family = binomial
+)
+
+
+summary(glm_model)       # coefficients, significativité
+anova(glm_model, test="Chisq")
+
+```
+
+# ---------------------
+#VII\_ CMR 
+# ---------------------
+
+##VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
+
+```{r}
+# -------------------------------
+# Packages nécessaires
+# -------------------------------
+library(RMark)
+library(dplyr)
+library(tidyr)
+library(DiagrammeR)
+
+# -------------------------------
+# 1. Charger les données
+# -------------------------------
+data<- data_original
+
+# -------------------------------
+# 2. Préparer les données phénologiques
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenology_data_numeric <- data %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  mutate(
+    phenoS1 = phenology_codes[phenoS1],
+    phenoS2 = phenology_codes[phenoS2],
+    phenoS3 = phenology_codes[phenoS3]
+  )
+
+# Supprimer les individus avec NA dans phenoS1, phenoS2 ou phenoS3
+phenology_data_numeric <- phenology_data_numeric %>%
+  filter(!is.na(phenoS1) & !is.na(phenoS2) & !is.na(phenoS3))
+
+# -------------------------------
+# 3. Calcul empirique des transitions 1 → 2 → 3
+# -------------------------------
+phenology_long <- phenology_data_numeric %>%
+  pivot_longer(cols = c(phenoS1, phenoS2, phenoS3),
+               names_to = "session",
+               values_to = "state") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Calculer les transitions successives
+transitions <- phenology_long %>%
+  group_by(ID_ind) %>%
+  arrange(session) %>%
+  mutate(next_state = lead(state)) %>%
+  filter(!is.na(next_state)) %>%
+  count(state, next_state) %>%
+  group_by(state) %>%
+  mutate(prob = n / sum(n))
+
+# Créer la matrice 5x5
+num_states <- 5
+states <- c("j","nf","f","ff","F")
+Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    val <- transitions %>% filter(state == i, next_state == j) %>% pull(prob)
+    if(length(val) > 0) Psi_matrix[i,j] <- mean(val)
+  }
+}
+
+# Normalisation par ligne
+Psi_matrix_norm <- Psi_matrix / rowSums(Psi_matrix)
+
+# -------------------------------
+# 4. Visualisation avec DiagrammeR
+# -------------------------------
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+  j; nf; f; ff; F;
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix_norm[i,j]
+    if(!is.na(prob) && prob > 0){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob, 2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+# -------------------------------
+# 5. Créer le champ "ch" pour MARK
+# -------------------------------
+phenology_data_numeric <- phenology_data_numeric %>%
+  mutate(ch = paste0(phenoS1, phenoS2, phenoS3))
+
+# Vérification
+stopifnot(all(nchar(phenology_data_numeric$ch) == 3))
+
+# -------------------------------
+# 6. Préparer les données pour RMark
+# -------------------------------
+ms_data <- process.data(
+  phenology_data_numeric,
+  model = "Multistrata",
+  strata.labels = c("1", "2", "3", "4", "5")
+)
+
+ms_ddl <- make.design.data(ms_data)
+
+# -------------------------------
+# 7. Modèle Multistrata avec RMark
+# -------------------------------
+ms_model <- mark(
+  ms_data,
+  ms_ddl,
+  model.parameters = list(
+    Psi = list(formula = ~stratum),
+    p = list(formula = ~1)
+  )
+)
+
+# Résultats MARK
+ms_model$results$real
+
+```
+
+###VII_i.ii Transitions session 1 → 2
+
+```{r}
+###MARK Session 1-2 ----
+
+# -------------------------------
+# Packages nécessaires
+# -------------------------------
+library(dplyr)
+library(tidyr)
+library(DiagrammeR)
+library(RMark)
+
+# -------------------------------
+# 1. Charger les données
+# -------------------------------
+data <- data_original
+
+# -------------------------------
+# 2. Préparer les données phénologiques (sessions 1 et 2)
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenology_data_numeric <- data %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2) %>%
+  mutate(
+    phenoS1 = as.character(phenology_codes[phenoS1]),
+    phenoS2 = as.character(phenology_codes[phenoS2])
+  ) %>%
+  # Supprimer les individus avec NA dans phenoS1 ou phenoS2
+  filter(!is.na(phenoS1) & !is.na(phenoS2))
+
+# -------------------------------
+# 3. Calcul empirique des transitions 1 → 2
+# -------------------------------
+phenology_long <- phenology_data_numeric %>%
+  pivot_longer(cols = c(phenoS1, phenoS2),
+               names_to = "session",
+               values_to = "state") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Transitions successives
+transitions <- phenology_long %>%
+  group_by(ID_ind) %>%
+  arrange(session) %>%
+  mutate(next_state = lead(state)) %>%
+  filter(!is.na(next_state)) %>%
+  count(state, next_state) %>%
+  group_by(state) %>%
+  mutate(prob = n / sum(n))
+
+# Créer la matrice 5x5
+num_states <- 5
+states <- c("j","nf","f","ff","F")
+Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    val <- transitions %>% filter(state == i, next_state == j) %>% pull(prob)
+    if(length(val) > 0) Psi_matrix[i,j] <- mean(val)
+  }
+}
+
+# Normalisation par ligne
+Psi_matrix_norm <- Psi_matrix / rowSums(Psi_matrix)
+
+# -------------------------------
+# 4. Visualisation des transitions avec DiagrammeR
+# -------------------------------
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+  j; nf; f; ff; F;
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix_norm[i,j]
+    if(!is.na(prob) && prob > 0){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob, 2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+# -------------------------------
+# 5. Partie RMark
+# -------------------------------
+# Créer le champ "ch" pour MARK
+phenology_data_numeric <- phenology_data_numeric %>%
+  mutate(ch = paste0(phenoS1, phenoS2))
+
+# Vérification
+stopifnot(all(nchar(phenology_data_numeric$ch) == 2))
+
+# Préparer les données pour RMark
+ms_data <- process.data(
+  phenology_data_numeric,
+  model = "Multistrata",
+  strata.labels = c("1","2","3","4","5")
+)
+
+ms_ddl <- make.design.data(ms_data)
+
+# Modèle Multistrata avec RMark
+ms_model <- mark(
+  ms_data,
+  ms_ddl,
+  model.parameters = list(
+    Psi = list(formula = ~stratum),
+    p = list(formula = ~1)
+  )
+)
+
+# Résultats MARK
+ms_model$results$real
+
+```
+
+###VII_i.iii Transitions session 2 → 3
+
+```{r}
+##MARK Session 2-3 ----
+
+###MARK Session 2-3 ----
+
+# -------------------------------
+# Packages nécessaires
+# -------------------------------
+library(dplyr)
+library(tidyr)
+library(DiagrammeR)
+library(RMark)
+
+# -------------------------------
+# 1. Charger les données
+# -------------------------------
+data <- data_original
+
+# -------------------------------
+# 2. Préparer les données phénologiques (sessions 2 et 3)
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenology_data_numeric <- data %>%
+  dplyr::select(ID_ind, phenoS2, phenoS3) %>%
+  mutate(
+    phenoS2 = as.character(phenology_codes[phenoS2]),
+    phenoS3 = as.character(phenology_codes[phenoS3])
+  ) %>%
+  # Supprimer les individus avec NA dans phenoS2 ou phenoS3
+  filter(!is.na(phenoS2) & !is.na(phenoS3))
+
+# -------------------------------
+# 3. Calcul empirique des transitions 2 → 3
+# -------------------------------
+phenology_long <- phenology_data_numeric %>%
+  pivot_longer(cols = c(phenoS2, phenoS3),
+               names_to = "session",
+               values_to = "state") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Transitions successives
+transitions <- phenology_long %>%
+  group_by(ID_ind) %>%
+  arrange(session) %>%
+  mutate(next_state = lead(state)) %>%
+  filter(!is.na(next_state)) %>%
+  count(state, next_state) %>%
+  group_by(state) %>%
+  mutate(prob = n / sum(n))
+
+# Créer la matrice 5x5
+num_states <- 5
+states <- c("j","nf","f","ff","F")
+Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    val <- transitions %>% filter(state == i, next_state == j) %>% pull(prob)
+    if(length(val) > 0) Psi_matrix[i,j] <- mean(val)
+  }
+}
+
+# Normalisation par ligne
+Psi_matrix_norm <- Psi_matrix / rowSums(Psi_matrix)
+
+# -------------------------------
+# 4. Visualisation des transitions avec DiagrammeR
+# -------------------------------
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+  j; nf; f; ff; F;
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix_norm[i,j]
+    if(!is.na(prob) && prob > 0){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob, 2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+# -------------------------------
+# 5. Partie RMark
+# -------------------------------
+# Créer le champ "ch" pour MARK
+phenology_data_numeric <- phenology_data_numeric %>%
+  mutate(ch = paste0(phenoS2, phenoS3))
+
+# Vérification
+stopifnot(all(nchar(phenology_data_numeric$ch) == 2))
+
+# Préparer les données pour RMark
+ms_data <- process.data(
+  phenology_data_numeric,
+  model = "Multistrata",
+  strata.labels = c("1","2","3","4","5")
+)
+
+ms_ddl <- make.design.data(ms_data)
+
+# Modèle Multistrata avec RMark
+ms_model <- mark(
+  ms_data,
+  ms_ddl,
+  model.parameters = list(
+    Psi = list(formula = ~stratum),
+    p = list(formula = ~1)
+  )
+)
+
+# Résultats MARK
+ms_model$results$real
+
+```
+
+# -------------------------------
