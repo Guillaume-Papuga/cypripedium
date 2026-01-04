@@ -8,10 +8,24 @@ execute-dir: project
 # Chargement des packages
 
 ```{r}
+
 library(tidyverse)
-library(MASS)
-library(ade4)
 library(ggalluvial)
+library(MuMIn)
+library(lme4)
+library(stats)
+library(plotly)
+library(ggrepel)
+library(ggpmisc)  
+library(MASS)        
+library(ade4)        
+library(tidyr)
+library(dplyr)
+library(stringr)
+library(vegan)
+library(car)
+library(RMark)
+library(DiagrammeR)
 
 ```
 
@@ -20,9 +34,11 @@ library(ggalluvial)
 # Ouverture des tableaux de données
 
 ```{r}
+# Tableau de recouvrement avec les strates
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
 unique(recouvrement$Site)
 
+# Tableau de la détection individuelle vérifiée des observateurs 
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
 #Problème d'espace à régler pour verification
 unique(verification$site)
@@ -43,9 +59,10 @@ data_original <- data_original %>%
   ))
 unique(data_original$site)
 
+# Tableau réponse questionnaire expérience individuelle des observateurs
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
+# Rajouter la colonne sexe au tableau
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
-
 
 ```
 
@@ -327,10 +344,6 @@ tab_complet <- tab_complet %>%
     by = c("ID_ind", "id_quadrat_fin")
   )
 
-
-library(dplyr)
-library(stringr)
-
 # 1. Extraire la partie quadrat de tab_complet (tout avant le dernier point)
 tab_complet <- tab_complet %>%
   mutate(
@@ -357,8 +370,6 @@ tab_complet <- tab_complet %>%
 ## I_i Relation taille et phénologie
 
 ```{r}
-library(dplyr)
-library(tidyr)
 
 data_long <- bind_rows(
   data_original %>% transmute(pheno = phenoS1, taille = tailleS1),
@@ -390,10 +401,6 @@ boxplot(taille ~ pheno,
 # -------------------------------
 # Analyse Factorielle Discriminante (AFD)
 # -------------------------------
-
-# Chargement des packages nécessaires
-library(MASS)        # pour lda()
-library(ade4)        # pour discrimin(), dudi.pca(), s.arrow(), s.class(), rtest()
 
 # -------------------------------
 # 1. LDA sur les données originales
@@ -469,9 +476,6 @@ s.class(afd3$li, factor(recouvrement$Site))
 Taille \~ session
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 
 # Transformer les données en format long
 taille_long <- data_original %>%
@@ -523,9 +527,6 @@ ggplot(taille_stats, aes(x = session, y = mean_taille, fill = session)) +
 phénologie \~ session
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 
 # Transformer les données en format long : session = S1, S2, S3
 pheno_long <- data_original %>%
@@ -597,9 +598,6 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
 Taille \~ site
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
 
 # Transformer les données en format long pour toutes les tailles
 taille_long <- data_original %>%
@@ -649,9 +647,6 @@ ggplot(taille_stats, aes(x = site, y = mean_taille)) +
 Taille \~ site + session
 
 ```{r}
-library(ggplot2)
-library(dplyr)
-library(tidyr)
 
 # Assurer que les colonnes de taille sont numériques
 data_original <- data_original %>%
@@ -703,9 +698,6 @@ ggplot(stats_long, aes(x = site, y = mean, fill = taille_type)) +
 phénologie \~ site
 
 ```{r}
-library(ggplot2)
-library(dplyr)
-library(tidyr)
 
 # Transformer les phénos en format long en gardant les NA
 pheno_long <- data_original %>%
@@ -766,10 +758,6 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
 Taille \~ strate
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(ggpmisc)  # pour afficher R² et p-value
 
 # Joindre les données par ID_Quadrat
 data_joined <- data_original %>%
@@ -821,9 +809,6 @@ ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
 phénologie \~ strate
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(vegan)
 
 # Phénologie en format long
 pheno_long <- data_original %>%
@@ -891,15 +876,11 @@ La RDA montre que le recouvrement végétal n’explique pas significativement l
 
 # -------------------------------
 
-#IV\_ Niveau des observateurs
+# IV\_ Niveau des observateurs
 
 ## Adéquation et fiabilité des observateurs
 
 ```{r}
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(car)
 
 # ------------------------------------------------------------
 # 1. Taux d’erreur d’adéquation par observateur
@@ -992,7 +973,6 @@ tx_erreur_fin <- experience2 %>%
 ### Erreur d’attribution phénologique vs non-détection
 
 ```{r}
-library(ggrepel)
 
 ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
   geom_point(
@@ -1111,14 +1091,12 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   )
 ```
 
-###Analyses complémentaires
+### Analyses complémentaires
 
 ```{r}
 # ------------------------------------------------------------
 # Visualisation des 3 axes en 3D 
 # ------------------------------------------------------------
-
-library(plotly)
 
 # Graphique 3D interactif avec taille fixe
 plot_ly(
@@ -1200,21 +1178,20 @@ AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 
 ```
 
-#-------------------------------
-#V\_ Probabilité de détection 
-#---------------------
+# ------------------------------- 
+# V\_ Probabilité de détection 
+# --------------------- 
 ## V_i GLM
 
 ```{r}
 # On a plusieurs strates et on veut seulement une covariable "recouvrement". On utilise donc une ACP pour avec l'inertie sur PC1.
 
-library(stats)
-
 # Extraire juste les colonnes numériques pour la PCA
-recouvrement_num <- recouvrement_mat %>%
-  ungroup() %>%              # enlever le grouping
+recouvrement_num <- tab_complet %>%
+  ungroup() %>%  # enlever le grouping
   dplyr::select(S_muscinale:S_arborescente) %>%
-  as.data.frame()            # transformer en data.frame pur
+  mutate(across(everything(), as.numeric)) %>%
+  as.data.frame()
 
 # Vérifier
 str(recouvrement_num)
@@ -1225,7 +1202,6 @@ pca <- prcomp(recouvrement_num, scale. = TRUE)
 tab_complet$recouvrement_PC1 <- pca$x[,1]
 
 # GLM
-library(lme4)
 
 glm_model <- glmer(
   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif + 
@@ -1240,21 +1216,114 @@ anova(glm_model, test="Chisq")
 
 ```
 
-# ---------------------
-#VII\_ CMR 
-# ---------------------
-
-##VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
+## Sélection de modèles
 
 ```{r}
-# -------------------------------
-# Packages nécessaires
-# -------------------------------
-library(RMark)
-library(dplyr)
-library(tidyr)
-library(DiagrammeR)
 
+# Autoriser MuMIn à travailler avec glmer
+options(na.action = "na.fail")
+
+#modèle complet
+glm_model <- glmer(
+  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
+    (1 | ID_ind) + (1 | id_quadrat_fin),
+  data = tab_complet,
+  family = binomial
+)
+
+# Sélection de modèle (toutes combinaisons de variables fixes)
+model_set <- dredge(glm_model, trace = TRUE)
+
+# Afficher les modèles triés par AICc
+model_set
+
+# Optionnel : extraire les meilleurs modèles avec delta AICc < 2
+best_models <- get.models(model_set, subset = delta < 2)
+
+# Afficher le résumé du meilleur modèle
+summary(best_models[[1]])
+
+```
+
+# ---------------------
+
+# VII\_ CMR
+
+```{r}
+#Résumer la phénologie en lettres pour crdms
+unique(tab_complet$phenologie_verif)
+#filtrer pour garder seuelement lignes sans NA
+tab_complet <- tab_complet %>%
+  filter(!is.na(phenologie_verif))
+
+unique(tab_complet$phenologie_verif)
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie = case_when(
+      phenologie_verif == "juv" ~ "j",
+      phenologie_verif == "non_fleuri" ~ "nf",
+      phenologie_verif == "fleur" ~ "f",
+      phenologie_verif == "fruit" ~ "F",
+      phenologie_verif == "fleurs_fanees" ~ "ff",
+      
+    )
+  )
+
+#Donner un chiffre à chaque observateur différent
+tab_complet <- tab_complet %>%
+  group_by(session) %>%
+  mutate(sec = as.integer(factor(observateur))) %>%
+  ungroup()
+
+#Histoire de captures
+ch_tab <- tab_complet %>%
+  arrange(ID_ind, session, sec) %>%
+  mutate(obs = ifelse(detection == 1, phenologie, "0")) %>%
+  group_by(ID_ind, session) %>%
+  summarise(ch_sess = paste0(obs, collapse = ""), .groups = "drop")
+
+#prendre infos covariables
+ind_cov <- tab_complet %>%
+  dplyr::select(ID_ind, session, site, quadrat, taille) %>%
+  distinct()
+
+#ajouter l'info
+ch_data <- left_join(ch_tab, ind_cov, by = c("ID_ind", "session"))
+
+#Concaténer les sessions pour avoir une seule histoire de capture
+ch_data_final <- ch_data %>% 
+  group_by(ID_ind) %>% 
+  summarise(ch=paste(ch_sess, collapse = "", .groups = "drop"))
+
+#Ajouter les covariables fixes
+cov_fixed <- tab_complet %>% 
+  dplyr::select(ID_ind, site, quadrat) %>% 
+  distinct()
+
+ch_data_final <- left_join(ch_data_final, cov_fixed, by = "ID_ind")
+
+#nombre d'occasions secondaires par session
+nocc <- tab_complet %>% 
+  distinct(session, sec) %>% 
+  count(session) %>% 
+  arrange(session) %>% 
+  pull(n)
+
+proc <- process.data(
+  ch_data_final,
+  model = "crdms",
+  nocc = nocc,
+  strata.labels = c("j", "nf", "f", "F", "ff")
+)
+ 
+
+```
+
+# ---------------------
+
+## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
+
+```{r}
 # -------------------------------
 # 1. Charger les données
 # -------------------------------
@@ -1370,18 +1439,10 @@ ms_model$results$real
 
 ```
 
-###VII_i.ii Transitions session 1 → 2
+### VII_i.ii Transitions session 1 → 2
 
 ```{r}
 ###MARK Session 1-2 ----
-
-# -------------------------------
-# Packages nécessaires
-# -------------------------------
-library(dplyr)
-library(tidyr)
-library(DiagrammeR)
-library(RMark)
 
 # -------------------------------
 # 1. Charger les données
@@ -1492,20 +1553,12 @@ ms_model$results$real
 
 ```
 
-###VII_i.iii Transitions session 2 → 3
+### VII_i.iii Transitions session 2 → 3
 
 ```{r}
 ##MARK Session 2-3 ----
 
 ###MARK Session 2-3 ----
-
-# -------------------------------
-# Packages nécessaires
-# -------------------------------
-library(dplyr)
-library(tidyr)
-library(DiagrammeR)
-library(RMark)
 
 # -------------------------------
 # 1. Charger les données
