@@ -31,6 +31,17 @@ unique(verification$site)
 
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
 unique(data_original$site)
+#enlever les accents
+data_original <- data_original %>% 
+  mutate(site
+         = case_when(
+    site == "Combe Michaut" ~ "Combe Michaut",
+    site == "Tête Cendrée Bas" ~ "Tete Cendree Bas",
+    site == "Tête Cendrée Haut" ~ "Tete Cendree Haut",
+    site == "Vigne au Renard" ~ "Vigne au Renard",
+    site == "Val Clavin" ~ "Val Clavin"
+  ))
+unique(data_original$site)
 
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")

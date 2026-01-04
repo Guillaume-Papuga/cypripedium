@@ -813,7 +813,7 @@ tab_complet <- tab_complet %>%
 ```
 #Préparation jeu de données pour crdms pour analyse dynamique des pops####
 #Point méthodologique
-Le Multistate va être utilisé pour prendre en compte transitions phhénologiques des individus
+Le Multistate va être utilisé pour prendre en compte transitions phénologiques des individus
 Le robust design pour prendre en compte variations entre sessions étant des périodes primaires et en même temps prendre en compte plusieurs observations dans chaque session (observateurs) étant notre période secondaire.
 Le closed correspond au fait qu'on ne considère pas de variations des paramètres démographiques au sein de notre période secondaire
 
