@@ -1348,7 +1348,7 @@ anova(glm_model, test="Chisq")
 # best_models <- get.models(model_set, subset = delta < 2)
 # 
 # # Afficher le résumé du meilleur modèle
-# summary(best_models[[1]])
+# summary(best_models[[1]]) 
 
 ```
 
