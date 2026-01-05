@@ -121,12 +121,12 @@ data_original3 <- data_original3 %>%
   dplyr::select(-session)
 
 #ajout des deux tableaux + enlever lignes sans info  à cause d'observation d'un individu à partir de session 2 ou 3
-data_original4 <- cbind(data_original2, data_original3) %>% 
-  filter(!is.na(taille)) #enlever lignes avec pas d'infos
+data_original4 <- cbind(data_original2, data_original3)
 
 #vérifier si manque des informations par rapport à phénologie
 data_original4 %>% 
   filter(is.na(phenologie_verif))
+#Il manque des informations
 
 #ajout variable individuelle complète
 data_original_obs <- data_original4 %>% 
@@ -243,7 +243,7 @@ nb_quadrat_manquant <- nb_individu_manquant_final %>%
     .groups = "drop"
   )
 nrow(nb_quadrat_manquant)
-#individus manquants dans 27 quadras
+#individus manquants dans 39 quadras
 
 nb_quadrat_manquant <- nb_quadrat_manquant %>% 
   mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
@@ -319,30 +319,41 @@ tab_complet %>%
   left_join(difference_ind, by = c("id_quadrat_fin", "observateur")) %>% 
   filter(n_detectes != n)
 
-#récuperer les informations biologiques par individus
-infos_individus <- tab_detection %>%
-  dplyr::select(
-    ID_ind,
-    id_quadrat_fin,
-    phenologie_verif,
-    site,
-    quadrat,
-    session,
-    taille
-  ) %>%
-  distinct()
-
-#Vérifier que j'ai bien une info par individu
-infos_individus %>%
-  count(ID_ind, id_quadrat_fin) %>%
-  filter(n > 1)
-
-#Ajouter ces informations à mon tableau de détection
+#Ajouter informations observateurs à mon tableau de détection
 tab_complet <- tab_complet %>%
   left_join(
-    infos_individus,
-    by = c("ID_ind", "id_quadrat_fin")
+    tab_detection,
+    by = c("id_quadrat_fin","ID_ind", "observateur")
   )
+
+#Ajouter informations données originales
+data_original_obs <- data_original_obs %>% 
+    mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = "."))
+
+tab_complet <- tab_complet %>%
+  left_join(
+    data_original_obs,
+    by = c("id_quadrat_fin","ID_ind"),
+    suffix = c("_test", "")
+  ) %>%
+  dplyr::select(
+    -ends_with("_test")  # ou l’inverse selon ce que tu veux garder
+  ) %>% 
+  dplyr::select(id_ind_fin,
+                id_quadrat_fin,
+                ID_quadrat,
+                ID_ind,
+                site,
+                quadrat,
+                marquage,
+                session,
+                observateur,
+                detection,
+                phenologie_verif,
+                phenologie,
+                adequation,
+                adequation_reel,
+                taille)
 
 # 1. Extraire la partie quadrat de tab_complet (tout avant le dernier point)
 tab_complet <- tab_complet %>%
@@ -359,7 +370,8 @@ recouvrement_clean <- recouvrement %>%
 
 # 3. Faire le left_join pour ajouter les colonnes S_ au tableau complet
 tab_complet <- tab_complet %>%
-  left_join(recouvrement_clean, by = "ID_Quadrat_clean")
+  left_join(recouvrement_clean, by = "ID_Quadrat_clean") %>% 
+  dplyr::select(-ID_Quadrat_clean)
 
 ```
 
@@ -1203,22 +1215,35 @@ recouvrement_num <- tab_complet %>%
 str(recouvrement_num)
 
 pca <- prcomp(recouvrement_num, scale. = TRUE)
-
+acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
 # Ajouter la première composante à ton tableau original
 tab_complet$recouvrement_PC1 <- pca$x[,1]
+tab_complet$recouvrement_PC1v2 <- acp1$li[,1]
+#Calcul des % de chaque axe :
+pc<-round(acp1$eig/sum(acp1$eig)*100,2)
+pc
+
+# % cumulés
+cumsum(pc) 
+
+#visualisation sur un graph
+barplot(acp1$eig)
+
+###Graphique de l'ACP####
+s.corcircle(acp1$co, xax=1, yax=2, box = F, clabel = 0.5) 
 
 # GLM
 
-# glm_model <- glmer(
-#   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif + 
-#     (1 | ID_ind) + (1 | id_quadrat_fin),
-#   data = tab_complet,
-#   family = binomial
-# )
-# 
-# 
-# summary(glm_model)       # coefficients, significativité
-# anova(glm_model, test="Chisq")
+glm_model <- glmer(
+  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
+    (1 | ID_ind),
+  data = tab_complet,
+  family = binomial
+)
+
+
+summary(glm_model)       # coefficients, significativité
+anova(glm_model, test="Chisq")
 
 ```
 
@@ -1256,14 +1281,77 @@ tab_complet$recouvrement_PC1 <- pca$x[,1]
 # VII\_ CMR <!--#  -->
 
 ```{r}
-#Résumer la phénologie en lettres pour crdms
 unique(tab_complet$phenologie_verif)
-#filtrer pour garder seuelement lignes sans NA
+#Transformer lignes NA en 0
 tab_complet <- tab_complet %>%
-  filter(!is.na(phenologie_verif))
+  mutate(
+    phenologie_verif = replace_na(phenologie_verif, "0")
+  )
 
-unique(tab_complet$phenologie_verif)
-tab_complet <- tab_complet %>%
+#Regarder le nombre d'observateurs par quadra
+tab_obs <- tab_complet %>% 
+  group_by(id_quadrat_fin, observateur) %>% 
+  summarise(n = 1, .groups = "drop") %>% 
+  ungroup()
+
+#Regarder le nombre de quadra observés par observateur
+tab_obs2 <- tab_obs %>% 
+  group_by(observateur) %>% 
+  summarise(nb_quadra = n()) %>% 
+  arrange(desc(nb_quadra))
+  
+#Regarder le nombre d'observations par quadra
+tab_obs_tot <- tab_obs %>% 
+  group_by(id_quadrat_fin) %>% 
+  summarise(nb_obs = n()) %>% 
+  ungroup()
+
+#Regarder pourcentages d'observations
+nb_obs <- tab_obs_tot %>% 
+  count(nb_obs) %>% 
+  mutate(pourcentage = round((n * 100) / sum(n), 2))
+
+nb_obs
+#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#extraire informations quadra avec 5 et 6 obs
+tab_obs_tot_5obs <- tab_obs_tot %>% 
+  filter(nb_obs == 5)
+
+tab_obs_tot_6obs <- tab_obs_tot %>% 
+  filter(nb_obs == 6)
+
+#Transvaser ces infos dans tableau complet
+tab_complet_5obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
+
+tab_complet_6obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
+
+#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
+#Extraire nb obs par observateur
+tab_complet_5obs <- tab_complet_5obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+tab_tmp <- tab_complet_6obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+#Garder 5 observations par individu/session/quadra/site
+tab_complet_5obs_6 <- tab_tmp %>%
+  group_by(id_ind_fin) %>%
+  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
+  ungroup()
+
+#Vérification si nombre de lignes semble bon
+nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
+nrow(tab_complet_5obs_6)
+
+#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
+tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+
+##Résumer la phénologie en lettres pour crdms
+unique(tab_complet_final$phenologie_verif)
+tab_complet_final <- tab_complet_final %>%
   mutate(
     phenologie = case_when(
       phenologie_verif == "juv" ~ "j",
@@ -1271,35 +1359,46 @@ tab_complet <- tab_complet %>%
       phenologie_verif == "fleur" ~ "f",
       phenologie_verif == "fruit" ~ "F",
       phenologie_verif == "fleurs_fanees" ~ "ff",
-      
+      phenologie_verif == "0" ~ "0"
     )
   )
 
 #Donner un chiffre à chaque observateur différent
-tab_complet <- tab_complet %>%
-  group_by(session) %>%
-  mutate(sec = as.integer(factor(observateur))) %>%
-  ungroup()
+tab_complet_final <- tab_complet_final %>%
+  mutate(sec = as.integer(factor(observateur)))
+
+#Nombre d'observateurs perdus par rapport à observateurs initiaux
+length(unique(tab_complet_final$observateur))
+length(unique(tab_complet$observateur))
 
 #Histoire de captures
-ch_tab <- tab_complet %>%
-  arrange(ID_ind, session, sec) %>%
+ch_tab <- tab_complet_final %>%
+  arrange(id_ind_fin, sec) %>%
   mutate(obs = ifelse(detection == 1, phenologie, "0")) %>%
-  group_by(ID_ind, session) %>%
+  group_by(id_ind_fin) %>%
   summarise(ch_sess = paste0(obs, collapse = ""), .groups = "drop")
 
 #prendre infos covariables
-ind_cov <- tab_complet %>%
-  dplyr::select(ID_ind, session, site, quadrat, taille) %>%
+ind_cov <- tab_complet_final %>%
+  dplyr::select(id_ind_fin, ID_ind, marquage, session, site, quadrat, taille, S_muscinale:S_arborescente) %>%
   distinct()
 
 #ajouter l'info
-ch_data <- left_join(ch_tab, ind_cov, by = c("ID_ind", "session"))
+ch_data <- left_join(ch_tab, ind_cov, by = "id_ind_fin")
 
 #Concaténer les sessions pour avoir une seule histoire de capture
 ch_data_final <- ch_data %>% 
   group_by(ID_ind) %>% 
-  summarise(ch=paste(ch_sess, collapse = "", .groups = "drop"))
+  summarise(ch=paste(ch_sess, collapse = ""), .groups = "drop")
+
+#j'ai un problème de certains individus pas présents à toutes les sessions
+verif_sessions <- tab_complet_final %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
 
 #Ajouter les covariables fixes
 cov_fixed <- tab_complet %>% 
