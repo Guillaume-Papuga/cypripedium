@@ -387,12 +387,11 @@ data_long$pheno <- factor(
   levels = c("j", "nf", "f", "F", "ff")
 )
 
-boxplot(taille ~ pheno,
-        data = data_long,
-        xlab = "Stade phénologique",
-        ylab = "Taille",
-        main = "Taille selon le stade phénologique (sessions confondues)",
-        col = "lightgray")
+ggplot(data = data_long, aes(x = pheno, y = taille))+
+  geom_boxplot()+
+  labs(x = "Stade phénologique", y = "Taille", title = "Taille selon le stade phénologique (sessions confondues)")+
+  theme_minimal()
+
 ```
 
 ## I_ii Relation recouvrement végétal et site
@@ -451,7 +450,7 @@ table(Site = newdata$Site, Predicted = afd_cv$class)
 # 7. AFD basée sur l'ACP centrée-réduite
 # -------------------------------
 pca_res <- dudi.pca(recouvrement[, 4:8], scannf = FALSE, nf = 3)
-afd3 <- discrimin(pca_res, factor(recouvrement$Site)) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
+afd3 <- discrimin(pca_res, factor(recouvrement$Site), scannf = FALSE, nf = 3) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
 
 # Exploration des valeurs propres et des coefficients standardisés
 afd3$eig
@@ -463,6 +462,10 @@ s.arrow(afd3$fa)
 
 # Projection des individus selon leur groupe
 s.class(afd3$li, factor(recouvrement$Site))
+
+#Regarder contribution relative des variables aux axes
+afd3$fa
+#A priori strate muscinale et arbustive basse sont les plus importantes
 ```
 
 # -------------------------------
@@ -537,9 +540,9 @@ pheno_long <- data_original %>%
     values_to = "pheno"
   ) %>%
   # Remplacer NA par un label pour garder comme modalité
-  mutate(pheno = ifelse(is.na(pheno), "NA", as.character(pheno))) %>%
+  dplyr::mutate(pheno = ifelse(is.na(pheno), "NA", as.character(pheno))) %>%
   # Renommer les sessions plus simplement
-  mutate(session = recode(session,
+  mutate(session = dplyr::recode(session,
                           "phenoS1" = "S1",
                           "phenoS2" = "S2",
                           "phenoS3" = "S3"))
@@ -834,7 +837,7 @@ pheno_tab <- pheno_long %>%
 str(pheno_tab)
 
 data_rda <- pheno_tab %>%
-  left_join(recouvrement, by = c("ID_quadrat" = "ID_Quadrat"))
+  left_join(recouvrement, by = c("ID_quadrat" = "ID_Quadrat")) %>% dplyr::select(-"NA")
 
 # Variables explicatives (recouvrement)
 X <- data_rda %>%
@@ -847,7 +850,7 @@ X <- data_rda %>%
   )
 
 Y <- data_rda %>%
-  dplyr::select(j, nf, f, ff, F, `NA`)
+  dplyr::select(j, nf, f, ff, F)
 
 # Hellinger (très recommandé)
 Y_hel <- decostand(Y, method = "hellinger")
@@ -976,7 +979,7 @@ tx_erreur_fin <- experience2 %>%
 
 ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
   geom_point(
-    aes(color = sexe, size = id_total),
+    aes(color = sexe.x, size = id_total),
     alpha = 0.8
   ) +
   geom_smooth(
@@ -987,7 +990,7 @@ ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
     alpha = 0.3
   ) +
   geom_text_repel(
-    aes(label = Observateur, color = sexe),
+    aes(label = Observateur, color = sexe.x),
     size = 3,
     max.overlaps = Inf,
     force = 5,
@@ -1016,7 +1019,7 @@ ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
 ```{r}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
   geom_point(
-    aes(color = sexe, size = id_total),
+    aes(color = sexe.x, size = id_total),
     alpha = 0.8
   ) +
   geom_smooth(
@@ -1027,7 +1030,7 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
     alpha = 0.3
   ) +
   geom_text_repel(
-    aes(label = Observateur, color = sexe),
+    aes(label = Observateur, color = sexe.x),
     size = 3,
     max.overlaps = Inf,
     force = 5,
@@ -1056,7 +1059,7 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
 ```{r}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   geom_point(
-    aes(color = sexe, size = id_total),
+    aes(color = sexe.x, size = id_total),
     alpha = 0.8
   ) +
   geom_smooth(
@@ -1067,7 +1070,7 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
     alpha = 0.3
   ) +
   geom_text_repel(
-    aes(label = Observateur, color = sexe),
+    aes(label = Observateur, color = sexe.x),
     size = 3,
     max.overlaps = Inf,
     force = 5,
@@ -1110,7 +1113,7 @@ plot_ly(
   textposition = "top center",
   marker = list(
     size = 5,  # taille fixe pour tous les points
-    color = ~ifelse(sexe == "f", "#E41A1C", "#377EB8"),
+    color = ~ifelse(sexe.x == "f", "#E41A1C", "#377EB8"),
     opacity = 0.8
   ),
   hovertemplate = paste(
@@ -1121,7 +1124,7 @@ plot_ly(
     "Non-détection: %{z}<br>",
     "<extra></extra>"
   ),
-  customdata = tx_erreur_fin[, c("sexe")]
+  customdata = tx_erreur_fin[, c("sexe.x")]
 ) %>%
   layout(
     scene = list(
@@ -1178,9 +1181,12 @@ AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 
 ```
 
-# ------------------------------- 
-# V\_ Probabilité de détection 
-# --------------------- 
+# -------------------------------
+
+# V\_ Probabilité de détection
+
+# ---------------------
+
 ## V_i GLM
 
 ```{r}
@@ -1203,16 +1209,16 @@ tab_complet$recouvrement_PC1 <- pca$x[,1]
 
 # GLM
 
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif + 
-    (1 | ID_ind) + (1 | id_quadrat_fin),
-  data = tab_complet,
-  family = binomial
-)
-
-
-summary(glm_model)       # coefficients, significativité
-anova(glm_model, test="Chisq")
+# glm_model <- glmer(
+#   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif + 
+#     (1 | ID_ind) + (1 | id_quadrat_fin),
+#   data = tab_complet,
+#   family = binomial
+# )
+# 
+# 
+# summary(glm_model)       # coefficients, significativité
+# anova(glm_model, test="Chisq")
 
 ```
 
@@ -1220,34 +1226,34 @@ anova(glm_model, test="Chisq")
 
 ```{r}
 
-# Autoriser MuMIn à travailler avec glmer
-options(na.action = "na.fail")
-
-#modèle complet
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
-    (1 | ID_ind) + (1 | id_quadrat_fin),
-  data = tab_complet,
-  family = binomial
-)
-
-# Sélection de modèle (toutes combinaisons de variables fixes)
-model_set <- dredge(glm_model, trace = TRUE)
-
-# Afficher les modèles triés par AICc
-model_set
-
-# Optionnel : extraire les meilleurs modèles avec delta AICc < 2
-best_models <- get.models(model_set, subset = delta < 2)
-
-# Afficher le résumé du meilleur modèle
-summary(best_models[[1]])
+# # Autoriser MuMIn à travailler avec glmer
+# options(na.action = "na.fail")
+# 
+# #modèle complet
+# glm_model <- glmer(
+#   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
+#     (1 | ID_ind) + (1 | id_quadrat_fin),
+#   data = tab_complet,
+#   family = binomial
+# )
+# 
+# # Sélection de modèle (toutes combinaisons de variables fixes)
+# model_set <- dredge(glm_model, trace = TRUE)
+# 
+# # Afficher les modèles triés par AICc
+# model_set
+# 
+# # Optionnel : extraire les meilleurs modèles avec delta AICc < 2
+# best_models <- get.models(model_set, subset = delta < 2)
+# 
+# # Afficher le résumé du meilleur modèle
+# summary(best_models[[1]])
 
 ```
 
 # ---------------------
 
-# VII\_ CMR
+# VII\_ CMR <!--#  -->
 
 ```{r}
 #Résumer la phénologie en lettres pour crdms
@@ -1309,12 +1315,12 @@ nocc <- tab_complet %>%
   arrange(session) %>% 
   pull(n)
 
-proc <- process.data(
-  ch_data_final,
-  model = "crdms",
-  nocc = nocc,
-  strata.labels = c("j", "nf", "f", "F", "ff")
-)
+# proc <- process.data(
+#   ch_data_final,
+#   model = "crdms",
+#   nocc = nocc,
+#   strata.labels = c("j", "nf", "f", "F", "ff")
+# )
  
 
 ```
@@ -1556,8 +1562,6 @@ ms_model$results$real
 ### VII_i.iii Transitions session 2 → 3
 
 ```{r}
-##MARK Session 2-3 ----
-
 ###MARK Session 2-3 ----
 
 # -------------------------------
