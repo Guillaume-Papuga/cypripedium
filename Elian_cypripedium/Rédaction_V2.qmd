@@ -717,6 +717,24 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
 
 Le graphique montre une progression claire du développement phénologique au fil des sessions : début majoritairement jeunes, floraison qui commence à S2 principalement, diminution des données manquantes et des jeunes. La diminution des NA pourrait être dûe à une meilleure détectabilité des individus matures (nous vérifirons cette hpyothèse dans les analyses suivantes). La session 3 montre l'apparition de fleurs fannées, et de fruits.
 
+```{r}
+
+# ordonner les modalités
+pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
+pheno_stats$session <- factor(pheno_stats$session, levels = c("S1", "S2", "S3"))
+
+# graphique : phénologie en x, couleur = session
+ggplot(pheno_stats, aes(x = pheno, y = n, fill = session)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
+  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
+                position = position_dodge(width = 0.8), width = 0.2, color = "black") +
+  scale_fill_manual(values = c("S1" = "#FF9999", "S2" = "#FF4D4D", "S3" = "#CC0000")) +
+  labs(title = "Distribution de la phénologie par session", x = "Type phénologique", y = "Nombre d'individus", fill = "Session") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "right")
+```
+
+
 ## --------------
 
 # III\_ Analyse de la variation dans l'espace
@@ -999,7 +1017,7 @@ plot(rda_pheno, scaling = 2)
 
 a_1<- anova(rda_pheno)          # effet global du recouvrement
 a_2<-anova(rda_pheno, by="term") # effet de chaque strate
-a_3<- anova(rda_pheno, by="axis") # axes significatifs
+a_3<- anova(rda_pheno, by="axis")  # axes significatifs
 
 
 ```
