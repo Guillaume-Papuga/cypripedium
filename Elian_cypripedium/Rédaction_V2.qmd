@@ -373,6 +373,7 @@ tab_complet <- tab_complet %>%
     -ends_with("_test")  # ou l’inverse selon ce que tu veux garder
   ) %>% 
   dplyr::select(id_ind_fin,id_quadrat_fin, ID_quadrat, ID_ind,site, quadrat, marquage, session,observateur, detection, phenologie_verif, phenologie, adequation, adequation_reel, taille)
+
 ```
 
 ### Joindre des données supplémentaires
@@ -1357,6 +1358,36 @@ glm_model <- glmer(
   family = binomial
 )
 
+table(tab_complet$detection)
+
+tab_complet <- tab_complet %>%
+  mutate(
+    site = factor(site),
+    session = factor(session),
+    phenologie_verif = factor(phenologie_verif)
+  )
+
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie_grp = case_when(
+      phenologie_verif %in% c("fleur", "fleurs_fanees", "fruit") ~ "reproductif",
+      phenologie_verif %in% c("juv", "non_fleuri") ~ "vegetatif",
+      TRUE ~ "0"
+    ),
+    phenologie_grp = factor(phenologie_grp)
+  )
+
+glm_model <- glmer(
+  detection ~ recouvrement_PC1 + phenologie_grp +
+    (1 | ID_ind),
+  data = tab_complet,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+)
+table(tab_complet$site, tab_complet$session)
+table(tab_complet$phenologie_verif, tab_complet$session)
+
+table(tab_complet$ID_ind)
 
 summary(glm_model)       # coefficients, significativité
 anova(glm_model, test="Chisq")
@@ -1398,13 +1429,18 @@ anova(glm_model, test="Chisq")
 
 ```{r}
 unique(tab_complet$phenologie_verif)
-#Transformer lignes NA en 0
+#Transformer lignes phenologie ayant des NA en 0
 tab_complet <- tab_complet %>%
   mutate(
     phenologie_verif = replace_na(phenologie_verif, "0")
   )
 
-#A voir si remplacer les tailles par 0
+#Faire la même chose avec les tailles
+tab_complet <- tab_complet %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille)),
+    taille = replace_na(taille, 0)
+  )
 
 #Regarder le nombre d'observateurs par quadra
 tab_obs <- tab_complet %>% 
@@ -1435,6 +1471,7 @@ nb_obs
 #regarder si j'ai des sessions qui vont disparaître avec cette méthode :
 enlever <- tab_obs_tot %>% 
   filter(nb_obs <5)
+enlever
 #quadra à enlever :
 # TCb.Q9.2
 # TCb.Q7.2
@@ -1481,8 +1518,8 @@ ind_av_filtrage <- nrow(tab_complet_final)
 tab_complet_final <- tab_complet_final %>% 
   filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
 ind_ap_filtrage <- nrow(tab_complet_final)
-#nb indiv perdus :
-1-(ind_ap_filtrage*100/ind_av_filtrage)
+#pourcentage indiv perdus :
+(1-(ind_ap_filtrage/ind_av_filtrage))*100
 
 #Vérification histoires de capture
 verif_sessions <- tab_complet_final %>%
@@ -1501,78 +1538,7 @@ check_sessions <- verif_sessions %>%
 check_sessions %>%
   filter(!ok_sessions)
 
-##Résumer la phénologie en lettres pour crdms
-unique(tab_complet_final$phenologie_verif)
-tab_complet_final <- tab_complet_final %>%
-  mutate(
-    phenologie = case_when(
-      phenologie_verif == "juv" ~ "j",
-      phenologie_verif == "non_fleuri" ~ "nf",
-      phenologie_verif == "fleur" ~ "f",
-      phenologie_verif == "fruit" ~ "F",
-      phenologie_verif == "fleurs_fanees" ~ "ff",
-      phenologie_verif == "0" ~ "0"
-    )
-  )
 
-#Donner un chiffre à chaque observateur différent
-tab_complet_final <- tab_complet_final %>%
-  mutate(sec = as.integer(factor(observateur)))
-
-#Nombre d'observateurs perdus par rapport à observateurs initiaux
-length(unique(tab_complet_final$observateur))
-length(unique(tab_complet$observateur))
-
-#Histoire de captures
-ch_tab <- tab_complet_final %>%
-  arrange(id_ind_fin, sec) %>%
-  mutate(obs = ifelse(detection == 1, phenologie, "0")) %>%
-  group_by(id_ind_fin) %>%
-  summarise(ch_sess = paste0(obs, collapse = ""), .groups = "drop")
-
-#prendre infos covariables
-ind_cov <- tab_complet_final %>%
-  dplyr::select(id_ind_fin, ID_ind, marquage, session, site, quadrat, taille, S_muscinale:S_arborescente) %>%
-  distinct()
-
-#ajouter l'info
-ch_data <- left_join(ch_tab, ind_cov, by = "id_ind_fin")
-
-#Concaténer les sessions pour avoir une seule histoire de capture
-ch_data_final <- ch_data %>% 
-  group_by(ID_ind) %>% 
-  summarise(ch=paste(ch_sess, collapse = ""), .groups = "drop")
-
-#j'ai un problème de certains individus pas présents à toutes les sessions
-verif_sessions <- tab_complet_final %>%
-  group_by(ID_ind) %>%
-  summarise(
-    nb_sessions = n_distinct(session),
-    sessions = paste(sort(unique(session)), collapse = ","),
-    .groups = "drop"
-  )
-
-#Ajouter les covariables fixes
-cov_fixed <- tab_complet %>% 
-  dplyr::select(ID_ind, site, quadrat) %>% 
-  distinct()
-
-ch_data_final <- left_join(ch_data_final, cov_fixed, by = "ID_ind")
-
-#nombre d'occasions secondaires par session
-nocc <- tab_complet %>% 
-  distinct(session, sec) %>% 
-  count(session) %>% 
-  arrange(session) %>% 
-  pull(n)
-
-# proc <- process.data(
-#   ch_data_final,
-#   model = "crdms",
-#   nocc = nocc,
-#   strata.labels = c("j", "nf", "f", "F", "ff")
-# )
- 
 
 ```
 
