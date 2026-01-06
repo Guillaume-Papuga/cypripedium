@@ -1,11 +1,14 @@
 ---
-title: "Rédaction_V1"
+title: "Rédaction_V2"
 format: html
 editor: visual
 execute-dir: project
 ---
+
 # -------------------------------
+
 # INTRODUCTION
+
 # --------------------------------------------------
 
 # Chargement des packages
@@ -43,6 +46,7 @@ library(rstatix)      # Tables propres
 # --------------------------------------------------
 
 # Ouverture des tableaux de données
+
 ## --------------
 
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
@@ -95,6 +99,7 @@ experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f"
 ```
 
 # --------------------------------------------------
+
 # Compilation tableau complet
 
 Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul.
@@ -393,16 +398,37 @@ tab_complet <- tab_complet %>%
   left_join(recouvrement_clean, by = "ID_Quadrat_clean") %>% 
   dplyr::select(-ID_Quadrat_clean)
 
+#Vérification histoires de capture
+verif_sessions <- tab_complet %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
+
 ```
 
 # --------------------------------------------------
+
 # ANALYSES PRELIMINAIRES
+
 ## --------------
 
 Avant de commencer des analyses complexes, difficiles à interpréter ou qui fournissent une compilation des informations, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets.
 
 # I\_ Analyse générale
+
 ## --------------
+
 ## I_i Relation taille et phénologie
 
 ```{r}
@@ -463,6 +489,7 @@ data_long %>%
   select(group1, group2, p, p.adj)
 
 ```
+
 Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg ; Tableau X). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p_adj ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
 
 ## I_ii Relation recouvrement végétal et site
@@ -543,6 +570,7 @@ afd3$fa # strates
 afd3$gc # sites
 #A priori strate muscinale et arbustive basse sont les plus importantes
 ```
+
 Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés.
 
 Les deux graphiques issus de l’AFD illustrent ces différences. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.
@@ -554,11 +582,13 @@ Le tableau des coordonnées des sites sur les trois premières fonctions discrim
 Dans l’ensemble, ces résultats montrent que la structuration de la végétation permet de discriminer partiellement certains sites. Certains sites sont nettement distincts, tandis que d’autres se rapprochent, illustrant des similarités écologiques. L’AFD met ainsi en évidence que les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
 
 ## --------------
+
 # II\_ Analyse de la variation dans le temps
 
 Dans un premier temps, nous avons étudié la variation des données au cours du temps afin d’obtenir une vision dynamique de leur évolution.
 
 ## --------------
+
 ## II_i Effet de la session
 
 ### Effet de la session sur la taille
@@ -620,7 +650,8 @@ taille_long %>%
 
 
 ```
-Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. On observe une augmentation progressive de la taille : la moyenne passe de S1 (~13,7) à S2 (~16,9) puis à S3 (~17,3). L'augmentation est statistiquement significative.
+
+Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. On observe une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
 
 ### Effet de la session sur la phénologie
 
@@ -682,11 +713,15 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 Le graphique montre une progression claire du développement phénologique au fil des sessions : début majoritairement jeunes, floraison qui commence à S2 principalement, diminution des données manquantes et des jeunes. La diminution des NA pourrait être dûe à une meilleure détectabilité des individus matures (nous vérifirons cette hpyothèse dans les analyses suivantes). La session 3 montre l'apparition de fleurs fannées, et de fruits.
 
 ## --------------
+
 # III\_ Analyse de la variation dans l'espace
+
 ## --------------
+
 ## III_i Effet du site
 
 ### Effet du site sur la taille
@@ -846,6 +881,7 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
 ```
 
 ## --------------
+
 ## III_ii Effet de la strate
 
 ### Effet de la strate sur la taille
@@ -970,6 +1006,7 @@ a_3<- anova(rda_pheno, by="axis") # axes significatifs
 La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p \< 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
 
 ## --------------
+
 # IV\_ Niveau des observateurs
 
 ## Adéquation et fiabilité des observateurs
@@ -1273,8 +1310,11 @@ AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 ```
 
 # --------------------------------------------------
+
 # PROBABILITE DE DETECTION
+
 ## --------------
+
 ## V_i GLM
 
 ```{r}
@@ -1364,6 +1404,8 @@ tab_complet <- tab_complet %>%
     phenologie_verif = replace_na(phenologie_verif, "0")
   )
 
+#A voir si remplacer les tailles par 0
+
 #Regarder le nombre d'observateurs par quadra
 tab_obs <- tab_complet %>% 
   group_by(id_quadrat_fin, observateur) %>% 
@@ -1389,6 +1431,15 @@ nb_obs <- tab_obs_tot %>%
 
 nb_obs
 #A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+enlever <- tab_obs_tot %>% 
+  filter(nb_obs <5)
+#quadra à enlever :
+# TCb.Q9.2
+# TCb.Q7.2
+# CM.Q7.2
+Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
 
 #extraire informations quadra avec 5 et 6 obs
 tab_obs_tot_5obs <- tab_obs_tot %>% 
@@ -1424,6 +1475,31 @@ nrow(tab_complet_5obs_6)
 
 #Fusion des deux tableaux 5 obs et 5obs issu de 6obs
 tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+ind_av_filtrage <- nrow(tab_complet_final)
+
+#Enlever les trois quadra ayant été partiellement supprimés
+tab_complet_final <- tab_complet_final %>% 
+  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+ind_ap_filtrage <- nrow(tab_complet_final)
+#nb indiv perdus :
+1-(ind_ap_filtrage*100/ind_av_filtrage)
+
+#Vérification histoires de capture
+verif_sessions <- tab_complet_final %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
 
 ##Résumer la phénologie en lettres pour crdms
 unique(tab_complet_final$phenologie_verif)
@@ -1501,6 +1577,7 @@ nocc <- tab_complet %>%
 ```
 
 ## --------------
+
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
 
 ```{r}
