@@ -1542,6 +1542,188 @@ check_sessions %>%
 
 ```
 
+#RMARK 
+
+```{r}
+
+# ---------------------------------------------------------
+# 2. Résumer par individu × session (une ligne par ID_ind × session)
+# ---------------------------------------------------------
+tab_sess <- tab_complet_final %>%
+  mutate(session = as.integer(session)) %>%
+  group_by(ID_ind, session) %>%
+  summarise(
+    detection = ifelse(all(is.na(detection)), NA_integer_, max(as.integer(detection), na.rm = TRUE)),
+    phenologie = {
+      ph = phenologie[!is.na(phenologie)]
+      if(length(ph) == 0) NA_character_ else ph[1]
+    },
+    taille = mean(taille, na.rm = TRUE),
+    recouvrement = mean(recouvrement_PC1, na.rm = TRUE),
+    site = first(site)
+  ) %>% ungroup()
+
+# contrôle
+table(tab_sess$session, useNA = "ifany")
+head(tab_sess)
+
+# ---------------------------------------------------------
+# 3. Construire les historiques ch par individu et covariables individuelles
+# ---------------------------------------------------------
+hist_by_id <- tab_sess %>%
+  arrange(ID_ind, session) %>%
+  group_by(ID_ind) %>%
+  summarise(
+    ch = paste0(detection, collapse = ""),
+    site = first(site),
+    taille = mean(taille, na.rm = TRUE),
+    recouv = mean(recouvrement, na.rm = TRUE)
+  ) %>% ungroup()
+
+# retirer historiques NA et "000" (jamais vus)
+n_sessions <- length(unique(tab_sess$session))
+zero_ch <- paste(rep(0, n_sessions), collapse = "")
+histories_clean <- hist_by_id %>%
+  filter(!is.na(ch)) %>%
+  filter(ch != zero_ch)
+
+# vérifier que tous les ch ont la bonne longueur
+table(nchar(histories_clean$ch))
+
+# ---------------------------------------------------------
+# 4. Formatage des covariables individuelles et centrage
+# ---------------------------------------------------------
+histories_clean <- histories_clean %>%
+  mutate(
+    site = factor(site),
+    taille_c = as.numeric(scale(taille, center = TRUE, scale = FALSE)),
+    recouv_c = as.numeric(scale(recouv, center = TRUE, scale = FALSE))
+  )
+
+# ---------------------------------------------------------
+# 5. Construire la table time varying pour phenologie (ID_ind × session)
+# ---------------------------------------------------------
+tv_pheno <- tab_sess %>%
+  select(ID_ind, session, phenologie) %>%
+  mutate(phenologie = as.character(phenologie)) %>%
+  arrange(ID_ind, session)
+
+# compléter la grille si nécessaire (garantir une ligne par ID_ind × session)
+ids <- unique(tv_pheno$ID_ind)
+sessions <- sort(unique(tv_pheno$session))
+grid <- expand.grid(ID_ind = ids, session = sessions, stringsAsFactors = FALSE)
+tv_pheno_full <- grid %>%
+  left_join(tv_pheno, by = c("ID_ind", "session")) %>%
+  arrange(ID_ind, session)
+
+# ---------------------------------------------------------
+# 6. Préparer les données pour RMark
+# ---------------------------------------------------------
+histories_for_mark <- histories_clean %>%
+  rename(ID = ID_ind) %>%
+  select(ID, ch, site, taille_c, recouv_c)
+
+processed <- process.data(histories_for_mark, model = "CJS", groups = c("site"))
+ddl <- make.design.data(processed)
+
+# ---------------------------------------------------------
+# 7. Injecter phenologie dans ddl pour p et/ou Phi (time varying)
+# ---------------------------------------------------------
+# créer clés pour matcher
+key_tv <- paste(tv_pheno_full$ID_ind, tv_pheno_full$session, sep = "_")
+key_ddl_p <- paste(ddl$p$ID, ddl$p$time, sep = "_")
+ddl$p$phenologie <- tv_pheno_full$phenologie[match(key_ddl_p, key_tv)]
+
+# si tu veux phenologie pour Phi (survie entre t et t+1)
+key_ddl_Phi <- paste(ddl$Phi$ID, ddl$Phi$time, sep = "_")
+ddl$Phi$phenologie <- tv_pheno_full$phenologie[match(key_ddl_Phi, key_tv)]
+
+# contrôle des NA éventuels
+table(ddl$p$phenologie, useNA = "ifany")
+table(ddl$Phi$phenologie, useNA = "ifany")
+
+# ---------------------------------------------------------
+# 8. Jeu de modèles candidats
+# ---------------------------------------------------------
+models <- list()
+
+models$null <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~1),
+                      p   = list(formula = ~1)
+                    ))
+
+models$time <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~time),
+                      p   = list(formula = ~1)
+                    ))
+
+models$site <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~site),
+                      p   = list(formula = ~1)
+                    ))
+
+models$taille <- mark(processed, ddl,
+                      model.parameters = list(
+                        Phi = list(formula = ~taille_c),
+                        p   = list(formula = ~1)
+                      ))
+
+models$pheno_p <- mark(processed, ddl,
+                       model.parameters = list(
+                         Phi = list(formula = ~1),
+                         p   = list(formula = ~phenologie)
+                       ))
+
+models$comb <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~site + taille_c),
+                      p   = list(formula = ~phenologie)
+                    ))
+
+models$int <- mark(processed, ddl,
+                   model.parameters = list(
+                     Phi = list(formula = ~site * taille_c),
+                     p   = list(formula = ~phenologie)
+                   ))
+
+# ---------------------------------------------------------
+# 9. Comparaison des modèles et sélection
+# ---------------------------------------------------------
+model_list <- unlist(models, recursive = FALSE)
+mt <- model.table(model_list, use.lnl = FALSE)
+print(mt)
+
+# ---------------------------------------------------------
+# 10. Résultats du meilleur modèle et prédictions exemples
+# ---------------------------------------------------------
+best_name <- rownames(mt)[1]
+best_model <- model_list[[best_name]]
+cat("Meilleur modèle selon AICc :", best_name, "\n")
+summary(best_model)
+
+# prédiction Phi en fonction de taille pour le premier site
+newdata <- data.frame(
+  taille_c = seq(min(histories_for_mark$taille_c, na.rm = TRUE),
+                 max(histories_for_mark$taille_c, na.rm = TRUE), length = 50),
+  site = factor(levels(histories_for_mark$site)[1], levels = levels(histories_for_mark$site))
+)
+pred_phi <- predict(best_model, type = "Phi", newdata = newdata)
+plot_df <- data.frame(taille_c = newdata$taille_c,
+                      estimate = pred_phi$estimate,
+                      lcl = pred_phi$lcl,
+                      ucl = pred_phi$ucl)
+
+ggplot(plot_df, aes(x = taille_c, y = estimate)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lcl, ymax = ucl), alpha = 0.2) +
+  labs(x = "Taille centrée", y = "Survie apparente Phi") +
+  theme_minimal()
+
+```
+
 ## --------------
 
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions

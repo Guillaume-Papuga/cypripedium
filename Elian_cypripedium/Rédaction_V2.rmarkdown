@@ -1,11 +1,14 @@
 ---
-title: "Rédaction_V1"
+title: "Rédaction_V2"
 format: html
 editor: visual
 execute-dir: project
 ---
+
 # -------------------------------
+
 # INTRODUCTION
+
 # --------------------------------------------------
 
 # Chargement des packages
@@ -43,6 +46,7 @@ library(rstatix)      # Tables propres
 # --------------------------------------------------
 
 # Ouverture des tableaux de données
+
 ## --------------
 
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
@@ -95,6 +99,7 @@ experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f"
 ```
 
 # --------------------------------------------------
+
 # Compilation tableau complet
 
 Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul.
@@ -368,6 +373,7 @@ tab_complet <- tab_complet %>%
     -ends_with("_test")  # ou l’inverse selon ce que tu veux garder
   ) %>% 
   dplyr::select(id_ind_fin,id_quadrat_fin, ID_quadrat, ID_ind,site, quadrat, marquage, session,observateur, detection, phenologie_verif, phenologie, adequation, adequation_reel, taille)
+
 ```
 
 ### Joindre des données supplémentaires
@@ -393,16 +399,37 @@ tab_complet <- tab_complet %>%
   left_join(recouvrement_clean, by = "ID_Quadrat_clean") %>% 
   dplyr::select(-ID_Quadrat_clean)
 
+#Vérification histoires de capture
+verif_sessions <- tab_complet %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
+
 ```
 
 # --------------------------------------------------
+
 # ANALYSES PRELIMINAIRES
+
 ## --------------
 
 Avant de commencer des analyses complexes, difficiles à interpréter ou qui fournissent une compilation des informations, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets.
 
 # I\_ Analyse générale
+
 ## --------------
+
 ## I_i Relation taille et phénologie
 
 ```{r}
@@ -463,6 +490,7 @@ data_long %>%
   select(group1, group2, p, p.adj)
 
 ```
+
 Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg ; Tableau X). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p_adj ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
 
 ## I_ii Relation recouvrement végétal et site
@@ -543,6 +571,7 @@ afd3$fa # strates
 afd3$gc # sites
 #A priori strate muscinale et arbustive basse sont les plus importantes
 ```
+
 Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés.
 
 Les deux graphiques issus de l’AFD illustrent ces différences. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.
@@ -554,11 +583,13 @@ Le tableau des coordonnées des sites sur les trois premières fonctions discrim
 Dans l’ensemble, ces résultats montrent que la structuration de la végétation permet de discriminer partiellement certains sites. Certains sites sont nettement distincts, tandis que d’autres se rapprochent, illustrant des similarités écologiques. L’AFD met ainsi en évidence que les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
 
 ## --------------
+
 # II\_ Analyse de la variation dans le temps
 
 Dans un premier temps, nous avons étudié la variation des données au cours du temps afin d’obtenir une vision dynamique de leur évolution.
 
 ## --------------
+
 ## II_i Effet de la session
 
 ### Effet de la session sur la taille
@@ -620,7 +651,8 @@ taille_long %>%
 
 
 ```
-Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. On observe une augmentation progressive de la taille : la moyenne passe de S1 (~13,7) à S2 (~16,9) puis à S3 (~17,3). L'augmentation est statistiquement significative.
+
+Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. On observe une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
 
 ### Effet de la session sur la phénologie
 
@@ -682,11 +714,15 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
 Le graphique montre une progression claire du développement phénologique au fil des sessions : début majoritairement jeunes, floraison qui commence à S2 principalement, diminution des données manquantes et des jeunes. La diminution des NA pourrait être dûe à une meilleure détectabilité des individus matures (nous vérifirons cette hpyothèse dans les analyses suivantes). La session 3 montre l'apparition de fleurs fannées, et de fruits.
 
 ## --------------
+
 # III\_ Analyse de la variation dans l'espace
+
 ## --------------
+
 ## III_i Effet du site
 
 ### Effet du site sur la taille
@@ -846,6 +882,7 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
 ```
 
 ## --------------
+
 ## III_ii Effet de la strate
 
 ### Effet de la strate sur la taille
@@ -970,6 +1007,7 @@ a_3<- anova(rda_pheno, by="axis") # axes significatifs
 La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p \< 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
 
 ## --------------
+
 # IV\_ Niveau des observateurs
 
 ## Adéquation et fiabilité des observateurs
@@ -1273,8 +1311,11 @@ AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 ```
 
 # --------------------------------------------------
+
 # PROBABILITE DE DETECTION
+
 ## --------------
+
 ## V_i GLM
 
 ```{r}
@@ -1317,6 +1358,36 @@ glm_model <- glmer(
   family = binomial
 )
 
+table(tab_complet$detection)
+
+tab_complet <- tab_complet %>%
+  mutate(
+    site = factor(site),
+    session = factor(session),
+    phenologie_verif = factor(phenologie_verif)
+  )
+
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie_grp = case_when(
+      phenologie_verif %in% c("fleur", "fleurs_fanees", "fruit") ~ "reproductif",
+      phenologie_verif %in% c("juv", "non_fleuri") ~ "vegetatif",
+      TRUE ~ "0"
+    ),
+    phenologie_grp = factor(phenologie_grp)
+  )
+
+glm_model <- glmer(
+  detection ~ recouvrement_PC1 + phenologie_grp +
+    (1 | ID_ind),
+  data = tab_complet,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+)
+table(tab_complet$site, tab_complet$session)
+table(tab_complet$phenologie_verif, tab_complet$session)
+
+table(tab_complet$ID_ind)
 
 summary(glm_model)       # coefficients, significativité
 anova(glm_model, test="Chisq")
@@ -1348,7 +1419,7 @@ anova(glm_model, test="Chisq")
 # best_models <- get.models(model_set, subset = delta < 2)
 # 
 # # Afficher le résumé du meilleur modèle
-# summary(best_models[[1]])
+# summary(best_models[[1]]) 
 
 ```
 
@@ -1358,10 +1429,17 @@ anova(glm_model, test="Chisq")
 
 ```{r}
 unique(tab_complet$phenologie_verif)
-#Transformer lignes NA en 0
+#Transformer lignes phenologie ayant des NA en 0
 tab_complet <- tab_complet %>%
   mutate(
     phenologie_verif = replace_na(phenologie_verif, "0")
+  )
+
+#Faire la même chose avec les tailles
+tab_complet <- tab_complet %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille)),
+    taille = replace_na(taille, 0)
   )
 
 #Regarder le nombre d'observateurs par quadra
@@ -1389,6 +1467,16 @@ nb_obs <- tab_obs_tot %>%
 
 nb_obs
 #A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+enlever <- tab_obs_tot %>% 
+  filter(nb_obs <5)
+enlever
+#quadra à enlever :
+# TCb.Q9.2
+# TCb.Q7.2
+# CM.Q7.2
+Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
 
 #extraire informations quadra avec 5 et 6 obs
 tab_obs_tot_5obs <- tab_obs_tot %>% 
@@ -1424,50 +1512,16 @@ nrow(tab_complet_5obs_6)
 
 #Fusion des deux tableaux 5 obs et 5obs issu de 6obs
 tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+ind_av_filtrage <- nrow(tab_complet_final)
 
-##Résumer la phénologie en lettres pour crdms
-unique(tab_complet_final$phenologie_verif)
-tab_complet_final <- tab_complet_final %>%
-  mutate(
-    phenologie = case_when(
-      phenologie_verif == "juv" ~ "j",
-      phenologie_verif == "non_fleuri" ~ "nf",
-      phenologie_verif == "fleur" ~ "f",
-      phenologie_verif == "fruit" ~ "F",
-      phenologie_verif == "fleurs_fanees" ~ "ff",
-      phenologie_verif == "0" ~ "0"
-    )
-  )
+#Enlever les trois quadra ayant été partiellement supprimés
+tab_complet_final <- tab_complet_final %>% 
+  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+ind_ap_filtrage <- nrow(tab_complet_final)
+#pourcentage indiv perdus :
+(1-(ind_ap_filtrage/ind_av_filtrage))*100
 
-#Donner un chiffre à chaque observateur différent
-tab_complet_final <- tab_complet_final %>%
-  mutate(sec = as.integer(factor(observateur)))
-
-#Nombre d'observateurs perdus par rapport à observateurs initiaux
-length(unique(tab_complet_final$observateur))
-length(unique(tab_complet$observateur))
-
-#Histoire de captures
-ch_tab <- tab_complet_final %>%
-  arrange(id_ind_fin, sec) %>%
-  mutate(obs = ifelse(detection == 1, phenologie, "0")) %>%
-  group_by(id_ind_fin) %>%
-  summarise(ch_sess = paste0(obs, collapse = ""), .groups = "drop")
-
-#prendre infos covariables
-ind_cov <- tab_complet_final %>%
-  dplyr::select(id_ind_fin, ID_ind, marquage, session, site, quadrat, taille, S_muscinale:S_arborescente) %>%
-  distinct()
-
-#ajouter l'info
-ch_data <- left_join(ch_tab, ind_cov, by = "id_ind_fin")
-
-#Concaténer les sessions pour avoir une seule histoire de capture
-ch_data_final <- ch_data %>% 
-  group_by(ID_ind) %>% 
-  summarise(ch=paste(ch_sess, collapse = ""), .groups = "drop")
-
-#j'ai un problème de certains individus pas présents à toutes les sessions
+#Vérification histoires de capture
 verif_sessions <- tab_complet_final %>%
   group_by(ID_ind) %>%
   summarise(
@@ -1476,31 +1530,202 @@ verif_sessions <- tab_complet_final %>%
     .groups = "drop"
   )
 
-#Ajouter les covariables fixes
-cov_fixed <- tab_complet %>% 
-  dplyr::select(ID_ind, site, quadrat) %>% 
-  distinct()
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
 
-ch_data_final <- left_join(ch_data_final, cov_fixed, by = "ID_ind")
+check_sessions %>%
+  filter(!ok_sessions)
 
-#nombre d'occasions secondaires par session
-nocc <- tab_complet %>% 
-  distinct(session, sec) %>% 
-  count(session) %>% 
-  arrange(session) %>% 
-  pull(n)
 
-# proc <- process.data(
-#   ch_data_final,
-#   model = "crdms",
-#   nocc = nocc,
-#   strata.labels = c("j", "nf", "f", "F", "ff")
-# )
- 
+
+```
+
+#RMARK 
+
+```{r}
+
+# ---------------------------------------------------------
+# 2. Résumer par individu × session (une ligne par ID_ind × session)
+# ---------------------------------------------------------
+tab_sess <- tab_complet_final %>%
+  mutate(session = as.integer(session)) %>%
+  group_by(ID_ind, session) %>%
+  summarise(
+    detection = ifelse(all(is.na(detection)), NA_integer_, max(as.integer(detection), na.rm = TRUE)),
+    phenologie = {
+      ph = phenologie[!is.na(phenologie)]
+      if(length(ph) == 0) NA_character_ else ph[1]
+    },
+    taille = mean(taille, na.rm = TRUE),
+    recouvrement = mean(recouvrement_PC1, na.rm = TRUE),
+    site = first(site)
+  ) %>% ungroup()
+
+# contrôle
+table(tab_sess$session, useNA = "ifany")
+head(tab_sess)
+
+# ---------------------------------------------------------
+# 3. Construire les historiques ch par individu et covariables individuelles
+# ---------------------------------------------------------
+hist_by_id <- tab_sess %>%
+  arrange(ID_ind, session) %>%
+  group_by(ID_ind) %>%
+  summarise(
+    ch = paste0(detection, collapse = ""),
+    site = first(site),
+    taille = mean(taille, na.rm = TRUE),
+    recouv = mean(recouvrement, na.rm = TRUE)
+  ) %>% ungroup()
+
+# retirer historiques NA et "000" (jamais vus)
+n_sessions <- length(unique(tab_sess$session))
+zero_ch <- paste(rep(0, n_sessions), collapse = "")
+histories_clean <- hist_by_id %>%
+  filter(!is.na(ch)) %>%
+  filter(ch != zero_ch)
+
+# vérifier que tous les ch ont la bonne longueur
+table(nchar(histories_clean$ch))
+
+# ---------------------------------------------------------
+# 4. Formatage des covariables individuelles et centrage
+# ---------------------------------------------------------
+histories_clean <- histories_clean %>%
+  mutate(
+    site = factor(site),
+    taille_c = as.numeric(scale(taille, center = TRUE, scale = FALSE)),
+    recouv_c = as.numeric(scale(recouv, center = TRUE, scale = FALSE))
+  )
+
+# ---------------------------------------------------------
+# 5. Construire la table time varying pour phenologie (ID_ind × session)
+# ---------------------------------------------------------
+tv_pheno <- tab_sess %>%
+  select(ID_ind, session, phenologie) %>%
+  mutate(phenologie = as.character(phenologie)) %>%
+  arrange(ID_ind, session)
+
+# compléter la grille si nécessaire (garantir une ligne par ID_ind × session)
+ids <- unique(tv_pheno$ID_ind)
+sessions <- sort(unique(tv_pheno$session))
+grid <- expand.grid(ID_ind = ids, session = sessions, stringsAsFactors = FALSE)
+tv_pheno_full <- grid %>%
+  left_join(tv_pheno, by = c("ID_ind", "session")) %>%
+  arrange(ID_ind, session)
+
+# ---------------------------------------------------------
+# 6. Préparer les données pour RMark
+# ---------------------------------------------------------
+histories_for_mark <- histories_clean %>%
+  rename(ID = ID_ind) %>%
+  select(ID, ch, site, taille_c, recouv_c)
+
+processed <- process.data(histories_for_mark, model = "CJS", groups = c("site"))
+ddl <- make.design.data(processed)
+
+# ---------------------------------------------------------
+# 7. Injecter phenologie dans ddl pour p et/ou Phi (time varying)
+# ---------------------------------------------------------
+# créer clés pour matcher
+key_tv <- paste(tv_pheno_full$ID_ind, tv_pheno_full$session, sep = "_")
+key_ddl_p <- paste(ddl$p$ID, ddl$p$time, sep = "_")
+ddl$p$phenologie <- tv_pheno_full$phenologie[match(key_ddl_p, key_tv)]
+
+# si tu veux phenologie pour Phi (survie entre t et t+1)
+key_ddl_Phi <- paste(ddl$Phi$ID, ddl$Phi$time, sep = "_")
+ddl$Phi$phenologie <- tv_pheno_full$phenologie[match(key_ddl_Phi, key_tv)]
+
+# contrôle des NA éventuels
+table(ddl$p$phenologie, useNA = "ifany")
+table(ddl$Phi$phenologie, useNA = "ifany")
+
+# ---------------------------------------------------------
+# 8. Jeu de modèles candidats
+# ---------------------------------------------------------
+models <- list()
+
+models$null <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~1),
+                      p   = list(formula = ~1)
+                    ))
+
+models$time <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~time),
+                      p   = list(formula = ~1)
+                    ))
+
+models$site <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~site),
+                      p   = list(formula = ~1)
+                    ))
+
+models$taille <- mark(processed, ddl,
+                      model.parameters = list(
+                        Phi = list(formula = ~taille_c),
+                        p   = list(formula = ~1)
+                      ))
+
+models$pheno_p <- mark(processed, ddl,
+                       model.parameters = list(
+                         Phi = list(formula = ~1),
+                         p   = list(formula = ~phenologie)
+                       ))
+
+models$comb <- mark(processed, ddl,
+                    model.parameters = list(
+                      Phi = list(formula = ~site + taille_c),
+                      p   = list(formula = ~phenologie)
+                    ))
+
+models$int <- mark(processed, ddl,
+                   model.parameters = list(
+                     Phi = list(formula = ~site * taille_c),
+                     p   = list(formula = ~phenologie)
+                   ))
+
+# ---------------------------------------------------------
+# 9. Comparaison des modèles et sélection
+# ---------------------------------------------------------
+model_list <- unlist(models, recursive = FALSE)
+mt <- model.table(model_list, use.lnl = FALSE)
+print(mt)
+
+# ---------------------------------------------------------
+# 10. Résultats du meilleur modèle et prédictions exemples
+# ---------------------------------------------------------
+best_name <- rownames(mt)[1]
+best_model <- model_list[[best_name]]
+cat("Meilleur modèle selon AICc :", best_name, "\n")
+summary(best_model)
+
+# prédiction Phi en fonction de taille pour le premier site
+newdata <- data.frame(
+  taille_c = seq(min(histories_for_mark$taille_c, na.rm = TRUE),
+                 max(histories_for_mark$taille_c, na.rm = TRUE), length = 50),
+  site = factor(levels(histories_for_mark$site)[1], levels = levels(histories_for_mark$site))
+)
+pred_phi <- predict(best_model, type = "Phi", newdata = newdata)
+plot_df <- data.frame(taille_c = newdata$taille_c,
+                      estimate = pred_phi$estimate,
+                      lcl = pred_phi$lcl,
+                      ucl = pred_phi$ucl)
+
+ggplot(plot_df, aes(x = taille_c, y = estimate)) +
+  geom_line() +
+  geom_ribbon(aes(ymin = lcl, ymax = ucl), alpha = 0.2) +
+  labs(x = "Taille centrée", y = "Survie apparente Phi") +
+  theme_minimal()
 
 ```
 
 ## --------------
+
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
 
 ```{r}
@@ -1848,3 +2073,4 @@ ms_model$results$real
 ```
 
 ## --------------
+
