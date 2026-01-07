@@ -2444,3 +2444,23 @@ m6 <- mark(
 models_list <- list(m6=m6)
 model.table(models_list)
 ```
+
+
+#TEST CRDMS 
+# Ajouter 0 au début et à la fin pour CRDMS
+time.intervals_crdms <- c(0, rep(1, T - 1), 0)
+
+processed_crdms <- process.data(histories_rmark,
+                                model = "CRDMS",
+                                time.intervals = time.intervals_crdms,
+                                strata.labels = states)
+
+# 12. design data
+ddl_crdms <- make.design.data(processed_crdms)
+
+# Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
+m1_crdms <- mark(processed_crdms, ddl_crdms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~ stratum),
+  Psi = list(formula = ~1)
+))
