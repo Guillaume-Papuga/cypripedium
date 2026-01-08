@@ -23,7 +23,7 @@ knitr::opts_chunk$set(
 
 # Chargement des packages
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 library(MuMIn)        # sélection de modèles, AICc, multimodel inference
 
 library(tidyverse)
@@ -53,8 +53,6 @@ library(RMark)        # modèles capture-marquage-recapture (interface MARK)
 library(DiagrammeR)   # graphes et diagrammes (flowcharts, DAG)
 library(rstatix)      # Tables propres
 
-
-
 ```
 
 # --------------------------------------------------
@@ -66,28 +64,37 @@ library(rstatix)      # Tables propres
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
 
 ### Tableau : recouvrement
+Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : 
+- strate muscinale
+- strate herbacée < à 1m de hauteur
+- strate arbustive basse entre 1 et 3m de hauteur
+- strate arbustive haute entre 3 et 7m de hauteur
+- strate arborescente > à 7m de hauteur
 
-```{r}
+```{r, message=FALSE, echo=FALSE}
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
-unique(recouvrement$Site)
+#Premières lignes du tableau pour lecteur
+head(recouvrement)
 ```
 
 ### Tableau : détections individuelles
+Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe.
+Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
 
-```{r}
+```{r, message=FALSE, echo=FALSE}
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
 
-# Certains noms des sites ont des espaces invisibles, correction : 
-unique(verification$site)
+# Certains noms des sites ont des espaces invisibles, correction :
 verification$site <- trimws(verification$site)
-unique(verification$site)
+
+#Premières lignes du tableau pour lecteur
+head(verification)
 ```
 
 ### Tableau : taille et phénologie vérifiées
-
-```{r}
+Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour chaque individu la phénologie et la taille ont été renseigné par session, le nombre de fleurs et de fruits et la présence de prédation ont aussi été renseignés.
+```{r, message=FALSE, echo=FALSE}
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
-unique(data_original$site)
 
 # Certains noms contiennent des accents non pris en charge
 data_original <- data_original %>% 
@@ -99,26 +106,38 @@ data_original <- data_original %>%
     site == "Vigne au Renard" ~ "Vigne au Renard",
     site == "Val Clavin" ~ "Val Clavin"
   ))
-unique(data_original$site)
+
+#Premières lignes du tableau pour lecteur
+head(data_original)
 ```
 
 ### Tableau : autonotation des observateurs
+Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique :
+- Question A : Niveau de connaissances naturalistes, hors botanique
+- Question B : Niveau de connaissances en botanique
+- Question C : Niveau d'expérience pratique du suivi de l’espèce
+- Question D : Niveau de connaissances théoriques de l’espèce
+- Question E : Niveau de connaissance pratique des sites d’étude
+- Question F : Liste des sites d’étude connus
+Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
 
-```{r}
+```{r, message=FALSE, echo=FALSE}
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
 
-# Pour les analyses suivantes nous avons rajouté la colonne sexe : 
+# Pour les analyses suivantes nous avons rajouté la colonne sexe à partir des informations trouvées sur internet:
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
 
+#Premières lignes du tableau pour lecteur
+head(experience)
 ```
 
 # --------------------------------------------------
 
 # Compilation tableau complet
 
-Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul.
+Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul tableau récapitulatif.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 
 # Ajouter une colonne d'identifiant individuel en ajoutant la session
   ## Pour le tableau "vérification" des observateurs
@@ -394,7 +413,7 @@ tab_complet <- tab_complet %>%
 
 Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau « recouvrement » contenant les différentes strates.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Extraire la partie quadrat de tab_complet (tout avant le dernier point)
 tab_complet <- tab_complet %>%
   mutate(
@@ -637,6 +656,10 @@ ggplot(emm_site_df, aes(
 pairs(emm_site)
 
 ```
+
+
+
+
 
 ## I_i Relation taille et phénologie
 
@@ -1675,6 +1698,13 @@ tab_complet <- tab_complet %>%
 
 glmm_final <- glmer(
   detection ~ site * session + taille_sc + phenologie_verif + recouvrement_PC1 + recouvrement_PC2 + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
+  data = tab_complet,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+)
+
+glmm_final <- glmer(
+  detection ~ site * session + phenologie_verif + recouvrement_PC1 + recouvrement_PC2 + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat) + (1|taille_sc),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
