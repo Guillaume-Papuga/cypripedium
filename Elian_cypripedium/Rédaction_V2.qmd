@@ -499,6 +499,9 @@ L’analyse factorielle discriminante (AFD) est une méthode statistique qui per
 
 Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuvent être distingués en fonction de la structure de la végétation, décrite par les recouvrements des différentes strates (muscinale, herbacée, arbustive et arborescente). L’objectif est donc de vérifier si chaque site présente une signature de recouvrement particulière et d’identifier quelles strates contribuent le plus à cette différenciation.
 
+### RDA
+
+Suppose une variable réponse continue et des relations linéaires
 ```{r}
 # -------------------------------
 # Analyse Factorielle Discriminante (AFD)
@@ -581,6 +584,72 @@ Le tableau des coefficients standardisés sur les trois premières fonctions dis
 Le tableau des coordonnées des sites sur les trois premières fonctions discriminantes montre la position de chaque site dans l’espace discriminant défini par les strates. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative, ce qui reflète des différences spécifiques sur les strates associées à cet axe.
 
 Dans l’ensemble, ces résultats montrent que la structuration de la végétation permet de discriminer partiellement certains sites. Certains sites sont nettement distincts, tandis que d’autres se rapprochent, illustrant des similarités écologiques. L’AFD met ainsi en évidence que les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
+
+### Régression Multinomiale
+
+```{r}
+# Regression multinomiale
+
+#modèle statistique utilisé quand la variable réponse est catégorielle avec 
+#plus de deux catégories, sans ordre naturel entre elles.
+#phénologie est un état discret, non ordonné, avec plusieurs modalités.
+
+#On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
+
+library(nnet)
+
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = tab_complet
+)
+summary(mod_pheno)
+
+
+# Extraction
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction pour étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Construction du tableau
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+library(knitr)
+library(kableExtra)
+
+kable(tableau, format = "html", booktabs = TRUE,
+      caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu :
+Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles.
+Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits.
+Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés.
+Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
+
+La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
 
 ## --------------
 
@@ -733,7 +802,6 @@ ggplot(pheno_stats, aes(x = pheno, y = n, fill = session)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "right")
 ```
-
 
 ## --------------
 
@@ -1561,7 +1629,7 @@ check_sessions %>%
 
 ```
 
-#RMARK 
+#RMARK
 
 ```{r}
 # ---------------------------------------------------------
@@ -2093,7 +2161,9 @@ ms_model$results$real
 ```
 
 ## --------------
+
 #TEST RMARK CRDMS
+
 ```{r}
 #Faire le tableau propre
 verification %>%
@@ -2257,9 +2327,10 @@ summary(model_ms)
 
 ```
 
-Résultat correcte pour A et B et pour D et E résultats completement aberrants 
+Résultat correcte pour A et B et pour D et E résultats completement aberrants
 
-#Autres modèles 
+#Autres modèles
+
 ```{r}
 
 # 5. lancer modèles parcimonieux (Multistrata)
@@ -2287,6 +2358,7 @@ model.table(models)
 
 
 ```
+
 #Prendre le recouvrement en compte
 
 ```{r}
@@ -2445,22 +2517,14 @@ models_list <- list(m6=m6)
 model.table(models_list)
 ```
 
+#TEST CRDMS \# Ajouter 0 au début et à la fin pour CRDMS time.intervals_crdms \<- c(0, rep(1, T - 1), 0)
 
-#TEST CRDMS 
-# Ajouter 0 au début et à la fin pour CRDMS
-time.intervals_crdms <- c(0, rep(1, T - 1), 0)
-
-processed_crdms <- process.data(histories_rmark,
-                                model = "CRDMS",
-                                time.intervals = time.intervals_crdms,
-                                strata.labels = states)
+processed_crdms \<- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
 
 # 12. design data
-ddl_crdms <- make.design.data(processed_crdms)
+
+ddl_crdms \<- make.design.data(processed_crdms)
 
 # Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
-m1_crdms <- mark(processed_crdms, ddl_crdms, model.parameters = list(
-  S   = list(formula = ~1),
-  p   = list(formula = ~ stratum),
-  Psi = list(formula = ~1)
-))
+
+m1_crdms \<- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
