@@ -5,6 +5,16 @@ editor: visual
 execute-dir: project
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE, 
+  echo = FALSE
+)
+#ce code permet de n'afficher aucun message parasite ni les warnings. 
+
+```
+
 # -------------------------------
 
 # INTRODUCTION
@@ -19,7 +29,9 @@ library(MuMIn)        # sélection de modèles, AICc, multimodel inference
 library(tidyverse)
 
 library(ggalluvial)   # diagrammes alluviaux (transitions, flux entre catégories)
-library(lme4)
+library(lme4) #modèle mixtes
+
+library(emmeans) #prédictions de modèles linéaires
 
 library(stats)
 library(plotly)
@@ -40,6 +52,8 @@ library(car)          # diagnostics de modèles (VIF, tests de type II/III)
 library(RMark)        # modèles capture-marquage-recapture (interface MARK)
 library(DiagrammeR)   # graphes et diagrammes (flowcharts, DAG)
 library(rstatix)      # Tables propres
+
+
 
 ```
 
@@ -104,7 +118,7 @@ experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f"
 
 Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul.
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Ajouter une colonne d'identifiant individuel en ajoutant la session
   ## Pour le tableau "vérification" des observateurs
@@ -380,7 +394,7 @@ tab_complet <- tab_complet %>%
 
 Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau « recouvrement » contenant les différentes strates.
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 # Extraire la partie quadrat de tab_complet (tout avant le dernier point)
 tab_complet <- tab_complet %>%
   mutate(
@@ -429,6 +443,200 @@ Avant de commencer des analyses complexes, difficiles à interpréter ou qui fou
 # I\_ Analyse générale
 
 ## --------------
+
+## Ajout Galad modèle taille
+
+```{r}
+data_original_obs
+unique(data_original_obs$phenologie_verif)
+
+#On repart de tableau vérificatrices avec la taille et la phénologie par session passée sur une colomne et colomne session ajoutée
+#On enlève phénologie NA 
+data_taille <- data_original_obs %>% 
+  filter(!is.na(phenologie_verif))
+
+#On vérifie que l'on a l'info sur toutes les tailles
+data_taille %>% 
+  filter(is.na(taille))
+
+#passer donnée taille caractères en numérique
+data_taille <- data_taille %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille))
+  )
+#distribution variable réponse taille
+ggplot(data=data_taille, aes(x= taille))+
+  geom_histogram()
+#Plus ou moins une loi de poisson
+#Comme variable taille est continue on va utiliser une loi de poisson
+
+#Enlever les taille = à 0 qui vont faie planter le modèle
+any(data_taille$taille <= 0)
+
+data_taille <- data_taille %>% 
+  filter(!taille<=0)
+#6 individus de perdus
+
+#Mettre les variables explicatives en facteur
+data_taille$phenologie_verif <- factor(data_taille$phenologie_verif)
+data_taille$site <- factor(data_taille$site)
+data_taille$session <- factor(data_taille$session)
+data_taille$ID_ind <- factor(data_taille$ID_ind)
+data_taille$ID_quadrat <- factor(data_taille$ID_quadrat)
+
+#Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
+
+mod_glmm_gamma <- glmer(
+  taille ~ phenologie_verif + site * session + (1 | ID_ind) + (1|ID_quadrat),
+  family = Gamma(link = "log"),
+  data = data_taille
+)
+
+summary(mod_glmm_gamma)
+Anova(mod_glmm_gamma, type = 3)
+
+#prédictions du modèle
+emm <- emmeans(
+  mod_glmm_gamma,
+  ~ session * phenologie_verif | site,
+  type = "response"
+)
+
+#préparation graphique
+emm_df <- as.data.frame(emm)
+
+emm_df$phenologie_verif <- factor(
+  emm_df$phenologie_verif,
+  levels = c("juv", "non_fleuri", "fleur", "fruit", "fleurs_fanees")
+)
+
+#graphique avec tous les effets
+ggplot(emm_df, aes(
+  x = session,
+  y = response,
+  fill = phenologie_verif
+)) +
+  geom_col(
+    position = position_dodge(width = 0.9),
+    color = "black"
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    position = position_dodge(width = 0.9),
+    width = 0.2
+  ) +
+  facet_wrap(~ site) +
+  labs(
+    x = "Session",
+    y = "Taille prédite",
+    fill = "Phénologie"
+  ) +
+  theme_minimal()
+
+#Effet propre de la session toute phénologie et tout site confondu (=prédiction marginale)
+emm_session <- emmeans(
+  mod_glmm_gamma,
+  ~ session,
+  type = "response"
+)
+
+emm_session
+
+emm_session_df <- as.data.frame(emm_session)
+
+ggplot(emm_session_df, aes(
+  x = session,
+  y = response
+)) +
+  geom_col(
+    fill = "grey70",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Session",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la session sur la taille"
+  ) +
+  theme_minimal()
+
+pairs(emm_session)
+
+#Effet propre de la phénologie toute session et tout site confondu (=prédiction marginale)
+emm_phenologie <- emmeans(
+  mod_glmm_gamma,
+  ~ phenologie_verif,
+  type = "response"
+)
+
+emm_phenologie
+
+emm_phenologie_df <- as.data.frame(emm_phenologie)
+emm_phenologie_df$phenologie_verif <- factor(
+  emm_phenologie_df$phenologie_verif,
+  levels = c("juv", "non_fleuri", "fleur", "fruit", "fleurs_fanees")
+)
+
+ggplot(emm_phenologie_df, aes(
+  x = phenologie_verif,
+  y = response
+)) +
+  geom_col(
+    fill = "skyblue",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Phénologie",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la phénologie sur la taille"
+  ) +
+  theme_minimal()
+
+pairs(emm_phenologie)
+
+#Effet propre du site toute phénologie et toute session confondu (=prédiction marginale)
+emm_site <- emmeans(
+  mod_glmm_gamma,
+  ~ site,
+  type = "response"
+)
+
+emm_site
+
+emm_site_df <- as.data.frame(emm_site)
+
+ggplot(emm_site_df, aes(
+  x = site,
+  y = response
+)) +
+  geom_col(
+    fill = "grey70",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Session",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la session sur la taille"
+  ) +
+  theme_minimal()
+
+pairs(emm_site)
+
+```
 
 ## I_i Relation taille et phénologie
 
@@ -502,6 +710,7 @@ Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuven
 ### RDA
 
 Suppose une variable réponse continue et des relations linéaires
+
 ```{r}
 # -------------------------------
 # Analyse Factorielle Discriminante (AFD)
@@ -587,8 +796,8 @@ Dans l’ensemble, ces résultats montrent que la structuration de la végétati
 
 ### Régression Multinomiale
 
-modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités.
-On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
+modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
+
 ```{r}
 library(nnet)
 
@@ -637,11 +846,8 @@ kable(tableau, format = "html", booktabs = TRUE,
       caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
-Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu :
-Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles.
-Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits.
-Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés.
-Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
+
+Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
 
 La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
 
@@ -1411,12 +1617,8 @@ recouvrement_num <- tab_complet %>%
 # Vérifier
 str(recouvrement_num)
 
-pca <- prcomp(recouvrement_num, scale. = TRUE)
-acp1 <- dudi.pca(recouvrement_num, scale=T,  scannf=F, nf=4)
-scatter(acp1)
-# Ajouter la première composante à ton tableau original
-tab_complet$recouvrement_PC1 <- pca$x[,1]
-tab_complet$recouvrement_PC1v2 <- acp1$li[,1]
+acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
+
 #Calcul des % de chaque axe :
 pc<-round(acp1$eig/sum(acp1$eig)*100,2)
 pc
@@ -1430,48 +1632,211 @@ barplot(acp1$eig)
 ###Graphique de l'ACP####
 s.corcircle(acp1$co, xax=1, yax=2, box = F, clabel = 0.5) 
 
-# GLM
+# Ajouter la première et deuxième composante au tableau
+tab_complet$recouvrement_PC1 <- acp1$li[,1]
+tab_complet$recouvrement_PC2 <- acp1$li[,2]
 
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
-    (1 | ID_ind),
-  data = tab_complet,
-  family = binomial
-)
-
-table(tab_complet$detection)
-
-tab_complet <- tab_complet %>%
+# préparation variables pour GLMM
+tab_complet <- tab_complet %>% 
   mutate(
-    site = factor(site),
-    session = factor(session),
-    phenologie_verif = factor(phenologie_verif)
+    site = as.factor(site),
+    session = as.factor(session),
+    phenologie_verif = as.factor(phenologie_verif),
+    taille = as.numeric(gsub(",", ".", taille)),
+    ID_ind <- as.factor(ID_ind)
+  )
+str(tab_complet)
+
+#Standardiser la taille sinon ça ne marche pas
+tab_complet$taille_sc <- scale(tab_complet$taille)
+
+tab_complet$ID_quadrat <- as.factor(tab_complet$ID_quadrat)
+
+tx_erreur <- tab_complet %>% 
+  group_by(observateur) %>% 
+  summarise(
+    nb_ind = n(),
+    nb_detect = sum(detection, na.rm = TRUE),
+    tx_detect = nb_detect / nb_ind
   )
 
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_grp = case_when(
-      phenologie_verif %in% c("fleur", "fleurs_fanees", "fruit") ~ "reproductif",
-      phenologie_verif %in% c("juv", "non_fleuri") ~ "vegetatif",
-      TRUE ~ "0"
-    ),
-    phenologie_grp = factor(phenologie_grp)
+tab_complet <- tab_complet %>% 
+  left_join(
+    tx_erreur,
+    by = "observateur"
   )
 
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + phenologie_grp +
-    (1 | ID_ind),
+experience_final <- experience %>% 
+  mutate(observateur = Observateur) %>% 
+  dplyr::select(observateur, risque_erreur)
+
+tab_complet <- tab_complet %>% 
+  left_join(experience_final, by = "observateur")
+
+glmm_final <- glmer(
+  detection ~ site * session + taille_sc + phenologie_verif + recouvrement_PC1 + recouvrement_PC2 + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
 )
-table(tab_complet$site, tab_complet$session)
-table(tab_complet$phenologie_verif, tab_complet$session)
 
-table(tab_complet$ID_ind)
+summary(glmm_final)
+Anova(glmm_final, type = 3)
 
-summary(glm_model)       # coefficients, significativité
-anova(glm_model, test="Chisq")
+#prédictions marginales du modèle
+
+#Pour l'axe 1 de l'ACP
+emm_PC1 <- emmeans(
+  glmm_final,
+  ~ recouvrement_PC1,
+  at = list(
+    recouvrement_PC1 = seq(
+      min(tab_complet$recouvrement_PC1, na.rm = TRUE),
+      max(tab_complet$recouvrement_PC1, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_PC1_df <- as.data.frame(emm_PC1)
+
+ggplot(emm_PC1_df, aes(x = recouvrement_PC1, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Gradient de fermeture du milieu (axe 2 ACP)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour l'axe 2 de l'ACP
+emm_PC2 <- emmeans(
+  glmm_final,
+  ~ recouvrement_PC2,
+  at = list(
+    recouvrement_PC2 = seq(
+      min(tab_complet$recouvrement_PC2, na.rm = TRUE),
+      max(tab_complet$recouvrement_PC2, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_PC2_df <- as.data.frame(emm_PC2)
+
+ggplot(emm_PC2_df, aes(x = recouvrement_PC2, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Gradient de fermeture du milieu (axe 2 ACP)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour le risque d'erreur lié à l'autonotation
+emm_risque_erreur <- emmeans(
+  glmm_final,
+  ~ risque_erreur,
+  at = list(
+    risque_erreur = seq(
+      min(tab_complet$risque_erreur, na.rm = TRUE),
+      max(tab_complet$risque_erreur, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
+
+ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Risque d'erreur (basé sur autonotation des observateurs",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour la taille
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_taille <- attr(tab_complet$taille_sc, "scaled:center")
+sd_taille <- attr(tab_complet$taille_sc, "scaled:scale")
+mu_taille
+sd_taille
+
+emm_taille <- emmeans(
+  glmm_final,
+  ~ taille_sc,
+  at = list(
+    taille_sc = seq(
+      min(tab_complet$taille_sc, na.rm = TRUE),
+      max(tab_complet$taille_sc, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_taille_df <- as.data.frame(emm_taille)
+
+emm_taille_df$taille_reelle <-
+  emm_taille_df$taille_sc * sd_taille + mu_taille
+
+ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Taille des individus (cm)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#Pour l'interaction session x site
+emm_site_session <- emmeans(
+  glmm_final,
+  ~ site * session,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_site_session_df <- as.data.frame(emm_site_session)
+
+ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",
+    fill = "Session",
+    title = "Probabilité marginale de détection par site et session"
+  ) +
+  theme_classic(base_size = 14)
+
+#Pour le stade phénologique
+emm_phenologie <- emmeans(
+  glmm_final,
+  ~ phenologie_verif,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_phenologie_df <- as.data.frame(emm_phenologie)
+
+ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",,
+    title = "Probabilité marginale de détection par stade phénologique"
+  ) +
+  theme_classic(base_size = 14)
+
 
 ```
 
@@ -1479,33 +1844,195 @@ anova(glm_model, test="Chisq")
 
 ```{r}
 
+# #Dredge ne fonctionne pas avec NA
+# vars <- c("detection", "site", "session", "taille_sc",
+#           "phenologie_verif", "recouvrement_PC1", "ID_ind")
+# 
+# tab_dredge <- tab_complet[complete.cases(tab_complet[, vars]), ]
+# 
+# #modèle complet
+# glmm_global <- glmer(
+#   detection ~ site + session + site:session + taille_sc + phenologie_verif + recouvrement_PC1 +
+#     (1 | ID_ind),
+#   data = tab_dredge,
+#   family = binomial,
+#   control = glmerControl(optimizer = "bobyqa",
+#                          optCtrl = list(maxfun = 2e5))
+# )
+# 
 # # Autoriser MuMIn à travailler avec glmer
 # options(na.action = "na.fail")
 # 
-# #modèle complet
-# glm_model <- glmer(
-#   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
-#     (1 | ID_ind) + (1 | id_quadrat_fin),
-#   data = tab_complet,
-#   family = binomial
-# )
-# 
 # # Sélection de modèle (toutes combinaisons de variables fixes)
-# model_set <- dredge(glm_model, trace = TRUE)
+# model_set <- dredge(glmm_global, trace = TRUE)
 # 
 # # Afficher les modèles triés par AICc
 # model_set
 # 
-# # Optionnel : extraire les meilleurs modèles avec delta AICc < 2
-# best_models <- get.models(model_set, subset = delta < 2)
+# model_set_df <- as.data.frame(model_set)
 # 
-# # Afficher le résumé du meilleur modèle
-# summary(best_models[[1]]) 
+# write.csv(
+#   model_set_df,
+#   file = "selection.csv",
+#   row.names = FALSE
+# )
+
+```
+
+## V_ii Détection de la phénologie
+
+```{r}
+unique(tab_complet$phenologie)
+unique(tab_complet$phenologie_verif)
+
+#création tableau
+detect_comp <- tab_complet %>% 
+  ungroup() %>% 
+  filter(detection == 1) %>% #on ne garde que les individus détectés par les observateurs
+  select(id_ind_fin,session,site,quadrat,marquage,phenologie_verif,phenologie)
+
+
+unique(detect_comp$phenologie)
+unique(detect_comp$phenologie_verif) #toujours des NA avec phénologie superviseuses
+
+detect_comp %>% 
+  filter(is.na(phenologie_verif))
+#deux pheno non observées par superviseuses
+tab_complet %>% 
+  filter(id_ind_fin == "VC.Q4.45.3")
+#Vu par un observateur/6
+
+tab_complet %>% 
+  filter(id_ind_fin == "VC.Q4.19.3")
+#Vu par un observateur/6
+
+#j'enlève ces deux individus des analyses
+detect_comp <- detect_comp %>% 
+  filter(!is.na(phenologie_verif))
+
+#matrice de confusion
+conf_mat <- table(
+  phenologie_verif = tab_complet$phenologie_verif,
+  phenologie = tab_complet$phenologie
+)
+
+conf_mat
+
+#Version proportions
+prop_conf_mat <- prop.table(conf_mat, margin = 1)
+
+prop_conf_mat
+
+#Transformer matrices en data frame
+conf_df <- as.data.frame(conf_mat)
+prop_df <- as.data.frame(prop_conf_mat)
+
+# Renommage explicite (évite TOUS les bugs)
+names(conf_df) <- c("phenologie_verif", "phenologie", "n")
+names(prop_df) <- c("phenologie_verif", "phenologie", "prob")
+
+#Tableau graphique
+heat_df <- conf_df %>%
+  left_join(prop_df,
+            by = c("phenologie_verif", "phenologie")) %>%
+  mutate(
+    correct = phenologie_verif == phenologie,
+    signed_prob = ifelse(correct, prob, -prob)
+  )
+
+#standardisation de mes probas pour que ça rende joli sur le graphique
+heat_df <- heat_df %>%
+  mutate(
+    signed_prob_scaled = case_when(
+      correct ~ prob / max(prob[correct]),               # 0 → 1 pour les bons
+      !correct ~ -prob / max(prob[!correct])              # 0 → -1 pour les erreurs
+    )
+  )
+
+#Heat map avec le nombre d'observations
+ggplot(heat_df,
+       aes(x = phenologie, y = phenologie_verif)) +
+  
+  geom_tile(aes(fill = signed_prob_scaled)) +
+  
+  geom_text(aes(label = n), size = 4, color = "black") +
+  
+  scale_fill_gradient2(
+    low = "darkred",
+    mid = "white",
+    high = "darkgreen",
+    midpoint = 0,
+    limits = c(-1, 1),
+    name = "Qualité d'observation\n(échelle relative)"
+  ) +
+  
+  labs(
+    x = "Phénologie observée",
+    y = "Phénologie vérifiée",
+    title = "Matrice de confusion – phénologie Sabot de Vénus",
+    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank()
+  )
+
+#Heat map avec les proportions
+ggplot(heat_df,
+       aes(x = phenologie, y = phenologie_verif)) +
+  
+  geom_tile(aes(fill = signed_prob_scaled)) +
+  
+  geom_text(aes(label = round(prob,2)), size = 4, color = "black") +
+  
+  scale_fill_gradient2(
+    low = "darkred",
+    mid = "white",
+    high = "darkgreen",
+    midpoint = 0,
+    limits = c(-1, 1),
+    name = "Qualité d'observation\n(échelle relative)"
+  ) +
+  
+  labs(
+    x = "Phénologie observée",
+    y = "Phénologie vérifiée",
+    title = "Matrice de confusion – phénologie Sabot de Vénus",
+    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank()
+  )
+
+#Si on veut faire la même chose par sites
+conf_par_site <- tab_complet %>%
+  group_by(site) %>%
+  summarise(
+    conf = list(table(phenologie_verif, phenologie)),
+    .groups = "drop"
+  )
+
+prop.table(conf_par_site$conf[[1]], margin = 1)
+prop.table(conf_par_site$conf[[2]], margin = 1)
+prop.table(conf_par_site$conf[[3]], margin = 1)
+prop.table(conf_par_site$conf[[4]], margin = 1)
+prop.table(conf_par_site$conf[[5]], margin = 1)
+
+
+
+
 
 ```
 
 # --------------------------------------------------
+
 # CMR
+
 ## --------------
 
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
@@ -1856,7 +2383,7 @@ ms_model$results$real
 
 ## --------------
 
-#TEST RMARK 
+#TEST RMARK
 
 ```{r}
 #Faire le tableau propre
@@ -2000,6 +2527,7 @@ states <- c("A","B","C","D","E")   # adapte si tu as d'autres états
 ```
 
 # Multistrata
+
 ```{r}
 processed_ms <- process.data(histories_for_mark, model = "Multistrata",
                              time.intervals = time.intervals,
@@ -2210,14 +2738,14 @@ models_list <- list(m6=m6)
 model.table(models_list)
 ```
 
-# CRDMS 
+# CRDMS
 
-processed_crdms <- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
+processed_crdms \<- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
 
 # 12. design data
 
-ddl_crdms <- make.design.data(processed_crdms)
+ddl_crdms \<- make.design.data(processed_crdms)
 
 # Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
 
-m1_crdms <- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
+m1_crdms \<- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
