@@ -587,15 +587,9 @@ Dans l’ensemble, ces résultats montrent que la structuration de la végétati
 
 ### Régression Multinomiale
 
+modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités.
+On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
 ```{r}
-# Regression multinomiale
-
-#modèle statistique utilisé quand la variable réponse est catégorielle avec 
-#plus de deux catégories, sans ordre naturel entre elles.
-#phénologie est un état discret, non ordonné, avec plusieurs modalités.
-
-#On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
-
 library(nnet)
 
 mod_pheno <- multinom(
@@ -1418,7 +1412,7 @@ recouvrement_num <- tab_complet %>%
 str(recouvrement_num)
 
 pca <- prcomp(recouvrement_num, scale. = TRUE)
-acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
+acp1 <- dudi.pca(recouvrement_num, scale=T,  scannf=F, nf=4)
 scatter(acp1)
 # Ajouter la première composante à ton tableau original
 tab_complet$recouvrement_PC1 <- pca$x[,1]
@@ -1511,307 +1505,7 @@ anova(glm_model, test="Chisq")
 ```
 
 # --------------------------------------------------
-
 # CMR
-
-```{r}
-unique(tab_complet$phenologie_verif)
-#Transformer lignes phenologie ayant des NA en 0
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_verif = replace_na(phenologie_verif, "0")
-  )
-
-#Faire la même chose avec les tailles
-tab_complet <- tab_complet %>%
-  mutate(
-    taille = as.numeric(gsub(",", ".", taille)),
-    taille = replace_na(taille, 0)
-  )
-
-#Regarder le nombre d'observateurs par quadra
-tab_obs <- tab_complet %>% 
-  group_by(id_quadrat_fin, observateur) %>% 
-  summarise(n = 1, .groups = "drop") %>% 
-  ungroup()
-
-#Regarder le nombre de quadra observés par observateur
-tab_obs2 <- tab_obs %>% 
-  group_by(observateur) %>% 
-  summarise(nb_quadra = n()) %>% 
-  arrange(desc(nb_quadra))
-  
-#Regarder le nombre d'observations par quadra
-tab_obs_tot <- tab_obs %>% 
-  group_by(id_quadrat_fin) %>% 
-  summarise(nb_obs = n()) %>% 
-  ungroup()
-
-#Regarder pourcentages d'observations
-nb_obs <- tab_obs_tot %>% 
-  count(nb_obs) %>% 
-  mutate(pourcentage = round((n * 100) / sum(n), 2))
-
-nb_obs
-#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
-
-#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
-enlever <- tab_obs_tot %>% 
-  filter(nb_obs <5)
-enlever
-#quadra à enlever :
-# TCb.Q9.2
-# TCb.Q7.2
-# CM.Q7.2
-Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
-
-#extraire informations quadra avec 5 et 6 obs
-tab_obs_tot_5obs <- tab_obs_tot %>% 
-  filter(nb_obs == 5)
-
-tab_obs_tot_6obs <- tab_obs_tot %>% 
-  filter(nb_obs == 6)
-
-#Transvaser ces infos dans tableau complet
-tab_complet_5obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
-
-tab_complet_6obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
-
-#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
-#Extraire nb obs par observateur
-tab_complet_5obs <- tab_complet_5obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-tab_tmp <- tab_complet_6obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-#Garder 5 observations par individu/session/quadra/site
-tab_complet_5obs_6 <- tab_tmp %>%
-  group_by(id_ind_fin) %>%
-  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
-  ungroup()
-
-#Vérification si nombre de lignes semble bon
-nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
-nrow(tab_complet_5obs_6)
-
-#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
-tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
-ind_av_filtrage <- nrow(tab_complet_final)
-
-#Enlever les trois quadra ayant été partiellement supprimés
-tab_complet_final <- tab_complet_final %>% 
-  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
-ind_ap_filtrage <- nrow(tab_complet_final)
-#pourcentage indiv perdus :
-(1-(ind_ap_filtrage/ind_av_filtrage))*100
-
-#Vérification histoires de capture
-verif_sessions <- tab_complet_final %>%
-  group_by(ID_ind) %>%
-  summarise(
-    nb_sessions = n_distinct(session),
-    sessions = paste(sort(unique(session)), collapse = ","),
-    .groups = "drop"
-  )
-
-check_sessions <- verif_sessions %>%
-  mutate(
-    ok_sessions = sessions == "1,2,3"
-  )
-
-check_sessions %>%
-  filter(!ok_sessions)
-
-
-
-```
-
-#RMARK
-
-```{r}
-# ---------------------------------------------------------
-# 2. Résumer par individu × session (une ligne par ID_ind × session)
-# ---------------------------------------------------------
-tab_sess <- tab_complet_final %>%
-  mutate(session = as.integer(session)) %>%
-  group_by(ID_ind, session) %>%
-  summarise(
-    detection = ifelse(
-      all(is.na(detection)),
-      NA_integer_,
-      max(as.integer(detection), na.rm = TRUE)
-    ),
-    phenologie = {
-      ph <- phenologie[!is.na(phenologie)]
-      if (length(ph) == 0) NA_character_ else ph[1]
-    },
-    taille = mean(taille, na.rm = TRUE),
-    recouvrement = if ("recouvrement_PC1" %in% names(cur_data()))
-      mean(recouvrement_PC1, na.rm = TRUE)
-      else NA_real_,
-    site = first(site),
-    .groups = "drop"
-  )
-# ---------------------------------------------------------
-# 3. Construire les historiques ch par individu et covariables individuelles
-# ---------------------------------------------------------
-hist_by_id <- tab_sess %>%
-  arrange(ID_ind, session) %>%
-  group_by(ID_ind) %>%
-  summarise(
-    ch = paste0(detection, collapse = ""),
-    site = first(site),
-    taille = mean(taille, na.rm = TRUE),
-    recouv = mean(recouvrement, na.rm = TRUE)
-  ) %>% ungroup()
-
-# retirer historiques NA et "000" (jamais vus)
-n_sessions <- length(unique(tab_sess$session))
-zero_ch <- paste(rep(0, n_sessions), collapse = "")
-histories_clean <- hist_by_id %>%
-  filter(!is.na(ch)) %>%
-  filter(ch != zero_ch)
-
-# vérifier que tous les ch ont la bonne longueur
-table(nchar(histories_clean$ch))
-
-# ---------------------------------------------------------
-# 4. Formatage des covariables individuelles et centrage
-# ---------------------------------------------------------
-histories_clean <- histories_clean %>%
-  mutate(
-    site = factor(site),
-    taille_c = as.numeric(scale(taille, center = TRUE, scale = FALSE)),
-    recouv_c = as.numeric(scale(recouv, center = TRUE, scale = FALSE))
-  )
-
-# ---------------------------------------------------------
-# 5. Construire la table time varying pour phenologie (ID_ind × session)
-# ---------------------------------------------------------
-tv_pheno <- tab_sess %>%
-  select(ID_ind, session, phenologie) %>%
-  mutate(phenologie = as.character(phenologie)) %>%
-  arrange(ID_ind, session)
-
-# compléter la grille si nécessaire (garantir une ligne par ID_ind × session)
-ids <- unique(tv_pheno$ID_ind)
-sessions <- sort(unique(tv_pheno$session))
-grid <- expand.grid(ID_ind = ids, session = sessions, stringsAsFactors = FALSE)
-tv_pheno_full <- grid %>%
-  left_join(tv_pheno, by = c("ID_ind", "session")) %>%
-  arrange(ID_ind, session)
-
-# ---------------------------------------------------------
-# 6. Préparer les données pour RMark
-# ---------------------------------------------------------
-histories_for_mark <- histories_clean %>%
-  rename(ID = ID_ind) %>%
-  select(ID, ch, site, taille_c, recouv_c)
-
-processed <- process.data(histories_for_mark, model = "Multistrata", groups = c("site"))
-ddl <- make.design.data(processed)
-
-# ---------------------------------------------------------
-# 7. Injecter phenologie dans ddl pour p et/ou Phi (time varying)
-# ---------------------------------------------------------
-# créer clés pour matcher
-key_tv <- paste(tv_pheno_full$ID_ind, tv_pheno_full$session, sep = "_")
-key_ddl_p <- paste(ddl$p$ID, ddl$p$time, sep = "_")
-ddl$p$phenologie <- tv_pheno_full$phenologie[match(key_ddl_p, key_tv)]
-
-# si tu veux phenologie pour Phi (survie entre t et t+1)
-key_ddl_Phi <- paste(ddl$Phi$ID, ddl$Phi$time, sep = "_")
-ddl$Phi$phenologie <- tv_pheno_full$phenologie[match(key_ddl_Phi, key_tv)]
-
-# contrôle des NA éventuels
-table(ddl$p$phenologie, useNA = "ifany")
-table(ddl$Phi$phenologie, useNA = "ifany")
-
-# ---------------------------------------------------------
-# 8. Jeu de modèles candidats
-# ---------------------------------------------------------
-models <- list()
-
-models$null <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~1),
-                      p   = list(formula = ~1)
-                    ))
-
-models$time <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~time),
-                      p   = list(formula = ~1)
-                    ))
-
-models$site <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~site),
-                      p   = list(formula = ~1)
-                    ))
-
-models$taille <- mark(processed, ddl,
-                      model.parameters = list(
-                        Phi = list(formula = ~taille_c),
-                        p   = list(formula = ~1)
-                      ))
-
-models$pheno_p <- mark(processed, ddl,
-                       model.parameters = list(
-                         Phi = list(formula = ~1),
-                         p   = list(formula = ~phenologie)
-                       ))
-
-models$comb <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~site + taille_c),
-                      p   = list(formula = ~phenologie)
-                    ))
-
-models$int <- mark(processed, ddl,
-                   model.parameters = list(
-                     Phi = list(formula = ~site * taille_c),
-                     p   = list(formula = ~phenologie)
-                   ))
-
-# ---------------------------------------------------------
-# 9. Comparaison des modèles et sélection
-# ---------------------------------------------------------
-model_list <- unlist(models, recursive = FALSE)
-mt <- model.table(model_list, use.lnl = FALSE)
-print(mt)
-
-# ---------------------------------------------------------
-# 10. Résultats du meilleur modèle et prédictions exemples
-# ---------------------------------------------------------
-best_name <- rownames(mt)[1]
-best_model <- model_list[[best_name]]
-cat("Meilleur modèle selon AICc :", best_name, "\n")
-summary(best_model)
-
-# prédiction Phi en fonction de taille pour le premier site
-newdata <- data.frame(
-  taille_c = seq(min(histories_for_mark$taille_c, na.rm = TRUE),
-                 max(histories_for_mark$taille_c, na.rm = TRUE), length = 50),
-  site = factor(levels(histories_for_mark$site)[1], levels = levels(histories_for_mark$site))
-)
-pred_phi <- predict(best_model, type = "Phi", newdata = newdata)
-plot_df <- data.frame(taille_c = newdata$taille_c,
-                      estimate = pred_phi$estimate,
-                      lcl = pred_phi$lcl,
-                      ucl = pred_phi$ucl)
-
-ggplot(plot_df, aes(x = taille_c, y = estimate)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = lcl, ymax = ucl), alpha = 0.2) +
-  labs(x = "Taille centrée", y = "Survie apparente Phi") +
-  theme_minimal()
-
-```
-
 ## --------------
 
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
@@ -2162,7 +1856,7 @@ ms_model$results$real
 
 ## --------------
 
-#TEST RMARK CRDMS
+#TEST RMARK 
 
 ```{r}
 #Faire le tableau propre
@@ -2303,16 +1997,15 @@ time.intervals <- rep(1, as.integer(T) - 1)
 # Process data en Multistrata : indiquer les labels d'états présents
 # RMark attend : lettres pour états et "0" pour non-observé — c'est ton cas
 states <- c("A","B","C","D","E")   # adapte si tu as d'autres états
+```
+
+# Multistrata
+```{r}
 processed_ms <- process.data(histories_for_mark, model = "Multistrata",
                              time.intervals = time.intervals,
                              strata.labels = states)
 
 ddl_ms <- make.design.data(processed_ms)
-
-# Contrôle : colonnes disponibles
-names(ddl_ms$p)
-names(ddl_ms$S)
-names(ddl_ms$Psi)
 
 # Exemple de modèles simples
 S.const <- list(formula = ~1)                       # survie constante
@@ -2517,14 +2210,14 @@ models_list <- list(m6=m6)
 model.table(models_list)
 ```
 
-#TEST CRDMS \# Ajouter 0 au début et à la fin pour CRDMS time.intervals_crdms \<- c(0, rep(1, T - 1), 0)
+# CRDMS 
 
-processed_crdms \<- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
+processed_crdms <- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
 
 # 12. design data
 
-ddl_crdms \<- make.design.data(processed_crdms)
+ddl_crdms <- make.design.data(processed_crdms)
 
 # Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
 
-m1_crdms \<- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
+m1_crdms <- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
