@@ -52,6 +52,8 @@ library(car)          # diagnostics de modèles (VIF, tests de type II/III)
 library(RMark)        # modèles capture-marquage-recapture (interface MARK)
 library(DiagrammeR)   # graphes et diagrammes (flowcharts, DAG)
 library(rstatix)      # Tables propres
+library(nnet)         # Régression multionomiale
+library(kableExtra)   # Tableau propre
 
 ```
 
@@ -64,12 +66,8 @@ library(rstatix)      # Tables propres
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
 
 ### Tableau : recouvrement
-Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : 
-- strate muscinale
-- strate herbacée < à 1m de hauteur
-- strate arbustive basse entre 1 et 3m de hauteur
-- strate arbustive haute entre 3 et 7m de hauteur
-- strate arborescente > à 7m de hauteur
+
+Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : - strate muscinale - strate herbacée \< à 1m de hauteur - strate arbustive basse entre 1 et 3m de hauteur - strate arbustive haute entre 3 et 7m de hauteur - strate arborescente \> à 7m de hauteur
 
 ```{r, message=FALSE, echo=FALSE}
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
@@ -78,8 +76,8 @@ head(recouvrement)
 ```
 
 ### Tableau : détections individuelles
-Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe.
-Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
+
+Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe. Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
 
 ```{r, message=FALSE, echo=FALSE}
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
@@ -92,7 +90,9 @@ head(verification)
 ```
 
 ### Tableau : taille et phénologie vérifiées
+
 Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour chaque individu la phénologie et la taille ont été renseigné par session, le nombre de fleurs et de fruits et la présence de prédation ont aussi été renseignés.
+
 ```{r, message=FALSE, echo=FALSE}
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
 
@@ -112,14 +112,8 @@ head(data_original)
 ```
 
 ### Tableau : autonotation des observateurs
-Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique :
-- Question A : Niveau de connaissances naturalistes, hors botanique
-- Question B : Niveau de connaissances en botanique
-- Question C : Niveau d'expérience pratique du suivi de l’espèce
-- Question D : Niveau de connaissances théoriques de l’espèce
-- Question E : Niveau de connaissance pratique des sites d’étude
-- Question F : Liste des sites d’étude connus
-Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
+
+Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique : - Question A : Niveau de connaissances naturalistes, hors botanique - Question B : Niveau de connaissances en botanique - Question C : Niveau d'expérience pratique du suivi de l’espèce - Question D : Niveau de connaissances théoriques de l’espèce - Question E : Niveau de connaissance pratique des sites d’étude - Question F : Liste des sites d’étude connus Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
 
 ```{r, message=FALSE, echo=FALSE}
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
@@ -320,8 +314,8 @@ test <- nb_quadrat_manquant %>%
 
 str(tab_detection)
 
-# Pour le moment, j'ai un tableau avec tous les individus observés, mais je n'ai pas l'information sur les individus non observés par les observateurs.
-# Il me faut, à chaque fois, le nombre de quadrats observés par observateur pour pouvoir calculer le nombre d'observateurs par quadrat.
+# Pour le moment, on obtient un tableau avec tous les individus observés, mais sans l'information sur les individus non observés par les observateurs.
+# Il faut, à chaque fois, le nombre de quadrats observés par observateur pour pouvoir calculer le nombre d'observateurs par quadrat.
 
 verification_obs_quadrat <- verification %>% 
   mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
@@ -407,6 +401,7 @@ tab_complet <- tab_complet %>%
   ) %>% 
   dplyr::select(id_ind_fin,id_quadrat_fin, ID_quadrat, ID_ind,site, quadrat, marquage, session,observateur, detection, phenologie_verif, phenologie, adequation, adequation_reel, taille)
 
+
 ```
 
 ### Joindre des données supplémentaires
@@ -459,17 +454,21 @@ check_sessions %>%
 
 Avant de commencer des analyses complexes, difficiles à interpréter ou qui fournissent une compilation des informations, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets.
 
-# I\_ Analyse générale
+# I\_ Analyse générale avec modélisation
 
 ## --------------
 
-## Ajout Galad modèle taille
+## Modèle taille
+## --------------
 
-```{r}
+### Preparation de données
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+
 data_original_obs
 unique(data_original_obs$phenologie_verif)
 
-#On repart de tableau vérificatrices avec la taille et la phénologie par session passée sur une colomne et colomne session ajoutée
+#On repart de tableau vérificatrices avec la taille et la phénologie par session passée sur une colonne et colonne session ajoutée
 #On enlève phénologie NA 
 data_taille <- data_original_obs %>% 
   filter(!is.na(phenologie_verif))
@@ -478,7 +477,7 @@ data_taille <- data_original_obs %>%
 data_taille %>% 
   filter(is.na(taille))
 
-#passer donnée taille caractères en numérique
+#passer la taille en numérique
 data_taille <- data_taille %>%
   mutate(
     taille = as.numeric(gsub(",", ".", taille))
@@ -487,9 +486,9 @@ data_taille <- data_taille %>%
 ggplot(data=data_taille, aes(x= taille))+
   geom_histogram()
 #Plus ou moins une loi de poisson
-#Comme variable taille est continue on va utiliser une loi de poisson
+#Comme la variable taille est continue on va utiliser une loi de poisson
 
-#Enlever les taille = à 0 qui vont faie planter le modèle
+#Enlever les taille = à 0 qui vont faire planter le modèle
 any(data_taille$taille <= 0)
 
 data_taille <- data_taille %>% 
@@ -503,6 +502,12 @@ data_taille$session <- factor(data_taille$session)
 data_taille$ID_ind <- factor(data_taille$ID_ind)
 data_taille$ID_quadrat <- factor(data_taille$ID_quadrat)
 
+head(data_taille)
+```
+
+### Construction modèle
+
+```{r}
 #Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
 
 mod_glmm_gamma <- glmer(
@@ -521,13 +526,44 @@ emm <- emmeans(
   type = "response"
 )
 
+#tableau pour lecture
+emm_clean <- emm %>%
+  as.data.frame() %>%
+  select(site, phenologie_verif, session, response) %>%
+  mutate(response = round(response, 2)) %>%
+  pivot_wider(
+    names_from = session,
+    values_from = response,
+    names_prefix = "session_"
+  )
+
+emm_clean %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Prédictions du modèle par site, phénologie et session"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
+```
+
+Méthode d'interprétation : Ce tableau présente les tailles prédites par le modèle pour chaque combinaison de site, phénologie et session. Les valeurs correspondent aux prédictions moyennes, ce qui permet de comparer facilement l’évolution de la taille entre les sessions et entre les stades phénologiques. Des valeurs plus élevées indiquent des individus plus grands, et les différences entre colonnes (sessions) montrent comment la taille progresse au cours du temps.
+
+### Préparation Graphique
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
 #préparation graphique
 emm_df <- as.data.frame(emm)
 
 emm_df$phenologie_verif <- factor(
   emm_df$phenologie_verif,
-  levels = c("juv", "non_fleuri", "fleur", "fruit", "fleurs_fanees")
+  levels = c("juv", "non_fleuri", "fleur", "fleurs_fanees","fruit")
 )
+
+```
+
+## Effet Taille, Site, Phénologie, Session
+
+```{r}
 
 #graphique avec tous les effets
 ggplot(emm_df, aes(
@@ -550,16 +586,29 @@ ggplot(emm_df, aes(
     y = "Taille prédite",
     fill = "Phénologie"
   ) +
+  scale_fill_manual(values = c(
+    "juv"  = "#FF9999",
+    "non_fleuri" = "#FF4D4D",
+    "fleur"  = "#CC0000",
+      "fleurs_fanees"  = "#990000",
+"fruit"   = "#660000"
+  )) +
   theme_minimal()
+```
 
-#Effet propre de la session toute phénologie et tout site confondu (=prédiction marginale)
+Ce graphique montre que la taille prédite augmente clairement entre les sessions 1, 2 et 3, quel que soit le site ou le stade phénologique. Les individus en phases avancées de phénologie (fleurs fanées, fruits) sont systématiquement plus grands, et cette tendance est cohérente dans tous les sites.
+
+## Effet Session
+
+Effet propre de la session, toutes phénologies et tous sites confondus (prédiction marginale).
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 emm_session <- emmeans(
   mod_glmm_gamma,
   ~ session,
   type = "response"
 )
-
-emm_session
 
 emm_session_df <- as.data.frame(emm_session)
 
@@ -583,16 +632,38 @@ ggplot(emm_session_df, aes(
   ) +
   theme_minimal()
 
-pairs(emm_session)
+#tableau pour lecture
+tab <- pairs(emm_session) %>% 
+  as.data.frame() %>% 
+  mutate(
+    ratio   = round(ratio, 3),
+    SE      = round(SE, 4),
+    z.ratio = round(z.ratio, 2),
+    p.value = signif(p.value, 3)
+  )
 
-#Effet propre de la phénologie toute session et tout site confondu (=prédiction marginale)
+tab %>%
+  kbl(booktabs = TRUE, caption = "Contrastes entre sessions (EMMs)") %>%
+  kable_classic(full_width = FALSE)
+
+
+```
+
+Méthode d'interprétation : Ce tableau présente les contrastes entre sessions à partir des moyennes marginales estimées. Le ratio indique l’effet multiplicatif entre deux sessions : un ratio inférieur à 1 signifie que la première session a une valeur plus faible que la seconde. Le z‑ratio et la p‑value testent si cette différence est statistiquement significative. Les comparaisons avec p \< 0.05 sont considérées comme significatives.
+
+Résultats : Les comparaisons montrent que la session 1 a des valeurs significativement plus faibles que les sessions 2 et 3 (ratios \< 1 et p \< 0.001). La session 2 est également légèrement mais significativement plus faible que la session 3 (p = 0.0015). Les tailles prédites augmentent significativement donc d’une session à l’autre.
+
+## Effet Phénologie
+
+Effet propre de la phénologie, toutes sessions et tous sites confondus (prédiction marginale).
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 emm_phenologie <- emmeans(
   mod_glmm_gamma,
   ~ phenologie_verif,
   type = "response"
 )
-
-emm_phenologie
 
 emm_phenologie_df <- as.data.frame(emm_phenologie)
 emm_phenologie_df$phenologie_verif <- factor(
@@ -620,16 +691,36 @@ ggplot(emm_phenologie_df, aes(
   ) +
   theme_minimal()
 
-pairs(emm_phenologie)
+#tableau pour lecture
+tab <- pairs(emm_phenologie) %>% 
+  as.data.frame() %>% 
+  mutate(
+    ratio   = round(ratio, 3),
+    SE      = round(SE, 4),
+    z.ratio = round(z.ratio, 2),
+    p.value = signif(p.value, 3)
+  )
 
-#Effet propre du site toute phénologie et toute session confondu (=prédiction marginale)
+tab %>%
+  kbl(booktabs = TRUE, caption = "Contrastes entre phénologie (EMMs)") %>%
+  kable_classic(full_width = FALSE)
+
+```
+Méthode d'interprétation : Ce tableau compare les tailles prédites entre les différents stades phénologiques. Le ratio indique combien la première catégorie est plus grande (ratio > 1) ou plus petite (ratio < 1) que la seconde. Les valeurs de p montrent si ces différences sont statistiquement significatives. Les contrastes avec p < 0.05 révèlent des différences nettes entre phénologies, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires entre stades.
+
+Résultats : Les contrastes montrent une progression nette de la taille au cours de la phénologie. Les stades juvénile et non fleuri sont significativement plus petits que tous les stades floraux et post‑floraux. En revanche, les stades fleur, fleurs fanées et fruit présentent des tailles similaires, sans différences significatives entre eux. Globalement, le modèle met en évidence une augmentation marquée de la taille entre les phases précoces et les phases florales, suivie d’une stabilisation une fois la floraison engagée.
+
+## Effet Site
+
+Effet propre du site , toutes sessions et toutes phénologies confondus (prédiction marginale).
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 emm_site <- emmeans(
   mod_glmm_gamma,
   ~ site,
   type = "response"
 )
-
-emm_site
 
 emm_site_df <- as.data.frame(emm_site)
 
@@ -653,17 +744,33 @@ ggplot(emm_site_df, aes(
   ) +
   theme_minimal()
 
-pairs(emm_site)
+#tableau pour lecture
+tab <- pairs(emm_site) %>% 
+  as.data.frame() %>% 
+  mutate(
+    ratio   = round(ratio, 3),
+    SE      = round(SE, 4),
+    z.ratio = round(z.ratio, 2),
+    p.value = signif(p.value, 3)
+  )
+
+tab %>%
+  kbl(booktabs = TRUE, caption = "Contrastes entre sites (EMMs)") %>%
+  kable_classic(full_width = FALSE)
 
 ```
 
+Méthode d'interprétation : Ce tableau présente les contrastes entre sites à partir des moyennes marginales estimées. Le ratio indique si la taille prédite est plus élevée dans le premier site du contraste (ratio > 1) ou plus faible (ratio < 1). Le z‑ratio et la p‑value testent la significativité statistique de cette différence. Les contrastes dont la p‑value est faible (p < 0.05) révèlent des différences nettes entre sites, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires. Ce type de tableau permet donc d’identifier rapidement quels sites se distinguent réellement les uns des autres.
 
+Résultats : Les contrastes montrent que la plupart des sites présentent des tailles prédictes similaires, avec peu de différences statistiquement significatives. Seuls quelques écarts ressortent, notamment des tailles plus élevées à Tête Cendrée Haut et Vigne au Renard par rapport à certains autres sites. Dans l’ensemble, la variabilité entre sites reste limitée, et seules quelques comparaisons isolées indiquent des différences marquées.
 
-
+## --------------
+# I\_ Analyse générale sans modélisation
+## --------------
 
 ## I_i Relation taille et phénologie
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Mise en forme des données en format long :
 # empilement des données de taille et de phénologie
@@ -703,42 +810,42 @@ ggplot(data = data_long, aes(x = pheno, y = taille)) +
   theme_minimal()
 
 # Test global de significativité
-kruskal.test(taille ~ pheno, data = data_long) 
+ktest<- kruskal.test(taille ~ pheno, data = data_long) 
 # Hypothèse : il y a au moins une différence significative de taille entre les stades phénologiques. Hypothèse acceptée si p-value < 0.05 
 
-# Comparaisons deux à deux (si le test global est significatif)
-pairwise.wilcox.test(
-  data_long$taille,
-  data_long$pheno,
-  p.adjust.method = "BH",
-  exact = FALSE
-)
-
-
-# Afficher le tableau propre
-data_long %>%
+#tableau lecture simple
+tab_pheno <- data_long %>%
   pairwise_wilcox_test(taille ~ pheno, p.adjust.method = "BH") %>%
-  select(group1, group2, p, p.adj)
+  select(group1, group2, p, p.adj) %>%
+  mutate(
+    p      = signif(p, 3),
+    p.adj  = signif(p.adj, 3)
+  )
+
+tab_pheno %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Comparaisons deux à deux entre phénologies (test de Wilcoxon, correction BH)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 
 ```
 
-Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg ; Tableau X). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p_adj ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
+Méthode d'interprétation : Ce type de tableau présente les comparaisons deux à deux entre groupes, ici entre phénologies, à l’aide d’un test de Wilcoxon. Pour chaque paire, on indique les deux groupes comparés ainsi que la p‑value brute et la p‑value ajustée, cette dernière tenant compte du nombre total de comparaisons. Cela permet d’identifier rapidement quelles paires de groupes diffèrent réellement de manière significative.
+
+Résultats : Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg ; Tableau X). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p_adj ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
 
 ## I_ii Relation recouvrement végétal et site
 
+### RDA
 L’analyse factorielle discriminante (AFD) est une méthode statistique qui permet de déterminer si des groupes prédéfinis peuvent être différenciés à partir de variables explicatives. Elle cherche à identifier les combinaisons de variables qui séparent le mieux ces groupes.
 
 Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuvent être distingués en fonction de la structure de la végétation, décrite par les recouvrements des différentes strates (muscinale, herbacée, arbustive et arborescente). L’objectif est donc de vérifier si chaque site présente une signature de recouvrement particulière et d’identifier quelles strates contribuent le plus à cette différenciation.
 
-### RDA
+Cette méthode suppose une variable réponse continue et des relations linéaires
 
-Suppose une variable réponse continue et des relations linéaires
-
-```{r}
-# -------------------------------
-# Analyse Factorielle Discriminante (AFD)
-# -------------------------------
-
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # -------------------------------
 # 1. LDA sur les données originales
 # -------------------------------
@@ -772,7 +879,7 @@ manova_res <- manova(as.matrix(recouvrement[, 4:8]) ~ recouvrement$Site)
 # 5. Prédiction avec LDA
 # -------------------------------
 pred <- predict(afd2)
-table(Site = recouvrement$Site, Predicted = pred$class)
+a<- table(Site = recouvrement$Site, Predicted = pred$class)
 
 # -------------------------------
 # 6. Validation croisée (jackknife)
@@ -782,7 +889,7 @@ afd_cv <- lda(
   data = newdata,
   CV = TRUE
 )
-table(Site = newdata$Site, Predicted = afd_cv$class)
+b<- table(Site = newdata$Site, Predicted = afd_cv$class)
 
 # -------------------------------
 # 7. AFD basée sur l'ACP centrée-réduite
@@ -791,8 +898,7 @@ pca_res <- dudi.pca(recouvrement[, 4:8], scannf = FALSE, nf = 3)
 afd3 <- discrimin(pca_res, factor(recouvrement$Site), scannf = FALSE, nf = 3) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
 
 # Exploration des valeurs propres et des coefficients standardisés
-afd3$eig
-sqrt(afd3$eig / (1 + afd3$eig))
+valeur_propres <- afd3$eig
 
 # Projection des variables sur les fonctions discriminantes
 # Créer une nouvelle fenêtre graphique (ou plot)
@@ -801,43 +907,67 @@ s.arrow(afd3$fa)
 # Projection des individus selon leur groupe
 s.class(afd3$li, factor(recouvrement$Site))
 
-#Regarder contribution relative des strates des variables aux axes
-afd3$fa # strates
-afd3$gc # sites
-#A priori strate muscinale et arbustive basse sont les plus importantes
+#Regarder contribution relative des strates et des variables aux axes
+# strates
+tab_afd <- afd3$fa %>%
+  as.data.frame() %>%
+  mutate(
+    DS1 = round(DS1, 3),
+    DS2 = round(DS2, 3),
+    DS3 = round(DS3, 3)
+  ) %>%
+  tibble::rownames_to_column("strate")
+
+tab_afd %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Coefficients standardisés des strates sur les fonctions discriminantes (AFD)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
+# sites
+tab_afd <- afd3$gc %>%
+  as.data.frame() %>%
+  mutate(
+    DS1 = round(DS1, 3),
+    DS2 = round(DS2, 3),
+    DS3 = round(DS3, 3)
+  ) %>%
+  tibble::rownames_to_column("strate")
+
+tab_afd %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Coefficients standardisés des sites sur les fonctions discriminantes (AFD)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 ```
 
-Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés.
+Méthode d'interprétation : Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.Le tableau des coefficients standardisés sur les trois premières fonctions discriminantes (DS1, DS2, DS3) permet de quantifier l’importance relative de chaque strate dans la discrimination des sites. 
 
-Les deux graphiques issus de l’AFD illustrent ces différences. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.
-
-Le tableau des coefficients standardisés sur les trois premières fonctions discriminantes (DS1, DS2, DS3) permet de quantifier l’importance relative de chaque strate dans la discrimination des sites. L’interprétation montre que les strates muscinale et arbustive basse ont les coefficients les plus élevés sur les axes principaux (DS1 et DS2), ce qui indique qu’elles jouent un rôle clé dans la différenciation des sites. Les autres strates contribuent moins à la séparation, suggérant que leurs variations sont moins distinctives entre les sites.
-
-Le tableau des coordonnées des sites sur les trois premières fonctions discriminantes montre la position de chaque site dans l’espace discriminant défini par les strates. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative, ce qui reflète des différences spécifiques sur les strates associées à cet axe.
-
-Dans l’ensemble, ces résultats montrent que la structuration de la végétation permet de discriminer partiellement certains sites. Certains sites sont nettement distincts, tandis que d’autres se rapprochent, illustrant des similarités écologiques. L’AFD met ainsi en évidence que les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
+Résultats : Les strates muscinale et arbustive basse ont les coefficients les plus élevés sur les axes principaux (DS1 et DS2). Les autres strates contribuent moins à la séparation. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative.
+Les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
 
 ### Régression Multinomiale
 
-modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
+Modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas de RDA car elle suggère que la variable réponse est continue, elle cherche des relations linéaires. 
 
-```{r}
-library(nnet)
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 mod_pheno <- multinom(
   phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
   data = tab_complet
 )
-summary(mod_pheno)
 
-
+#Tableau lecture simple
 # Extraction
 coef_mat <- summary(mod_pheno)$coefficients
 se_mat   <- summary(mod_pheno)$standard.errors
 z_mat    <- coef_mat / se_mat
 p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
 
-# Fonction pour étoiles
+# Fonction pour étoiles 
 etoiles <- function(p){
   ifelse(p < 0.001, "***",
          ifelse(p < 0.01, "**",
@@ -845,7 +975,6 @@ etoiles <- function(p){
                        ifelse(p < 0.1, ".", ""))))
 }
 
-# Construction du tableau
 tableau <- data.frame(
   Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
   Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
@@ -862,15 +991,14 @@ tableau <- data.frame(
     Signif = etoiles(p_value)
   )
 
-library(knitr)
-library(kableExtra)
-
 kable(tableau, format = "html", booktabs = TRUE,
       caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
 ```
 
-Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
+Méthode d'interprétation : Dans ce tableau de régression multinomiale, chaque ligne indique l’effet d’une strate de végétation sur la probabilité d’appartenir à un état phénologique donné, comparé à la catégorie de référence. La colonne *Coefficient* montre si la strate augmente (valeur positive) ou diminue (valeur négative) cette probabilité, tandis que l’erreur standard (*SE*), la statistique *z* et la *p‑value* renseignent sur la précision de l’estimation et sa significativité. La colonne *Signif* résume visuellement cette significativité. Ensemble, ces informations permettent d’identifier quelles strates influencent réellement la transition d’un état phénologique à un autre et dans quel sens.
+
+Résultats : Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
 
 La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
 
@@ -886,7 +1014,7 @@ Dans un premier temps, nous avons étudié la variation des données au cours du
 
 ### Effet de la session sur la taille
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Transformer les données en format long
 taille_long <- data_original %>%
@@ -931,24 +1059,33 @@ ggplot(taille_stats, aes(x = session, y = mean_taille, fill = session)) +
   ) +
   theme_minimal()
 
-
-# Test global de significativité
-kruskal.test(taille ~ session, data = taille_long)
-# Hypothèse : il y a au moins une différence significative de taille entre les sessions. Hypothèse acceptée si p-value < 0.05 
-
-# Comparaisons deux à deux (si le test global est significatif)
-taille_long %>%
+#tableau lecture simple
+# Comparaisons deux à deux après Kruskal-Wallis
+tab_session <- taille_long %>%
   pairwise_wilcox_test(taille ~ session, p.adjust.method = "BH") %>%
-  select(group1, group2, p, p.adj)
+  select(group1, group2, p, p.adj) %>%
+  mutate(
+    p     = signif(p, 3),
+    p.adj = signif(p.adj, 3)
+  )
+
+tab_session %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Comparaisons deux à deux entre sessions (test de Wilcoxon, correction BH)"
+  ) %>%
+  kable_classic(full_width = FALSE)
 
 
 ```
 
-Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. On observe une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
+Méthode d'interprétation : Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau compare les sessions deux à deux pour voir si leur taille diffère significativement. Les colonnes p et p.adj indiquent la significativité du test : des valeurs très faibles montrent une différence nette entre les deux sessions, tandis qu’une valeur élevée signifie qu’elles ne diffèrent pas. Chaque ligne résume donc si la paire de sessions considérée présente ou non une différence statistiquement détectable.
+
+Résultats : Nous observons une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
 
 ### Effet de la session sur la phénologie
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Transformer les données en format long : session = S1, S2, S3
 pheno_long <- data_original %>%
@@ -1005,12 +1142,30 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+tab_pheno <- pheno_stats %>%
+  mutate(
+    n        = round(n, 0),
+    se       = round(se, 2),
+    ci_lower = round(ci_lower, 2),
+    ci_upper = round(ci_upper, 2)
+  ) %>%
+  arrange(session, pheno)
+
+tab_pheno %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Effectifs par session et type phénologique avec IC 95% (approximation Poisson)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 ```
 
-Le graphique montre une progression claire du développement phénologique au fil des sessions : début majoritairement jeunes, floraison qui commence à S2 principalement, diminution des données manquantes et des jeunes. La diminution des NA pourrait être dûe à une meilleure détectabilité des individus matures (nous vérifirons cette hpyothèse dans les analyses suivantes). La session 3 montre l'apparition de fleurs fannées, et de fruits.
+Méthode d'interprétation : Le graphique montre la taille moyenne des individus par phénologie avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque session (S1, S2, S3) et chaque type phénologique, le nombre d’individus observés (n). La colonne se indique l’erreur standard associée à cet effectif, et les colonnes ci_lower et ci_upper donnent les bornes de l’intervalle de confiance à 95 %, c’est‑à‑dire la zone dans laquelle l’effectif réel est probablement situé. Chaque ligne correspond donc à une combinaison session × phéno et résume combien d’individus ont été comptés et la précision de cette estimation.
 
-```{r}
+Résultats : Nous observons que S1 est dominée par les stades j et nf, avec relativement peu de fleurs et un nombre notable de données manquantes. En S2, le stade nf devient majoritaire et les stades reproducteurs (f et ff) apparaissent davantage. En S3, les stades avancés (ff et F) sont plus représentés, tandis que les stades précoces diminuent. 
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## Même graphique mais inversé
 # ordonner les modalités
 pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
 pheno_stats$session <- factor(pheno_stats$session, levels = c("S1", "S2", "S3"))
@@ -1030,15 +1185,15 @@ ggplot(pheno_stats, aes(x = pheno, y = n, fill = session)) +
 
 # III\_ Analyse de la variation dans l'espace
 
+Dans un second temps, nous avons étudié la variation des données dans l'espace afin d’obtenir une vision spatiale de leur évolution.
+
 ## --------------
 
 ## III_i Effet du site
 
 ### Effet du site sur la taille
 
-Taille \~ site
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Transformer les données en format long pour toutes les tailles
 taille_long <- data_original %>%
@@ -1081,13 +1236,33 @@ ggplot(taille_stats, aes(x = site, y = mean_taille)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
 
+#tableau lecture simple
+tab_pheno <- pheno_stats %>%
+  mutate(
+    n        = round(n, 0),
+    se       = round(se, 2),
+    ci_lower = round(ci_lower, 2),
+    ci_upper = round(ci_upper, 2)
+  ) %>%
+  arrange(session, pheno)
+
+tab_pheno %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Effectifs par session et type phénologique avec IC 95% (approximation Poisson)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 ```
+Méthode d'interprétation : Le graphique montre la taille moyenne des individus par sites avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque session et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’apprécier la précision des estimations. La lecture se fait ligne par ligne : chaque combinaison session × phéno résume combien d’individus ont été comptés et dans quelle mesure cet effectif est fiable statistiquement.
+
+Résultats : Voici une version plus concise :
+
+Le tableau montre comment les stades phénologiques évoluent d’une session à l’autre. S1 est dominée par les stades précoces, S2 voit apparaître davantage de stades reproducteurs, et S3 présente surtout des stades avancés. Les intervalles de confiance indiquent la précision des effectifs : ils sont serrés pour les stades fréquents et plus larges pour les stades rares. En résumé, le tableau illustre une progression nette de la phénologie au fil des sessions.
 
 ### Effet du site sur la taille selon la session
 
-Taille \~ site + session
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Assurer que les colonnes de taille sont numériques
 data_original <- data_original %>%
@@ -1132,13 +1307,32 @@ ggplot(stats_long, aes(x = site, y = mean, fill = taille_type)) +
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+#tableau lecture simple
+tab_taille <- stats_long %>%
+  mutate(
+    mean  = round(mean, 2),
+    sd    = round(sd, 2),
+    se    = round(se, 2),
+    ci95  = round(ci95, 2)
+  ) %>%
+  arrange(site, taille_type)
+
+tab_taille %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Taille moyenne par site et type de mesure avec IC 95%"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 ```
+Méthode d'interprétation : Le graphique montre la taille moyenne des individus par sites et par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque site et chaque session, la taille moyenne observée ainsi que les indicateurs de variabilité associés. Les colonnes indiquent l’écart‑type, le nombre d’individus mesurés, l’erreur standard et l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des moyennes. Chaque ligne correspond donc à une combinaison site × session et résume la valeur moyenne et la fiabilité statistique de cette estimation.
+
+Résultats : Les sites présentent des dynamiques de taille différentes. À Tête Cendrée Bas, les tailles sont globalement élevées et augmentent légèrement entre S1 et S3, mais les faibles effectifs rendent les intervalles de confiance plus larges. À Tête Cendrée Haut, les tailles sont plus faibles mais progressent régulièrement, avec des estimations précises grâce à des effectifs importants. Val Clavin est le site où les tailles sont les plus grandes, avec une forte hausse entre S1 et S2 suivie d’une stabilisation, et des intervalles de confiance raisonnables malgré des effectifs modestes. Enfin, à Vigne au Renard, les tailles sont intermédiaires, augmentent légèrement entre S1 et S2 puis se stabilisent, avec des intervalles de confiance un peu plus larges mais une tendance générale nette.
 
 ### Effet du site sur la phénologie
 
-phénologie \~ site
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Transformer les phénos en format long en gardant les NA
 pheno_long <- data_original %>%
@@ -1188,7 +1382,27 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
+#tableau lecture simple
+tab_pheno <- pheno_stats %>%
+  mutate(
+    n        = round(n, 0),
+    se       = round(se, 2),
+    ci_lower = round(ci_lower, 2),
+    ci_upper = round(ci_upper, 2)
+  ) %>%
+  arrange(site, pheno)
+
+tab_pheno %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Effectifs par site et type phénologique avec IC 95% (approximation Poisson)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
 ```
+Méthode d'interprétation : Le graphique montre la nombre d'individu par sites et par phénologie avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque site et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des comptages. Chaque ligne correspond à une combinaison site × phéno et résume combien d’individus ont été observés dans chaque catégorie phénologique, ainsi que la fiabilité statistique de cette estimation.
+
+Résultats : Les sites présentent des profils phénologiques contrastés. À Combe Michaut, tous les stades sont représentés, avec une forte présence des stades précoces et intermédiaires. À Tête Cendrée Bas, seuls les stades précoces sont observés, les stades reproducteurs étant absents, ce qui reflète une phénologie très peu avancée. À Tête Cendrée Haut, les stades précoces dominent également, avec très peu d’individus dans les stades avancés. Val Clavin présente une gamme complète de stades, incluant des stades reproducteurs plus avancés. Enfin, à Vigne au Renard, tous les stades sont présents mais en effectifs plus faibles, tout en montrant une progression phénologique plus marquée que dans les sites les plus précoces.
 
 ## --------------
 
@@ -1196,9 +1410,7 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
 
 ### Effet de la strate sur la taille
 
-Taille \~ strate
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Joindre les données par ID_Quadrat
 data_joined <- data_original %>%
@@ -1244,12 +1456,13 @@ ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
   ) +
   theme_minimal()
 ```
+Méthode d'interprétation : Nous cherchons simplement à vérifier s’il existe une relation entre la taille moyenne des individus et le taux de recouvrement végétal des différentes strates. La droite de régression indique la tendance générale, tandis que le R² montre à quel point cette tendance explique réellement la variation de taille, et la p‑value indique si cette relation est statistiquement fiable. 
+
+Résultats : La strate arborescente montre une relation positive et significative : plus le recouvrement est élevé, plus les individus sont grands (R² = 0.21, p < 0.001), ce qui suggère un effet structurant fort. La strate arbustive basse présente aussi une relation positive, mais plus faible (R² = 0.08), indiquant un effet modéré. En revanche, les strates arbustive haute, herbacée et muscinale ne montrent pas de relation claire ou significative : les R² sont très faibles (< 0.05) et les p‑values élevées ou marginales, ce qui signifie que le recouvrement dans ces strates n’explique pas la variation de taille. 
 
 ### Effet de la strate sur la phénologie
 
-phénologie \~ strate
-
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # Phénologie en format long
 pheno_long <- data_original %>%
@@ -1270,9 +1483,6 @@ pheno_tab <- pheno_long %>%
     values_from = n,
     values_fill = 0
   )
-
-# Vérification
-str(pheno_tab)
 
 data_rda <- pheno_tab %>%
   left_join(recouvrement, by = c("ID_quadrat" = "ID_Quadrat")) %>% dplyr::select(-"NA")
@@ -1310,18 +1520,40 @@ a_1<- anova(rda_pheno)          # effet global du recouvrement
 a_2<-anova(rda_pheno, by="term") # effet de chaque strate
 a_3<- anova(rda_pheno, by="axis")  # axes significatifs
 
+#Tableau lecture simple 
+
+# Tableau 1 : effet global du recouvrement
+a_1 %>%
+  kbl(caption = "Effet global du recouvrement sur la phénologie (RDA)",
+      booktabs = TRUE) %>%
+  kable_classic(full_width = FALSE)
+
+# Tableau 2 : effet de chaque strate
+a_2 %>%
+  kbl(caption = "Effet individuel de chaque strate sur la phénologie (RDA)",
+      booktabs = TRUE) %>%
+  kable_classic(full_width = FALSE)
+
+# Tableau 3 : axes significatifs
+a_3 %>%
+  kbl(caption = "Significativité des axes RDA",
+      booktabs = TRUE) %>%
+  kable_classic(full_width = FALSE)
 
 ```
+Méthode d'interpretation : La RDA permet d’évaluer si les variables environnementales, ici les différentes strates de recouvrement, expliquent la variation d’un ensemble de variables biologiques, en l’occurrence la phénologie. Le premier tableau teste l’effet global : il indique si l’ensemble des strates, prises ensemble, influence significativement la phénologie. Le second tableau examine l’effet individuel de chaque strate, en testant séparément si chacune contribue de manière significative à expliquer la variation phénologique. Enfin, le troisième tableau teste la significativité des axes RDA, c’est‑à‑dire si les gradients principaux extraits par l’analyse représentent des structures réelles dans les données ou seulement du bruit. Ensemble, ces trois tableaux permettent de savoir si le recouvrement influence la phénologie, quelles strates sont responsables de cet effet, et si les axes produits par la RDA sont interprétables
 
-La RDA montre que le recouvrement végétal n’explique pas significativement la variation globale de la phénologie (p = 0.146). Toutefois, le recouvrement herbacé et arbustif bas présentent des effets proches du seuil de significativité (p \< 0.1). Les strates hautes (arbustive haute et arborescente) n’influencent pas la phénologie. Ces résultats suggèrent que la phénologie est principalement associée à la structure végétale proche du sol.
+Résultats : L’effet global du recouvrement sur la phénologie n’est pas significatif (p = 0.19), ce qui indique que, dans l’ensemble, les strates végétales n’expliquent pas fortement la variation phénologique entre quadrats. Lorsqu’on examine les strates individuellement, seule la strate arbustive basse présente un effet significatif (p = 0.037), suggérant qu’elle influence modestement la distribution des stades phénologiques. Les autres strates (muscinale, herbacée, arbustive haute, arborescente) ne montrent aucun effet détectable. Enfin, aucun des axes RDA n’est significatif (tous p > 0.15), ce qui confirme que la structure ordonnée extraite par la RDA est faible et que les gradients phénologiques ne sont pas clairement associés aux gradients de recouvrement. En résumé, le recouvrement végétal n’explique que très faiblement la phénologie, avec un signal limité provenant de la strate arbustive basse.
 
 ## --------------
 
 # IV\_ Niveau des observateurs
 
+Nous avons distingué trois variables mesurées. Le risque d’erreur correspond à l’estimation que les observateurs font de leur propre fiabilité, basée sur leur auto‑évaluation dans le questionnaire. Le taux d’erreur désigne les cas où l’observateur a bien détecté l’individu, mais a attribué une phénologie incorrecte. Enfin, le taux de détection correspond simplement au fait que l’observateur a vu et signalé l’individu.
+
 ## Adéquation et fiabilité des observateurs
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
 
 # ------------------------------------------------------------
 # 1. Taux d’erreur d’adéquation par observateur

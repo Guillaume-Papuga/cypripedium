@@ -5,6 +5,16 @@ editor: visual
 execute-dir: project
 ---
 
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  warning = FALSE,
+  message = FALSE, 
+  echo = FALSE
+)
+#ce code permet de n'afficher aucun message parasite ni les warnings. 
+
+```
+
 # -------------------------------
 
 # INTRODUCTION
@@ -13,13 +23,15 @@ execute-dir: project
 
 # Chargement des packages
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
+library(MuMIn)        # sélection de modèles, AICc, multimodel inference
 
 library(tidyverse)
 
 library(ggalluvial)   # diagrammes alluviaux (transitions, flux entre catégories)
-library(MuMIn)        # sélection de modèles, AICc, multimodel inference
-library(lme4)
+library(lme4) #modèle mixtes
+
+library(emmeans) #prédictions de modèles linéaires
 
 library(stats)
 library(plotly)
@@ -53,27 +65,34 @@ Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les an
 
 ### Tableau : recouvrement
 
-```{r}
+Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : - strate muscinale - strate herbacée \< à 1m de hauteur - strate arbustive basse entre 1 et 3m de hauteur - strate arbustive haute entre 3 et 7m de hauteur - strate arborescente \> à 7m de hauteur
+
+```{r, message=FALSE, echo=FALSE}
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
-unique(recouvrement$Site)
+#Premières lignes du tableau pour lecteur
+head(recouvrement)
 ```
 
 ### Tableau : détections individuelles
 
-```{r}
+Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe. Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
+
+```{r, message=FALSE, echo=FALSE}
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
 
-# Certains noms des sites ont des espaces invisibles, correction : 
-unique(verification$site)
+# Certains noms des sites ont des espaces invisibles, correction :
 verification$site <- trimws(verification$site)
-unique(verification$site)
+
+#Premières lignes du tableau pour lecteur
+head(verification)
 ```
 
 ### Tableau : taille et phénologie vérifiées
 
-```{r}
+Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour chaque individu la phénologie et la taille ont été renseigné par session, le nombre de fleurs et de fruits et la présence de prédation ont aussi été renseignés.
+
+```{r, message=FALSE, echo=FALSE}
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
-unique(data_original$site)
 
 # Certains noms contiennent des accents non pris en charge
 data_original <- data_original %>% 
@@ -85,26 +104,32 @@ data_original <- data_original %>%
     site == "Vigne au Renard" ~ "Vigne au Renard",
     site == "Val Clavin" ~ "Val Clavin"
   ))
-unique(data_original$site)
+
+#Premières lignes du tableau pour lecteur
+head(data_original)
 ```
 
 ### Tableau : autonotation des observateurs
 
-```{r}
+Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique : - Question A : Niveau de connaissances naturalistes, hors botanique - Question B : Niveau de connaissances en botanique - Question C : Niveau d'expérience pratique du suivi de l’espèce - Question D : Niveau de connaissances théoriques de l’espèce - Question E : Niveau de connaissance pratique des sites d’étude - Question F : Liste des sites d’étude connus Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
+
+```{r, message=FALSE, echo=FALSE}
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
 
-# Pour les analyses suivantes nous avons rajouté la colonne sexe : 
+# Pour les analyses suivantes nous avons rajouté la colonne sexe à partir des informations trouvées sur internet:
 experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
 
+#Premières lignes du tableau pour lecteur
+head(experience)
 ```
 
 # --------------------------------------------------
 
 # Compilation tableau complet
 
-Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul.
+Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul tableau récapitulatif.
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 
 # Ajouter une colonne d'identifiant individuel en ajoutant la session
   ## Pour le tableau "vérification" des observateurs
@@ -287,8 +312,8 @@ test <- nb_quadrat_manquant %>%
 
 str(tab_detection)
 
-# Pour le moment, j'ai un tableau avec tous les individus observés, mais je n'ai pas l'information sur les individus non observés par les observateurs.
-# Il me faut, à chaque fois, le nombre de quadrats observés par observateur pour pouvoir calculer le nombre d'observateurs par quadrat.
+# Pour le moment, on obtient un tableau avec tous les individus observés, mais sans l'information sur les individus non observés par les observateurs.
+# Il faut, à chaque fois, le nombre de quadrats observés par observateur pour pouvoir calculer le nombre d'observateurs par quadrat.
 
 verification_obs_quadrat <- verification %>% 
   mutate(id_quadrat_fin = paste(ID_quadrat, session, sep = ".")) %>% 
@@ -374,13 +399,14 @@ tab_complet <- tab_complet %>%
   ) %>% 
   dplyr::select(id_ind_fin,id_quadrat_fin, ID_quadrat, ID_ind,site, quadrat, marquage, session,observateur, detection, phenologie_verif, phenologie, adequation, adequation_reel, taille)
 
+
 ```
 
 ### Joindre des données supplémentaires
 
 Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau « recouvrement » contenant les différentes strates.
 
-```{r}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Extraire la partie quadrat de tab_complet (tout avant le dernier point)
 tab_complet <- tab_complet %>%
   mutate(
@@ -429,6 +455,268 @@ Avant de commencer des analyses complexes, difficiles à interpréter ou qui fou
 # I\_ Analyse générale
 
 ## --------------
+
+## Modèle taille
+# preparation de données
+```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+
+data_original_obs
+unique(data_original_obs$phenologie_verif)
+
+#On repart de tableau vérificatrices avec la taille et la phénologie par session passée sur une colonne et colonne session ajoutée
+#On enlève phénologie NA 
+data_taille <- data_original_obs %>% 
+  filter(!is.na(phenologie_verif))
+
+#On vérifie que l'on a l'info sur toutes les tailles
+data_taille %>% 
+  filter(is.na(taille))
+
+#passer la taille en numérique
+data_taille <- data_taille %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille))
+  )
+#distribution variable réponse taille
+ggplot(data=data_taille, aes(x= taille))+
+  geom_histogram()
+#Plus ou moins une loi de poisson
+#Comme la variable taille est continue on va utiliser une loi de poisson
+
+#Enlever les taille = à 0 qui vont faire planter le modèle
+any(data_taille$taille <= 0)
+
+data_taille <- data_taille %>% 
+  filter(!taille<=0)
+#6 individus de perdus
+
+#Mettre les variables explicatives en facteur
+data_taille$phenologie_verif <- factor(data_taille$phenologie_verif)
+data_taille$site <- factor(data_taille$site)
+data_taille$session <- factor(data_taille$session)
+data_taille$ID_ind <- factor(data_taille$ID_ind)
+data_taille$ID_quadrat <- factor(data_taille$ID_quadrat)
+
+head(data_taille)
+```
+
+# Construction modèle
+```{r}
+#Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
+
+mod_glmm_gamma <- glmer(
+  taille ~ phenologie_verif + site * session + (1 | ID_ind) + (1|ID_quadrat),
+  family = Gamma(link = "log"),
+  data = data_taille
+)
+
+summary(mod_glmm_gamma)
+Anova(mod_glmm_gamma, type = 3)
+
+#prédictions du modèle
+emm <- emmeans(
+  mod_glmm_gamma,
+  ~ session * phenologie_verif | site,
+  type = "response"
+)
+
+#tableau pour lecture
+emm_clean <- emm %>%
+  as.data.frame() %>%
+  select(site, phenologie_verif, session, response) %>%
+  mutate(response = round(response, 2)) %>%
+  pivot_wider(
+    names_from = session,
+    values_from = response,
+    names_prefix = "session_"
+  )
+
+emm_clean %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Prédictions du modèle par site, phénologie et session"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
+```
+
+Méthode d'interprétation : Ce tableau présente les tailles prédites par le modèle pour chaque combinaison de site, phénologie et session. Les valeurs correspondent aux prédictions moyennes, ce qui permet de comparer facilement l’évolution de la taille entre les sessions et entre les stades phénologiques. Des valeurs plus élevées indiquent des individus plus grands, et les différences entre colonnes (sessions) montrent comment la taille progresse au cours du temps.
+
+# Préparation Graphique 
+
+``` {r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+#préparation graphique
+emm_df <- as.data.frame(emm)
+
+emm_df$phenologie_verif <- factor(
+  emm_df$phenologie_verif,
+  levels = c("juv", "non_fleuri", "fleur", "fleurs_fanees","fruit")
+)
+
+```
+
+## Effet Taille, Site, Phénologie, Session
+
+```{r}
+
+#graphique avec tous les effets
+ggplot(emm_df, aes(
+  x = session,
+  y = response,
+  fill = phenologie_verif
+)) +
+  geom_col(
+    position = position_dodge(width = 0.9),
+    color = "black"
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    position = position_dodge(width = 0.9),
+    width = 0.2
+  ) +
+  facet_wrap(~ site) +
+  labs(
+    x = "Session",
+    y = "Taille prédite",
+    fill = "Phénologie"
+  ) +
+  scale_fill_manual(values = c(
+    "juv"  = "#FF9999",
+    "non_fleuri" = "#FF4D4D",
+    "fleur"  = "#CC0000",
+      "fleurs_fanees"  = "#990000",
+"fruit"   = "#660000"
+  )) +
+  theme_minimal()
+```
+
+Ce graphique montre que la taille prédite augmente clairement entre les sessions 1, 2 et 3, quel que soit le site ou le stade phénologique. Les individus en phases avancées de phénologie (fleurs fanées, fruits) sont systématiquement plus grands, et cette tendance est cohérente dans tous les sites.
+
+## Effet Session
+
+Effet propre de la session, toutes phénologies et tous sites confondus (prédiction marginale).
+
+```{r}
+emm_session <- emmeans(
+  mod_glmm_gamma,
+  ~ session,
+  type = "response"
+)
+
+emm_session_df <- as.data.frame(emm_session)
+
+ggplot(emm_session_df, aes(
+  x = session,
+  y = response
+)) +
+  geom_col(
+    fill = "grey70",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Session",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la session sur la taille"
+  ) +
+  theme_minimal()
+
+tab <- pairs(emm_session) %>% 
+  as.data.frame() %>% 
+  mutate(
+    ratio   = round(ratio, 3),
+    SE      = round(SE, 4),
+    z.ratio = round(z.ratio, 2),
+    p.value = signif(p.value, 3)
+  )
+library(kableExtra)
+
+tab %>%
+  kbl(booktabs = TRUE, caption = "Contrastes entre sessions (EMMs)") %>%
+  kable_classic(full_width = FALSE)
+
+
+```
+Méthode d'interprétation : Ce tableau présente les contrastes entre sessions à partir des moyennes marginales estimées. Le ratio indique l’effet multiplicatif entre deux sessions : un ratio inférieur à 1 signifie que la première session a une valeur plus faible que la seconde. Le z‑ratio et la p‑value testent si cette différence est statistiquement significative. Les comparaisons avec p < 0.05 sont considérées comme significatives.
+
+Résultats : Les comparaisons montrent que la session 1 a des valeurs significativement plus faibles que les sessions 2 et 3 (ratios < 1 et p < 0.001). La session 2 est également légèrement mais significativement plus faible que la session 3 (p = 0.0015). Les tailles prédites augmentent significativement donc d’une session à l’autre.
+
+```{r}
+#Effet propre de la phénologie toute session et tout site confondu (=prédiction marginale)
+emm_phenologie <- emmeans(
+  mod_glmm_gamma,
+  ~ phenologie_verif,
+  type = "response"
+)
+
+emm_phenologie
+
+emm_phenologie_df <- as.data.frame(emm_phenologie)
+emm_phenologie_df$phenologie_verif <- factor(
+  emm_phenologie_df$phenologie_verif,
+  levels = c("juv", "non_fleuri", "fleur", "fruit", "fleurs_fanees")
+)
+
+ggplot(emm_phenologie_df, aes(
+  x = phenologie_verif,
+  y = response
+)) +
+  geom_col(
+    fill = "skyblue",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Phénologie",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la phénologie sur la taille"
+  ) +
+  theme_minimal()
+
+pairs(emm_phenologie)
+
+#Effet propre du site toute phénologie et toute session confondu (=prédiction marginale)
+emm_site <- emmeans(
+  mod_glmm_gamma,
+  ~ site,
+  type = "response"
+)
+
+emm_site
+
+emm_site_df <- as.data.frame(emm_site)
+
+ggplot(emm_site_df, aes(
+  x = site,
+  y = response
+)) +
+  geom_col(
+    fill = "grey70",
+    color = "black",
+    width = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    width = 0.2
+  ) +
+  labs(
+    x = "Session",
+    y = "Taille prédite (moyenne marginale)",
+    title = "Effet marginal de la session sur la taille"
+  ) +
+  theme_minimal()
+
+pairs(emm_site)
+
+```
 
 ## I_i Relation taille et phénologie
 
@@ -498,6 +786,10 @@ Les tailles diffèrent significativement entre l’ensemble des stades phénolog
 L’analyse factorielle discriminante (AFD) est une méthode statistique qui permet de déterminer si des groupes prédéfinis peuvent être différenciés à partir de variables explicatives. Elle cherche à identifier les combinaisons de variables qui séparent le mieux ces groupes.
 
 Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuvent être distingués en fonction de la structure de la végétation, décrite par les recouvrements des différentes strates (muscinale, herbacée, arbustive et arborescente). L’objectif est donc de vérifier si chaque site présente une signature de recouvrement particulière et d’identifier quelles strates contribuent le plus à cette différenciation.
+
+### RDA
+
+Suppose une variable réponse continue et des relations linéaires
 
 ```{r}
 # -------------------------------
@@ -581,6 +873,63 @@ Le tableau des coefficients standardisés sur les trois premières fonctions dis
 Le tableau des coordonnées des sites sur les trois premières fonctions discriminantes montre la position de chaque site dans l’espace discriminant défini par les strates. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative, ce qui reflète des différences spécifiques sur les strates associées à cet axe.
 
 Dans l’ensemble, ces résultats montrent que la structuration de la végétation permet de discriminer partiellement certains sites. Certains sites sont nettement distincts, tandis que d’autres se rapprochent, illustrant des similarités écologiques. L’AFD met ainsi en évidence que les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
+
+### Régression Multinomiale
+
+modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas RDA car suggère que la variable réponse est continue, elle cherche des relation linéaire
+
+```{r}
+library(nnet)
+
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = tab_complet
+)
+summary(mod_pheno)
+
+
+# Extraction
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction pour étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Construction du tableau
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+library(knitr)
+library(kableExtra)
+
+kable(tableau, format = "html", booktabs = TRUE,
+      caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+```
+
+Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
+
+La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
 
 ## --------------
 
@@ -733,7 +1082,6 @@ ggplot(pheno_stats, aes(x = pheno, y = n, fill = session)) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "right")
 ```
-
 
 ## --------------
 
@@ -1017,7 +1365,7 @@ plot(rda_pheno, scaling = 2)
 
 a_1<- anova(rda_pheno)          # effet global du recouvrement
 a_2<-anova(rda_pheno, by="term") # effet de chaque strate
-a_3<- anova(rda_pheno, by="axis") # axes significatifs
+a_3<- anova(rda_pheno, by="axis")  # axes significatifs
 
 
 ```
@@ -1349,11 +1697,8 @@ recouvrement_num <- tab_complet %>%
 # Vérifier
 str(recouvrement_num)
 
-pca <- prcomp(recouvrement_num, scale. = TRUE)
 acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
-# Ajouter la première composante à ton tableau original
-tab_complet$recouvrement_PC1 <- pca$x[,1]
-tab_complet$recouvrement_PC1v2 <- acp1$li[,1]
+
 #Calcul des % de chaque axe :
 pc<-round(acp1$eig/sum(acp1$eig)*100,2)
 pc
@@ -1367,48 +1712,218 @@ barplot(acp1$eig)
 ###Graphique de l'ACP####
 s.corcircle(acp1$co, xax=1, yax=2, box = F, clabel = 0.5) 
 
-# GLM
+# Ajouter la première et deuxième composante au tableau
+tab_complet$recouvrement_PC1 <- acp1$li[,1]
+tab_complet$recouvrement_PC2 <- acp1$li[,2]
 
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
-    (1 | ID_ind),
-  data = tab_complet,
-  family = binomial
-)
-
-table(tab_complet$detection)
-
-tab_complet <- tab_complet %>%
+# préparation variables pour GLMM
+tab_complet <- tab_complet %>% 
   mutate(
-    site = factor(site),
-    session = factor(session),
-    phenologie_verif = factor(phenologie_verif)
+    site = as.factor(site),
+    session = as.factor(session),
+    phenologie_verif = as.factor(phenologie_verif),
+    taille = as.numeric(gsub(",", ".", taille)),
+    ID_ind <- as.factor(ID_ind)
+  )
+str(tab_complet)
+
+#Standardiser la taille sinon ça ne marche pas
+tab_complet$taille_sc <- scale(tab_complet$taille)
+
+tab_complet$ID_quadrat <- as.factor(tab_complet$ID_quadrat)
+
+tx_erreur <- tab_complet %>% 
+  group_by(observateur) %>% 
+  summarise(
+    nb_ind = n(),
+    nb_detect = sum(detection, na.rm = TRUE),
+    tx_detect = nb_detect / nb_ind
   )
 
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_grp = case_when(
-      phenologie_verif %in% c("fleur", "fleurs_fanees", "fruit") ~ "reproductif",
-      phenologie_verif %in% c("juv", "non_fleuri") ~ "vegetatif",
-      TRUE ~ "0"
-    ),
-    phenologie_grp = factor(phenologie_grp)
+tab_complet <- tab_complet %>% 
+  left_join(
+    tx_erreur,
+    by = "observateur"
   )
 
-glm_model <- glmer(
-  detection ~ recouvrement_PC1 + phenologie_grp +
-    (1 | ID_ind),
+experience_final <- experience %>% 
+  mutate(observateur = Observateur) %>% 
+  dplyr::select(observateur, risque_erreur)
+
+tab_complet <- tab_complet %>% 
+  left_join(experience_final, by = "observateur")
+
+glmm_final <- glmer(
+  detection ~ site * session + taille_sc + phenologie_verif + recouvrement_PC1 + recouvrement_PC2 + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
 )
-table(tab_complet$site, tab_complet$session)
-table(tab_complet$phenologie_verif, tab_complet$session)
 
-table(tab_complet$ID_ind)
+glmm_final <- glmer(
+  detection ~ site * session + phenologie_verif + recouvrement_PC1 + recouvrement_PC2 + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat) + (1|taille_sc),
+  data = tab_complet,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+)
 
-summary(glm_model)       # coefficients, significativité
-anova(glm_model, test="Chisq")
+summary(glmm_final)
+Anova(glmm_final, type = 3)
+
+#prédictions marginales du modèle
+
+#Pour l'axe 1 de l'ACP
+emm_PC1 <- emmeans(
+  glmm_final,
+  ~ recouvrement_PC1,
+  at = list(
+    recouvrement_PC1 = seq(
+      min(tab_complet$recouvrement_PC1, na.rm = TRUE),
+      max(tab_complet$recouvrement_PC1, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_PC1_df <- as.data.frame(emm_PC1)
+
+ggplot(emm_PC1_df, aes(x = recouvrement_PC1, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Gradient de fermeture du milieu (axe 2 ACP)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour l'axe 2 de l'ACP
+emm_PC2 <- emmeans(
+  glmm_final,
+  ~ recouvrement_PC2,
+  at = list(
+    recouvrement_PC2 = seq(
+      min(tab_complet$recouvrement_PC2, na.rm = TRUE),
+      max(tab_complet$recouvrement_PC2, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_PC2_df <- as.data.frame(emm_PC2)
+
+ggplot(emm_PC2_df, aes(x = recouvrement_PC2, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Gradient de fermeture du milieu (axe 2 ACP)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour le risque d'erreur lié à l'autonotation
+emm_risque_erreur <- emmeans(
+  glmm_final,
+  ~ risque_erreur,
+  at = list(
+    risque_erreur = seq(
+      min(tab_complet$risque_erreur, na.rm = TRUE),
+      max(tab_complet$risque_erreur, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
+
+ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Risque d'erreur (basé sur autonotation des observateurs",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#pour la taille
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_taille <- attr(tab_complet$taille_sc, "scaled:center")
+sd_taille <- attr(tab_complet$taille_sc, "scaled:scale")
+mu_taille
+sd_taille
+
+emm_taille <- emmeans(
+  glmm_final,
+  ~ taille_sc,
+  at = list(
+    taille_sc = seq(
+      min(tab_complet$taille_sc, na.rm = TRUE),
+      max(tab_complet$taille_sc, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_taille_df <- as.data.frame(emm_taille)
+
+emm_taille_df$taille_reelle <-
+  emm_taille_df$taille_sc * sd_taille + mu_taille
+
+ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Taille des individus (cm)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+#Pour l'interaction session x site
+emm_site_session <- emmeans(
+  glmm_final,
+  ~ site * session,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_site_session_df <- as.data.frame(emm_site_session)
+
+ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",
+    fill = "Session",
+    title = "Probabilité marginale de détection par site et session"
+  ) +
+  theme_classic(base_size = 14)
+
+#Pour le stade phénologique
+emm_phenologie <- emmeans(
+  glmm_final,
+  ~ phenologie_verif,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_phenologie_df <- as.data.frame(emm_phenologie)
+
+ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",,
+    title = "Probabilité marginale de détection par stade phénologique"
+  ) +
+  theme_classic(base_size = 14)
+
 
 ```
 
@@ -1416,331 +1931,194 @@ anova(glm_model, test="Chisq")
 
 ```{r}
 
+# #Dredge ne fonctionne pas avec NA
+# vars <- c("detection", "site", "session", "taille_sc",
+#           "phenologie_verif", "recouvrement_PC1", "ID_ind")
+# 
+# tab_dredge <- tab_complet[complete.cases(tab_complet[, vars]), ]
+# 
+# #modèle complet
+# glmm_global <- glmer(
+#   detection ~ site + session + site:session + taille_sc + phenologie_verif + recouvrement_PC1 +
+#     (1 | ID_ind),
+#   data = tab_dredge,
+#   family = binomial,
+#   control = glmerControl(optimizer = "bobyqa",
+#                          optCtrl = list(maxfun = 2e5))
+# )
+# 
 # # Autoriser MuMIn à travailler avec glmer
 # options(na.action = "na.fail")
 # 
-# #modèle complet
-# glm_model <- glmer(
-#   detection ~ recouvrement_PC1 + site + session + taille + phenologie_verif +
-#     (1 | ID_ind) + (1 | id_quadrat_fin),
-#   data = tab_complet,
-#   family = binomial
-# )
-# 
 # # Sélection de modèle (toutes combinaisons de variables fixes)
-# model_set <- dredge(glm_model, trace = TRUE)
+# model_set <- dredge(glmm_global, trace = TRUE)
 # 
 # # Afficher les modèles triés par AICc
 # model_set
 # 
-# # Optionnel : extraire les meilleurs modèles avec delta AICc < 2
-# best_models <- get.models(model_set, subset = delta < 2)
+# model_set_df <- as.data.frame(model_set)
 # 
-# # Afficher le résumé du meilleur modèle
-# summary(best_models[[1]]) 
+# write.csv(
+#   model_set_df,
+#   file = "selection.csv",
+#   row.names = FALSE
+# )
+
+```
+
+## V_ii Détection de la phénologie
+
+```{r}
+unique(tab_complet$phenologie)
+unique(tab_complet$phenologie_verif)
+
+#création tableau
+detect_comp <- tab_complet %>% 
+  ungroup() %>% 
+  filter(detection == 1) %>% #on ne garde que les individus détectés par les observateurs
+  select(id_ind_fin,session,site,quadrat,marquage,phenologie_verif,phenologie)
+
+
+unique(detect_comp$phenologie)
+unique(detect_comp$phenologie_verif) #toujours des NA avec phénologie superviseuses
+
+detect_comp %>% 
+  filter(is.na(phenologie_verif))
+#deux pheno non observées par superviseuses
+tab_complet %>% 
+  filter(id_ind_fin == "VC.Q4.45.3")
+#Vu par un observateur/6
+
+tab_complet %>% 
+  filter(id_ind_fin == "VC.Q4.19.3")
+#Vu par un observateur/6
+
+#j'enlève ces deux individus des analyses
+detect_comp <- detect_comp %>% 
+  filter(!is.na(phenologie_verif))
+
+#matrice de confusion
+conf_mat <- table(
+  phenologie_verif = tab_complet$phenologie_verif,
+  phenologie = tab_complet$phenologie
+)
+
+conf_mat
+
+#Version proportions
+prop_conf_mat <- prop.table(conf_mat, margin = 1)
+
+prop_conf_mat
+
+#Transformer matrices en data frame
+conf_df <- as.data.frame(conf_mat)
+prop_df <- as.data.frame(prop_conf_mat)
+
+# Renommage explicite (évite TOUS les bugs)
+names(conf_df) <- c("phenologie_verif", "phenologie", "n")
+names(prop_df) <- c("phenologie_verif", "phenologie", "prob")
+
+#Tableau graphique
+heat_df <- conf_df %>%
+  left_join(prop_df,
+            by = c("phenologie_verif", "phenologie")) %>%
+  mutate(
+    correct = phenologie_verif == phenologie,
+    signed_prob = ifelse(correct, prob, -prob)
+  )
+
+#standardisation de mes probas pour que ça rende joli sur le graphique
+heat_df <- heat_df %>%
+  mutate(
+    signed_prob_scaled = case_when(
+      correct ~ prob / max(prob[correct]),               # 0 → 1 pour les bons
+      !correct ~ -prob / max(prob[!correct])              # 0 → -1 pour les erreurs
+    )
+  )
+
+#Heat map avec le nombre d'observations
+ggplot(heat_df,
+       aes(x = phenologie, y = phenologie_verif)) +
+  
+  geom_tile(aes(fill = signed_prob_scaled)) +
+  
+  geom_text(aes(label = n), size = 4, color = "black") +
+  
+  scale_fill_gradient2(
+    low = "darkred",
+    mid = "white",
+    high = "darkgreen",
+    midpoint = 0,
+    limits = c(-1, 1),
+    name = "Qualité d'observation\n(échelle relative)"
+  ) +
+  
+  labs(
+    x = "Phénologie observée",
+    y = "Phénologie vérifiée",
+    title = "Matrice de confusion – phénologie Sabot de Vénus",
+    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank()
+  )
+
+#Heat map avec les proportions
+ggplot(heat_df,
+       aes(x = phenologie, y = phenologie_verif)) +
+  
+  geom_tile(aes(fill = signed_prob_scaled)) +
+  
+  geom_text(aes(label = round(prob,2)), size = 4, color = "black") +
+  
+  scale_fill_gradient2(
+    low = "darkred",
+    mid = "white",
+    high = "darkgreen",
+    midpoint = 0,
+    limits = c(-1, 1),
+    name = "Qualité d'observation\n(échelle relative)"
+  ) +
+  
+  labs(
+    x = "Phénologie observée",
+    y = "Phénologie vérifiée",
+    title = "Matrice de confusion – phénologie Sabot de Vénus",
+    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    panel.grid = element_blank()
+  )
+
+#Si on veut faire la même chose par sites
+conf_par_site <- tab_complet %>%
+  group_by(site) %>%
+  summarise(
+    conf = list(table(phenologie_verif, phenologie)),
+    .groups = "drop"
+  )
+
+prop.table(conf_par_site$conf[[1]], margin = 1)
+prop.table(conf_par_site$conf[[2]], margin = 1)
+prop.table(conf_par_site$conf[[3]], margin = 1)
+prop.table(conf_par_site$conf[[4]], margin = 1)
+prop.table(conf_par_site$conf[[5]], margin = 1)
+
+
+
+
 
 ```
 
 # --------------------------------------------------
 
 # CMR
-
-```{r}
-unique(tab_complet$phenologie_verif)
-#Transformer lignes phenologie ayant des NA en 0
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_verif = replace_na(phenologie_verif, "0")
-  )
-
-#Faire la même chose avec les tailles
-tab_complet <- tab_complet %>%
-  mutate(
-    taille = as.numeric(gsub(",", ".", taille)),
-    taille = replace_na(taille, 0)
-  )
-
-#Regarder le nombre d'observateurs par quadra
-tab_obs <- tab_complet %>% 
-  group_by(id_quadrat_fin, observateur) %>% 
-  summarise(n = 1, .groups = "drop") %>% 
-  ungroup()
-
-#Regarder le nombre de quadra observés par observateur
-tab_obs2 <- tab_obs %>% 
-  group_by(observateur) %>% 
-  summarise(nb_quadra = n()) %>% 
-  arrange(desc(nb_quadra))
-  
-#Regarder le nombre d'observations par quadra
-tab_obs_tot <- tab_obs %>% 
-  group_by(id_quadrat_fin) %>% 
-  summarise(nb_obs = n()) %>% 
-  ungroup()
-
-#Regarder pourcentages d'observations
-nb_obs <- tab_obs_tot %>% 
-  count(nb_obs) %>% 
-  mutate(pourcentage = round((n * 100) / sum(n), 2))
-
-nb_obs
-#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
-
-#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
-enlever <- tab_obs_tot %>% 
-  filter(nb_obs <5)
-enlever
-#quadra à enlever :
-# TCb.Q9.2
-# TCb.Q7.2
-# CM.Q7.2
-Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
-
-#extraire informations quadra avec 5 et 6 obs
-tab_obs_tot_5obs <- tab_obs_tot %>% 
-  filter(nb_obs == 5)
-
-tab_obs_tot_6obs <- tab_obs_tot %>% 
-  filter(nb_obs == 6)
-
-#Transvaser ces infos dans tableau complet
-tab_complet_5obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
-
-tab_complet_6obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
-
-#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
-#Extraire nb obs par observateur
-tab_complet_5obs <- tab_complet_5obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-tab_tmp <- tab_complet_6obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-#Garder 5 observations par individu/session/quadra/site
-tab_complet_5obs_6 <- tab_tmp %>%
-  group_by(id_ind_fin) %>%
-  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
-  ungroup()
-
-#Vérification si nombre de lignes semble bon
-nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
-nrow(tab_complet_5obs_6)
-
-#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
-tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
-ind_av_filtrage <- nrow(tab_complet_final)
-
-#Enlever les trois quadra ayant été partiellement supprimés
-tab_complet_final <- tab_complet_final %>% 
-  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
-ind_ap_filtrage <- nrow(tab_complet_final)
-#pourcentage indiv perdus :
-(1-(ind_ap_filtrage/ind_av_filtrage))*100
-
-#Vérification histoires de capture
-verif_sessions <- tab_complet_final %>%
-  group_by(ID_ind) %>%
-  summarise(
-    nb_sessions = n_distinct(session),
-    sessions = paste(sort(unique(session)), collapse = ","),
-    .groups = "drop"
-  )
-
-check_sessions <- verif_sessions %>%
-  mutate(
-    ok_sessions = sessions == "1,2,3"
-  )
-
-check_sessions %>%
-  filter(!ok_sessions)
-
-
-
-```
-
-#RMARK 
-
-```{r}
-
-# ---------------------------------------------------------
-# 2. Résumer par individu × session (une ligne par ID_ind × session)
-# ---------------------------------------------------------
-tab_sess <- tab_complet_final %>%
-  mutate(session = as.integer(session)) %>%
-  group_by(ID_ind, session) %>%
-  summarise(
-    detection = ifelse(all(is.na(detection)), NA_integer_, max(as.integer(detection), na.rm = TRUE)),
-    phenologie = {
-      ph = phenologie[!is.na(phenologie)]
-      if(length(ph) == 0) NA_character_ else ph[1]
-    },
-    taille = mean(taille, na.rm = TRUE),
-    recouvrement = mean(recouvrement_PC1, na.rm = TRUE),
-    site = first(site)
-  ) %>% ungroup()
-
-# contrôle
-table(tab_sess$session, useNA = "ifany")
-head(tab_sess)
-
-# ---------------------------------------------------------
-# 3. Construire les historiques ch par individu et covariables individuelles
-# ---------------------------------------------------------
-hist_by_id <- tab_sess %>%
-  arrange(ID_ind, session) %>%
-  group_by(ID_ind) %>%
-  summarise(
-    ch = paste0(detection, collapse = ""),
-    site = first(site),
-    taille = mean(taille, na.rm = TRUE),
-    recouv = mean(recouvrement, na.rm = TRUE)
-  ) %>% ungroup()
-
-# retirer historiques NA et "000" (jamais vus)
-n_sessions <- length(unique(tab_sess$session))
-zero_ch <- paste(rep(0, n_sessions), collapse = "")
-histories_clean <- hist_by_id %>%
-  filter(!is.na(ch)) %>%
-  filter(ch != zero_ch)
-
-# vérifier que tous les ch ont la bonne longueur
-table(nchar(histories_clean$ch))
-
-# ---------------------------------------------------------
-# 4. Formatage des covariables individuelles et centrage
-# ---------------------------------------------------------
-histories_clean <- histories_clean %>%
-  mutate(
-    site = factor(site),
-    taille_c = as.numeric(scale(taille, center = TRUE, scale = FALSE)),
-    recouv_c = as.numeric(scale(recouv, center = TRUE, scale = FALSE))
-  )
-
-# ---------------------------------------------------------
-# 5. Construire la table time varying pour phenologie (ID_ind × session)
-# ---------------------------------------------------------
-tv_pheno <- tab_sess %>%
-  select(ID_ind, session, phenologie) %>%
-  mutate(phenologie = as.character(phenologie)) %>%
-  arrange(ID_ind, session)
-
-# compléter la grille si nécessaire (garantir une ligne par ID_ind × session)
-ids <- unique(tv_pheno$ID_ind)
-sessions <- sort(unique(tv_pheno$session))
-grid <- expand.grid(ID_ind = ids, session = sessions, stringsAsFactors = FALSE)
-tv_pheno_full <- grid %>%
-  left_join(tv_pheno, by = c("ID_ind", "session")) %>%
-  arrange(ID_ind, session)
-
-# ---------------------------------------------------------
-# 6. Préparer les données pour RMark
-# ---------------------------------------------------------
-histories_for_mark <- histories_clean %>%
-  rename(ID = ID_ind) %>%
-  select(ID, ch, site, taille_c, recouv_c)
-
-processed <- process.data(histories_for_mark, model = "CJS", groups = c("site"))
-ddl <- make.design.data(processed)
-
-# ---------------------------------------------------------
-# 7. Injecter phenologie dans ddl pour p et/ou Phi (time varying)
-# ---------------------------------------------------------
-# créer clés pour matcher
-key_tv <- paste(tv_pheno_full$ID_ind, tv_pheno_full$session, sep = "_")
-key_ddl_p <- paste(ddl$p$ID, ddl$p$time, sep = "_")
-ddl$p$phenologie <- tv_pheno_full$phenologie[match(key_ddl_p, key_tv)]
-
-# si tu veux phenologie pour Phi (survie entre t et t+1)
-key_ddl_Phi <- paste(ddl$Phi$ID, ddl$Phi$time, sep = "_")
-ddl$Phi$phenologie <- tv_pheno_full$phenologie[match(key_ddl_Phi, key_tv)]
-
-# contrôle des NA éventuels
-table(ddl$p$phenologie, useNA = "ifany")
-table(ddl$Phi$phenologie, useNA = "ifany")
-
-# ---------------------------------------------------------
-# 8. Jeu de modèles candidats
-# ---------------------------------------------------------
-models <- list()
-
-models$null <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~1),
-                      p   = list(formula = ~1)
-                    ))
-
-models$time <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~time),
-                      p   = list(formula = ~1)
-                    ))
-
-models$site <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~site),
-                      p   = list(formula = ~1)
-                    ))
-
-models$taille <- mark(processed, ddl,
-                      model.parameters = list(
-                        Phi = list(formula = ~taille_c),
-                        p   = list(formula = ~1)
-                      ))
-
-models$pheno_p <- mark(processed, ddl,
-                       model.parameters = list(
-                         Phi = list(formula = ~1),
-                         p   = list(formula = ~phenologie)
-                       ))
-
-models$comb <- mark(processed, ddl,
-                    model.parameters = list(
-                      Phi = list(formula = ~site + taille_c),
-                      p   = list(formula = ~phenologie)
-                    ))
-
-models$int <- mark(processed, ddl,
-                   model.parameters = list(
-                     Phi = list(formula = ~site * taille_c),
-                     p   = list(formula = ~phenologie)
-                   ))
-
-# ---------------------------------------------------------
-# 9. Comparaison des modèles et sélection
-# ---------------------------------------------------------
-model_list <- unlist(models, recursive = FALSE)
-mt <- model.table(model_list, use.lnl = FALSE)
-print(mt)
-
-# ---------------------------------------------------------
-# 10. Résultats du meilleur modèle et prédictions exemples
-# ---------------------------------------------------------
-best_name <- rownames(mt)[1]
-best_model <- model_list[[best_name]]
-cat("Meilleur modèle selon AICc :", best_name, "\n")
-summary(best_model)
-
-# prédiction Phi en fonction de taille pour le premier site
-newdata <- data.frame(
-  taille_c = seq(min(histories_for_mark$taille_c, na.rm = TRUE),
-                 max(histories_for_mark$taille_c, na.rm = TRUE), length = 50),
-  site = factor(levels(histories_for_mark$site)[1], levels = levels(histories_for_mark$site))
-)
-pred_phi <- predict(best_model, type = "Phi", newdata = newdata)
-plot_df <- data.frame(taille_c = newdata$taille_c,
-                      estimate = pred_phi$estimate,
-                      lcl = pred_phi$lcl,
-                      ucl = pred_phi$ucl)
-
-ggplot(plot_df, aes(x = taille_c, y = estimate)) +
-  geom_line() +
-  geom_ribbon(aes(ymin = lcl, ymax = ucl), alpha = 0.2) +
-  labs(x = "Taille centrée", y = "Survie apparente Phi") +
-  theme_minimal()
-
-```
 
 ## --------------
 
@@ -2091,4 +2469,371 @@ ms_model$results$real
 ```
 
 ## --------------
+
+#TEST RMARK
+
+```{r}
+#Faire le tableau propre
+verification %>%
+  mutate(site=as.factor(site),
+         date=date(date),
+         ID_quadrat=as.factor(ID_quadrat),
+         ID_ind=as.factor(ID_ind),
+         observateur=as.factor(observateur)) %>%
+  rowwise() %>%
+  mutate(detecte=sum(juv, non_fleuri, fleur, fleurs_fanees, fruit)) -> data_imp
+
+
+data_original %>%
+  mutate(site=as.factor(site),
+         ID_quadrat=as.factor(ID_quadrat),
+         ID_ind=as.factor(ID_ind),
+         phenoS1=as.factor(phenoS1),
+         phenoS2=as.factor(phenoS2),
+         phenoS3=as.factor(phenoS3)) -> taille_pheno
+
+data_original %>%
+  pivot_longer(cols=c(phenoS1, phenoS2, phenoS3), names_prefix = "phenoS", names_to = "session", values_to = "stade_pheno") %>%
+  mutate(session=as.numeric(session)) %>%
+  select(site, ID_quadrat, ID_ind, session, stade_pheno) -> pheno 
+
+data_original %>%
+  pivot_longer(cols=c(tailleS1, tailleS2, tailleS3), names_prefix = "tailleS", names_to = "session", values_to = "taille") %>%
+  mutate(session=as.numeric(session)) %>%
+  select(site, ID_quadrat, ID_ind, session, taille) -> taille
+
+
+# visualisation des changements phéno
+pheno %>%
+  pivot_wider(names_from=session, id_cols = "ID_ind", values_from = "stade_pheno", names_prefix = "session") -> evo_pheno
+
+evo_pheno %>%
+  filter(!ID_ind%in%"CM.Q5.10") %>%
+  group_by(session1, session2, session3) %>%
+  summarise(n=n()) -> recap_pheno
+
+# jointure avec données détectins individuelles et infos pheno/taille
+data_imp %>%
+  select(-site) %>%
+  left_join(pheno) %>%
+  left_join(taille) -> data
+
+# on importe les infos observateurs / numéros de sessions 
+obs_session <- readr::read_csv2("data/raw/obs_session.csv")
+obs_session %>%
+  dplyr::mutate(ID_quadrat = as.factor(ID_quadrat),
+                observateur = as.factor(observateur),
+                num_obs=as.factor(num_obs)) -> obs_session
+
+obs_session %>%
+  mutate(val=1) %>%
+  pivot_wider(names_from = c(session,num_obs), values_from = val, id_cols=ID_quadrat) -> recap_sessions_obs
+
+
+# on indique l'effort pour les observateurs manquants sur des quadrats, on reporte ensuite cette info aux individus
+recap_sessions_obs %>%
+  pivot_longer(cols=2:19,  names_to = "session_obs", values_to = "prospecte") %>%
+  mutate(session=str_sub(session_obs, 1,1),
+         session=as.numeric(session),
+         num_obs=str_sub(session_obs, 3,6),
+         num_obs=as.factor(num_obs)) %>%
+  left_join(obs_session) -> effort
+
+
+data %>%
+  select(ID_quadrat, ID_ind) %>%
+  group_by(ID_ind) %>%
+  slice(1) -> ind_quadrat
+
+
+ind_quadrat %>%
+  left_join(effort) -> effort_inds
+
+
+# histoires de détection individuelles avec les stades phénos pour multistate. 
+effort_inds %>%
+  left_join(data) %>%
+  select(session, ID_ind, num_obs, stade_pheno, prospecte) %>%
+  mutate(pheno_lettres = case_when(stade_pheno%in% "j" ~ "A",
+                                   stade_pheno%in% "nf" ~ "B",
+                                   stade_pheno%in% "f" ~ "C",
+                                   stade_pheno%in% "ff" ~ "D",
+                                   stade_pheno%in% "F"~ "E"),
+         etat_prosp= case_when(prospecte==1~pheno_lettres, 
+                               is.na(prospecte)~".")) %>% 
+  arrange(session, num_obs) %>%
+  pivot_wider(names_from = c(session,num_obs), values_from = etat_prosp, id_cols=ID_ind) %>%
+  replace(is.na(.),"0") -> hist_det
+  
+hist_long <- hist_det %>%
+  pivot_longer(
+    cols = -ID_ind,
+    names_to = "sess_obs",
+    values_to = "etat"
+  ) %>%
+  mutate(
+    session = as.integer(str_sub(sess_obs, 1, 1)),
+    obs = str_extract(sess_obs, "obs[0-9]+")
+  )
+
+histories_for_mark <- hist_long %>%
+  arrange(ID_ind, obs, session) %>%
+  group_by(ID_ind, obs) %>%
+  summarise(
+    ch = paste0(etat, collapse = ""),
+    .groups = "drop"
+  )
+  
+histories_clean <- histories_for_mark %>%
+  mutate(ID_obs = paste(ID_ind, obs, sep = "_")) %>%
+  select(ID_obs, ch)
+
+histories_valid <- histories_clean %>%
+  # garder seulement les lignes qui ont au moins un A ou B
+  filter(grepl("[A-Z]", ch))
+
+histories_valid2 <- histories_valid %>%
+  filter(!grepl("obs6", ID_obs))
+
+# 2. Définir time.intervals : longueur = T - 1 = 2
+
+# Si tu n'as pas de covariables individuelles prêtes, on utilise juste ID et ch
+histories_for_mark <- histories_valid2 %>% select(ID_obs, ch)
+
+# vérifier les chaînes
+table(nchar(histories_for_mark$ch))
+unique(head(histories_for_mark$ch, 20))
+
+# définir time.intervals (T = longueur des ch ; ici T = 3 => length = 2)
+T <- unique(nchar(histories_for_mark$ch))
+time.intervals <- rep(1, as.integer(T) - 1)
+
+# Process data en Multistrata : indiquer les labels d'états présents
+# RMark attend : lettres pour états et "0" pour non-observé — c'est ton cas
+states <- c("A","B","C","D","E")   # adapte si tu as d'autres états
+```
+
+# Multistrata
+
+```{r}
+processed_ms <- process.data(histories_for_mark, model = "Multistrata",
+                             time.intervals = time.intervals,
+                             strata.labels = states)
+
+ddl_ms <- make.design.data(processed_ms)
+
+# Exemple de modèles simples
+S.const <- list(formula = ~1)                       # survie constante
+p.bystratum <- list(formula = ~ stratum)            # p dépend de l'état observé
+Psi.bystratum <- list(formula = ~ stratum)          # transitions dépendant de l'état de départ
+
+# Lancer un modèle multistate simple
+model_ms <- mark(processed_ms, ddl_ms,
+                 model.parameters = list(S = S.const, p = p.bystratum, Psi = Psi.bystratum))
+
+summary(model_ms)
+
+```
+
+Résultat correcte pour A et B et pour D et E résultats completement aberrants
+
+#Autres modèles
+
+```{r}
+
+# 5. lancer modèles parcimonieux (Multistrata)
+mA <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),       # survie constante
+  p   = list(formula = ~stratum), # détection selon état
+  Psi = list(formula = ~1)        # transitions constantes
+))
+
+mB <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~1),
+  Psi = list(formula = ~stratum)
+))
+
+mC <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~stratum),
+  Psi = list(formula = ~stratum)
+))
+
+# 6. comparer
+models <- collect.models()
+model.table(models)
+
+
+```
+
+#Prendre le recouvrement en compte
+
+```{r}
+# 1. Sécuriser noms et types
+histories_for_mark <- histories_for_mark %>%
+  rename_with(~ as.character(.), everything())
+
+tab_complet <- tab_complet %>%
+  rename_with(~ as.character(.), everything())
+
+# 2. Extraire ID_ind depuis ID_obs (tout avant le premier "_")
+histories_tmp <- histories_for_mark %>%
+  mutate(ID_ind = sub("_.*$", "", as.character(ID_obs)),
+         ID_ind = str_trim(ID_ind))
+
+# 3. Préparer tab_complet : ID_ind + covariables à joindre
+tab_tmp <- tab_complet %>%
+  mutate(ID_ind = as.character(ID_ind),
+         ID_ind = str_trim(ID_ind)) %>%
+  select(ID_ind,
+         recouvrement_PC1,
+         site,
+         session,
+         taille,
+         quadrat)
+
+# 4. Jointure des covariables
+histories_with_recov <- histories_tmp %>%
+  left_join(tab_tmp, by = "ID_ind")
+
+# 5. Conserver la structure d'origine + nouvelles colonnes
+histories_for_mark_final <- histories_with_recov %>%
+  select(all_of(names(histories_for_mark)),
+         recouvrement_PC1,
+         site,
+         session,
+         taille,
+         quadrat)
+
+# 6. Contrôles rapides
+n_total <- nrow(histories_for_mark_final)
+n_missing <- sum(is.na(histories_for_mark_final$recouvrement_PC1))
+message("Total lignes : ", n_total,
+        " — lignes sans recouvrement_PC1 après jointure : ", n_missing)
+
+# 7. Préparation finale : ID_ind + centrage de la covariable continue
+histories_for_mark_final <- histories_for_mark_final %>%
+  mutate(ID_ind = sub("_.*$", "", as.character(ID_obs)),
+         recouvrement_PC1 = as.numeric(recouvrement_PC1),
+         taille = as.numeric(taille),
+         recov_c = recouvrement_PC1 - mean(recouvrement_PC1, na.rm = TRUE))
+
+# 8. Vérifier longueurs des chaînes ch
+len_tab <- table(nchar(histories_for_mark_final$ch))
+if (length(len_tab) != 1)
+  stop("Les chaînes ch n'ont pas toutes la même longueur")
+
+T <- as.integer(names(len_tab)[1])
+time.intervals <- rep(1, T - 1)
+
+# 9. Définir états présents (exclure '0' et '.')
+states <- sort(
+  setdiff(
+    unique(unlist(strsplit(paste(histories_for_mark_final$ch,
+                                 collapse = ""), ""))),
+    c("0", ".")
+  )
+)
+message("États détectés : ", paste(states, collapse = ", "))
+
+# 10. Table pour process.data : ID, ch + covariables individuelles
+histories_rmark <- histories_for_mark_final %>%
+  transmute(ID = ID_obs,
+            ch = ch,
+            recov_c,
+            site,
+            session,
+            taille,
+            quadrat)
+
+# 11. process.data Multistrata
+processed_ms <- process.data(histories_rmark,
+                             model = "Multistrata",
+                             time.intervals = time.intervals,
+                             strata.labels = states)
+
+# 12. design data
+ddl_ms <- make.design.data(processed_ms)
+
+# Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
+m1 <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~ stratum),
+  Psi = list(formula = ~1)
+))
+
+# Modèle 2 : p constant, Psi selon état (test de structure)
+m2 <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~1),
+  Psi = list(formula = ~ stratum)
+))
+
+# Modèle 3 : modèle complet sans covariable (S constant, p ~ stratum, Psi ~ stratum)
+m3 <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~1),
+  p   = list(formula = ~ stratum),
+  Psi = list(formula = ~ stratum)
+))
+
+# Modèle 4 : inclure recouvrement_PC1 (cov individuelle) sur S
+m4 <- mark(processed_ms, ddl_ms, model.parameters = list(
+  S   = list(formula = ~ recov_c),
+  p   = list(formula = ~ stratum),
+  Psi = list(formula = ~ stratum)
+))
+
+# Modèle 5 : 
+m5 <- mark(processed_ms, ddl_ms, model.parameters = list( 
+S = list(formula = ~1), 
+p = list(formula = ~ stratum + recov_c), 
+Psi = list(formula = ~ stratum) ))
+
+# Modèle 5 : 
+m5 <- mark(processed_ms, ddl_ms, model.parameters = list( 
+S = list(formula = ~ 1), 
+p = list(formula = ~ stratum + recov_c), 
+Psi = list(formula = ~ stratum) ))
+
+
+# Rassembler et comparer
+models_list <- list(m1 = m1, m2 = m2, m3 = m3, m4 = m4, m5 =m5)
+model.table(models_list)
+
+processed_ms <- process.data(
+  histories_rmark,
+  model = "Multistrata",
+  time.intervals = time.intervals,
+  strata.labels = states,
+  groups = "site"
+)
+
+ddl_ms <- make.design.data(processed_ms)
+
+m6 <- mark(
+  processed_ms,
+  ddl_ms,
+  model.parameters = list(
+    S   = list(formula = ~ group),                 # survie différente selon site
+    p   = list(formula = ~ stratum + recov_c),     # détection selon état + recouvrement
+    Psi = list(formula = ~ stratum)                # transitions selon état
+  )
+)
+
+models_list <- list(m6=m6)
+model.table(models_list)
+```
+
+# CRDMS
+
+processed_crdms \<- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
+
+# 12. design data
+
+ddl_crdms \<- make.design.data(processed_crdms)
+
+# Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
+
+m1_crdms \<- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
 
