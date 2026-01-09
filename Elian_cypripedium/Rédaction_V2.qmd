@@ -16,8 +16,31 @@ knitr::opts_chunk$set(
 ```
 
 # -------------------------------
-
 # INTRODUCTION
+
+Insere ici
+
+# -------------------------------
+
+# INFORMATIONS
+
+1_ Pour l’interprétation, les tests de significativité reposent généralement sur la p‑value. Les seuils couramment utilisés sont :
+p < 0.001 : très hautement significatif ; p < 0.01 : hautement significatif ; p < 0.05 : significatif ; p < 0.1 : tendance ; p ≥ 0.1 : non significatif.
+
+2_ Le chargement complet des packages est indispensable. Si un package n’est pas reconnu, il peut être installé avec :
+install.packages("nom_du_package")
+
+3_ Si un élément du script ne fonctionne pas, vérifiez que la structure des vecteurs correspond bien au format attendu. De même, assurez‑vous que les fichiers de données sont correctement formatés avant leur importation.
+
+La méthode d’analyse présentée suit toujours la même logique :
+
+- Préparation des données (nettoyage, transformation, mise en forme).
+
+- Analyse sous forme de graphiques et/ou tableaux. Les tableaux affichés sont souvent simplifiés, mais les versions complètes restent accessibles via les objets R correspondants.
+
+- Interprétation, comprenant une explication de la méthode utilisée et des critères de lecture.
+
+- Résultats, où l’on discute spécifiquement ce que montrent les analyses réalisées sur notre jeu de données.
 
 # --------------------------------------------------
 
@@ -1645,7 +1668,7 @@ tx_erreur_fin <- experience2 %>%
 
 ### Erreur d’attribution phénologique vs non-détection
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
   geom_point(
@@ -1686,7 +1709,7 @@ ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
 
 ### Autonotation vs erreur d'attribution phénologique
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
   geom_point(
     aes(color = sexe.x, size = id_total),
@@ -1726,7 +1749,7 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
 
 ### Autonotation vs non-détection
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   geom_point(
     aes(color = sexe.x, size = id_total),
@@ -1764,8 +1787,8 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   )
 ```
 
-### Analyses complémentaires
-
+## Analyses complémentaires
+###Visualiser les 3 variables en 3D
 ```{r}
 # ------------------------------------------------------------
 # Visualisation des 3 axes en 3D 
@@ -1850,6 +1873,56 @@ anova(model3_autonotation)
 AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 
 ```
+
+### Effet du sexe
+
+```{r}
+library(ggpubr)
+
+cols_sexe <- c("f" = "#E41A1C", "m" = "#377EB8")
+
+### 1) Risque d'erreur
+ggplot(tx_erreur_fin, aes(x = sexe.x, y = risque_erreur, fill = sexe.x)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = cols_sexe) +
+  stat_compare_means(method = "wilcox.test", label = "p.format") +
+  labs(
+    title = "Risque d'erreur selon le sexe",
+    x = "Sexe",
+    y = "Risque d'erreur"
+  ) +
+  theme_minimal()
+
+
+### 2) Taux de détection
+ggplot(tx_erreur_fin, aes(x = sexe.x, y = tx_detect, fill = sexe.x)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = cols_sexe) +
+  stat_compare_means(method = "wilcox.test", label = "p.format") +
+  labs(
+    title = "Taux de détection selon le sexe",
+    x = "Sexe",
+    y = "Taux de détection"
+  ) +
+  theme_minimal()
+
+
+### 3) Taux d'erreur d'attribution
+ggplot(tx_erreur_fin, aes(x = sexe.x, y = tx_erreur, fill = sexe.x)) +
+  geom_boxplot(alpha = 0.7) +
+  scale_fill_manual(values = cols_sexe) +
+  stat_compare_means(method = "wilcox.test", label = "p.format") +
+  labs(
+    title = "Taux d'erreur d'attribution selon le sexe",
+    x = "Sexe",
+    y = "Taux d'erreur"
+  ) +
+  theme_minimal()
+
+```
+Méthode d'interprétation : Ces graphiques permettent de comparer visuellement si les performances des observateurs diffèrent selon le sexe. Le boxplot du risque d’erreur montre si hommes et femmes s’auto‑évaluent différemment en termes de confiance ou de prudence. Celui du taux de détection indique si un sexe repère plus souvent les individus que l’autre. Enfin, le boxplot du taux d’erreur d’attribution révèle si l’un des deux groupes se trompe davantage dans l’identification de la phénologie. Les p‑values affichées sur les graphiques permettent de savoir si les différences observées sont statistiquement significatives ou si elles relèvent simplement de la variabilité individuelle. 
+
+Résultats : Nous n’avons observé aucune différence significative entre les sexes, quelle que soit la variable d’erreur considérée.
 
 # --------------------------------------------------
 
