@@ -19,24 +19,7 @@ knitr::opts_chunk$set(
 
 # INTRODUCTION
 
-Le Sabot de Vénus (Cypripedium calceolus L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France.
-Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement.
-Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu :
--	Au niveau international par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ;
--	Au niveau européen par la Directive Habitat en tant qu’espèce d’intérêt communautaire devant être protégée (Annexe II et IV) ;
--	Au niveau national en tant qu’espèce protégée en France (Arrêté du 20 janvier 1982).
-Enfin, le Sabot de Vénus est présent sur la liste rouge nationale de 2019 en tant qu’espèce « Quasi-menacée » en accord avec son statut sur la liste rouge européenne de l’UICN.
-Bien que majoritairement situé en contexte de plaine, le territoire du Parc national de forêts, avec son microclimat froid et humide et ses reliefs variés abrite plusieurs populations du Sabot de Vénus. Ce parc est situé à la frontière entre les départements de la Côte-d’Or dans la région Bourgogne-Franche-Comté et de la Haute-Marne dans la région Grand-Est. 
-Son statut de parc national depuis 2019 lui confère le devoir de protéger la biodiversité notamment en développant la connaissance des espèces et leur suivi scientifique. C’est dans ce cadre qu’un suivi de Cypripedium calceolus est requis. Pour cela, une étude pilote a été réalisée en 2025 pour émettre des points de vigilance méthodologique quant à l’établissement d’un nouveau protocole de suivi robuste et standardisé à l’échelle du territoire du Parc national de forêts.
-Cette étude a permis le suivi de 5 sites présents dans le Cœur du parc. Dans chaque site, des quadrats de 100 m² ont été placés en suivant un échantillonnage stratifié permettant de prendre en compte des différences de densité d’individus observées. Chaque quadrat a été prospecté sur trois sessions permettant de couvrir plusieurs stades phénologiques de l’espèce et de faire varier sa détectabilité :
--	La session 1 du 22 au 24 mai correspondant au stade phénologique attendu de végétatif ;
--	La session 2 du 3 au 5 juin correspondant au stade phénologique attendu du pic de floraison ;
--	La session 3 du 2 au 4 juillet correspondant au stade phénologique attendu de fructification.
-Deux opérateurs ont réalisé le suivi en notant pour chaque individu le stade phénologique, la taille, le nombre de fleurs et de fruits et la présence de prédation. De plus, ils ont aussi évalué pour chaque quadrat le recouvrement de cinq strates végétales.
-Enfin, lors de chaque session, entre 4 et 6 observateurs ont prospecté chaque quadrat pendant une durée contrainte de 10 à 15 minutes. Pour chaque individu observé, ils ont renseigné le stade phénologique. Cette approche permet d’évaluer à la fois les erreurs d’attribution des stades phénologiques et les taux de détection, en comparaison avec le nombre total d’individus recensés par les opérateurs. 
-Un premier rapport auquel il faut se référer est celui de Léa DESCLOS en 2025 qui permet d’aborder le protocole plus en profondeur et qui donne déjà des clés sur les résultats de cette étude pilote.
-L’objectif de ce rapport d’analyse est de mettre en lumière l’écologie du Sabot de Vénus sur le parc puis de mieux comprendre les contraintes liées à la détection du sabot de Vénus. Cela pourra servir d’appui à la mise en place d’un protocole de suivi de Cypripedium calceolus.
-
+Le Sabot de Vénus (Cypripedium calceolus L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu : - Au niveau international par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ; - Au niveau européen par la Directive Habitat en tant qu’espèce d’intérêt communautaire devant être protégée (Annexe II et IV) ; - Au niveau national en tant qu’espèce protégée en France (Arrêté du 20 janvier 1982). Enfin, le Sabot de Vénus est présent sur la liste rouge nationale de 2019 en tant qu’espèce « Quasi-menacée » en accord avec son statut sur la liste rouge européenne de l’UICN. Bien que majoritairement situé en contexte de plaine, le territoire du Parc national de forêts, avec son microclimat froid et humide et ses reliefs variés abrite plusieurs populations du Sabot de Vénus. Ce parc est situé à la frontière entre les départements de la Côte-d’Or dans la région Bourgogne-Franche-Comté et de la Haute-Marne dans la région Grand-Est. Son statut de parc national depuis 2019 lui confère le devoir de protéger la biodiversité notamment en développant la connaissance des espèces et leur suivi scientifique. C’est dans ce cadre qu’un suivi de Cypripedium calceolus est requis. Pour cela, une étude pilote a été réalisée en 2025 pour émettre des points de vigilance méthodologique quant à l’établissement d’un nouveau protocole de suivi robuste et standardisé à l’échelle du territoire du Parc national de forêts. Cette étude a permis le suivi de 5 sites présents dans le Cœur du parc. Dans chaque site, des quadrats de 100 m² ont été placés en suivant un échantillonnage stratifié permettant de prendre en compte des différences de densité d’individus observées. Chaque quadrat a été prospecté sur trois sessions permettant de couvrir plusieurs stades phénologiques de l’espèce et de faire varier sa détectabilité : - La session 1 du 22 au 24 mai correspondant au stade phénologique attendu de végétatif ; - La session 2 du 3 au 5 juin correspondant au stade phénologique attendu du pic de floraison ; - La session 3 du 2 au 4 juillet correspondant au stade phénologique attendu de fructification. Deux opérateurs ont réalisé le suivi en notant pour chaque individu le stade phénologique, la taille, le nombre de fleurs et de fruits et la présence de prédation. De plus, ils ont aussi évalué pour chaque quadrat le recouvrement de cinq strates végétales. Enfin, lors de chaque session, entre 4 et 6 observateurs ont prospecté chaque quadrat pendant une durée contrainte de 10 à 15 minutes. Pour chaque individu observé, ils ont renseigné le stade phénologique. Cette approche permet d’évaluer à la fois les erreurs d’attribution des stades phénologiques et les taux de détection, en comparaison avec le nombre total d’individus recensés par les opérateurs. Un premier rapport auquel il faut se référer est celui de Léa DESCLOS en 2025 qui permet d’aborder le protocole plus en profondeur et qui donne déjà des clés sur les résultats de cette étude pilote. L’objectif de ce rapport d’analyse est de mettre en lumière l’écologie du Sabot de Vénus sur le parc puis de mieux comprendre les contraintes liées à la détection du sabot de Vénus. Cela pourra servir d’appui à la mise en place d’un protocole de suivi de Cypripedium calceolus.
 
 # -------------------------------
 
@@ -2018,16 +2001,7 @@ tab_complet <- tab_complet %>%
   left_join(experience_final, by = "observateur")
 ```
 
-Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables.
-Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont :
-- le site, la session et leur interaction : On s'attend à ce que la détectabilité augmente avec le temps, quelle varie potentiellement entre sites et que cet détectabilité entre sites change au cours du temps
-- la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri
-- les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses
-- le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur
-Les variables explicatives aléatoires sont :
-- l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu)
-- le quadra emboité dans site (déjà intégré dans notre écriture du quadrat)
-- l'observateur
+Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site, la session et leur interaction : On s'attend à ce que la détectabilité augmente avec le temps, quelle varie potentiellement entre sites et que cet détectabilité entre sites change au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
 
 ```{r, echo=FALSE}
 #Modèle stade phénologique
@@ -2163,6 +2137,7 @@ ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
 ```
 
 #Partie modèle Taille
+
 ```{r, message=FALSE, echo=FALSE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
@@ -2197,7 +2172,6 @@ ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
        y = "Probabilité de détection")+
   theme_minimal()
 ```
-
 
 ```{r, message=FALSE, echo=FALSE}
 #prédictions marginales du modèle
@@ -2481,119 +2455,6 @@ prop.table(conf_par_site$conf[[5]], margin = 1)
 # CMR
 
 ## --------------
-###Partie galad
-```{r}
-unique(tab_complet$phenologie_verif)
-#Transformer lignes phenologie ayant des NA en 0
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_verif = replace_na(phenologie_verif, "0")
-  )
-
-#Faire la même chose avec les tailles
-tab_complet <- tab_complet %>%
-  mutate(
-    taille = as.numeric(gsub(",", ".", taille)),
-    taille = replace_na(taille, 0)
-  )
-
-#Regarder le nombre d'observateurs par quadra
-tab_obs <- tab_complet %>% 
-  group_by(id_quadrat_fin, observateur) %>% 
-  summarise(n = 1, .groups = "drop") %>% 
-  ungroup()
-
-#Regarder le nombre de quadra observés par observateur
-tab_obs2 <- tab_obs %>% 
-  group_by(observateur) %>% 
-  summarise(nb_quadra = n()) %>% 
-  arrange(desc(nb_quadra))
-  
-#Regarder le nombre d'observations par quadra
-tab_obs_tot <- tab_obs %>% 
-  group_by(id_quadrat_fin) %>% 
-  summarise(nb_obs = n()) %>% 
-  ungroup()
-
-#Regarder pourcentages d'observations
-nb_obs <- tab_obs_tot %>% 
-  count(nb_obs) %>% 
-  mutate(pourcentage = round((n * 100) / sum(n), 2))
-
-nb_obs
-#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
-
-#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
-enlever <- tab_obs_tot %>% 
-  filter(nb_obs <5)
-enlever
-#quadra à enlever :
-# TCb.Q9.2
-# TCb.Q7.2
-# CM.Q7.2
-Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
-
-#extraire informations quadra avec 5 et 6 obs
-tab_obs_tot_5obs <- tab_obs_tot %>% 
-  filter(nb_obs == 5)
-
-tab_obs_tot_6obs <- tab_obs_tot %>% 
-  filter(nb_obs == 6)
-
-#Transvaser ces infos dans tableau complet
-tab_complet_5obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
-
-tab_complet_6obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
-
-#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
-#Extraire nb obs par observateur
-tab_complet_5obs <- tab_complet_5obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-tab_tmp <- tab_complet_6obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-#Garder 5 observations par individu/session/quadra/site
-tab_complet_5obs_6 <- tab_tmp %>%
-  group_by(id_ind_fin) %>%
-  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
-  ungroup()
-
-#Vérification si nombre de lignes semble bon
-nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
-nrow(tab_complet_5obs_6)
-
-#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
-tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
-ind_av_filtrage <- nrow(tab_complet_final)
-
-#Enlever les trois quadra ayant été partiellement supprimés
-tab_complet_final <- tab_complet_final %>% 
-  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
-ind_ap_filtrage <- nrow(tab_complet_final)
-#pourcentage indiv perdus :
-(1-(ind_ap_filtrage/ind_av_filtrage))*100
-
-#Vérification histoires de capture
-verif_sessions <- tab_complet_final %>%
-  group_by(ID_ind) %>%
-  summarise(
-    nb_sessions = n_distinct(session),
-    sessions = paste(sort(unique(session)), collapse = ","),
-    .groups = "drop"
-  )
-
-check_sessions <- verif_sessions %>%
-  mutate(
-    ok_sessions = sessions == "1,2,3"
-  )
-
-check_sessions %>%
-  filter(!ok_sessions)
-```
-
 
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
 
@@ -2943,369 +2804,298 @@ ms_model$results$real
 
 ## --------------
 
-#TEST RMARK
+# RMARK
+# Préparation tableau 
+```{r}
+unique(tab_complet$phenologie_verif)
+#Transformer lignes phenologie ayant des NA en 0
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie_verif = as.character(phenologie_verif),
+    phenologie_verif = replace_na(phenologie_verif, "0")
+  )
+
+
+#Faire la même chose avec les tailles
+tab_complet <- tab_complet %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille)),
+    taille = replace_na(taille, 0)
+  )
+
+#Regarder le nombre d'observateurs par quadra
+tab_obs <- tab_complet %>% 
+  group_by(id_quadrat_fin, observateur) %>% 
+  summarise(n = 1, .groups = "drop") %>% 
+  ungroup()
+
+#Regarder le nombre de quadra observés par observateur
+tab_obs2 <- tab_obs %>% 
+  group_by(observateur) %>% 
+  summarise(nb_quadra = n()) %>% 
+  arrange(desc(nb_quadra))
+  
+#Regarder le nombre d'observations par quadra
+tab_obs_tot <- tab_obs %>% 
+  group_by(id_quadrat_fin) %>% 
+  summarise(nb_obs = n()) %>% 
+  ungroup()
+
+#Regarder pourcentages d'observations
+nb_obs <- tab_obs_tot %>% 
+  count(nb_obs) %>% 
+  mutate(pourcentage = round((n * 100) / sum(n), 2))
+
+nb_obs
+#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+enlever <- tab_obs_tot %>% 
+  filter(nb_obs <5)
+enlever
+#quadra à enlever :
+# TCb.Q9.2
+# TCb.Q7.2
+# CM.Q7.2
+Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
+
+#extraire informations quadra avec 5 et 6 obs
+tab_obs_tot_5obs <- tab_obs_tot %>% 
+  filter(nb_obs == 5)
+
+tab_obs_tot_6obs <- tab_obs_tot %>% 
+  filter(nb_obs == 6)
+
+#Transvaser ces infos dans tableau complet
+tab_complet_5obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
+
+tab_complet_6obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
+
+#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
+#Extraire nb obs par observateur
+tab_complet_5obs <- tab_complet_5obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+tab_tmp <- tab_complet_6obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+#Garder 5 observations par individu/session/quadra/site
+tab_complet_5obs_6 <- tab_tmp %>%
+  group_by(id_ind_fin) %>%
+  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
+  ungroup()
+
+#Vérification si nombre de lignes semble bon
+nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
+nrow(tab_complet_5obs_6)
+
+#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
+tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+ind_av_filtrage <- nrow(tab_complet_final)
+
+#Enlever les trois quadra ayant été partiellement supprimés
+tab_complet_final <- tab_complet_final %>% 
+  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+ind_ap_filtrage <- nrow(tab_complet_final)
+#pourcentage indiv perdus :
+(1-(ind_ap_filtrage/ind_av_filtrage))*100
+
+#Vérification histoires de capture
+verif_sessions <- tab_complet_final %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
+```
+
+#Préparation CRDMS
 
 ```{r}
-# #Faire le tableau propre
-# verification %>%
-#   mutate(site=as.factor(site),
-#          date=date(date),
-#          ID_quadrat=as.factor(ID_quadrat),
-#          ID_ind=as.factor(ID_ind),
-#          observateur=as.factor(observateur)) %>%
-#   rowwise() %>%
-#   mutate(detecte=sum(juv, non_fleuri, fleur, fleurs_fanees, fruit)) -> data_imp
-# 
-# 
-# data_original %>%
-#   mutate(site=as.factor(site),
-#          ID_quadrat=as.factor(ID_quadrat),
-#          ID_ind=as.factor(ID_ind),
-#          phenoS1=as.factor(phenoS1),
-#          phenoS2=as.factor(phenoS2),
-#          phenoS3=as.factor(phenoS3)) -> taille_pheno
-# 
-# data_original %>%
-#   pivot_longer(cols=c(phenoS1, phenoS2, phenoS3), names_prefix = "phenoS", names_to = "session", values_to = "stade_pheno") %>%
-#   mutate(session=as.numeric(session)) %>%
-#   select(site, ID_quadrat, ID_ind, session, stade_pheno) -> pheno 
-# 
-# data_original %>%
-#   pivot_longer(cols=c(tailleS1, tailleS2, tailleS3), names_prefix = "tailleS", names_to = "session", values_to = "taille") %>%
-#   mutate(session=as.numeric(session)) %>%
-#   select(site, ID_quadrat, ID_ind, session, taille) -> taille
-# 
-# 
-# # visualisation des changements phéno
-# pheno %>%
-#   pivot_wider(names_from=session, id_cols = "ID_ind", values_from = "stade_pheno", names_prefix = "session") -> evo_pheno
-# 
-# evo_pheno %>%
-#   filter(!ID_ind%in%"CM.Q5.10") %>%
-#   group_by(session1, session2, session3) %>%
-#   summarise(n=n()) -> recap_pheno
-# 
-# # jointure avec données détectins individuelles et infos pheno/taille
-# data_imp %>%
-#   select(-site) %>%
-#   left_join(pheno) %>%
-#   left_join(taille) -> data
-# 
-# # on importe les infos observateurs / numéros de sessions 
-# obs_session <- readr::read_csv2("data/raw/obs_session.csv")
-# obs_session %>%
-#   dplyr::mutate(ID_quadrat = as.factor(ID_quadrat),
-#                 observateur = as.factor(observateur),
-#                 num_obs=as.factor(num_obs)) -> obs_session
-# 
-# obs_session %>%
-#   mutate(val=1) %>%
-#   pivot_wider(names_from = c(session,num_obs), values_from = val, id_cols=ID_quadrat) -> recap_sessions_obs
-# 
-# 
-# # on indique l'effort pour les observateurs manquants sur des quadrats, on reporte ensuite cette info aux individus
-# recap_sessions_obs %>%
-#   pivot_longer(cols=2:19,  names_to = "session_obs", values_to = "prospecte") %>%
-#   mutate(session=str_sub(session_obs, 1,1),
-#          session=as.numeric(session),
-#          num_obs=str_sub(session_obs, 3,6),
-#          num_obs=as.factor(num_obs)) %>%
-#   left_join(obs_session) -> effort
-# 
-# 
-# data %>%
-#   select(ID_quadrat, ID_ind) %>%
-#   group_by(ID_ind) %>%
-#   slice(1) -> ind_quadrat
-# 
-# 
-# ind_quadrat %>%
-#   left_join(effort) -> effort_inds
-# 
-# 
-# # histoires de détection individuelles avec les stades phénos pour multistate. 
-# effort_inds %>%
-#   left_join(data) %>%
-#   select(session, ID_ind, num_obs, stade_pheno, prospecte) %>%
-#   mutate(pheno_lettres = case_when(stade_pheno%in% "j" ~ "A",
-#                                    stade_pheno%in% "nf" ~ "B",
-#                                    stade_pheno%in% "f" ~ "C",
-#                                    stade_pheno%in% "ff" ~ "D",
-#                                    stade_pheno%in% "F"~ "E"),
-#          etat_prosp= case_when(prospecte==1~pheno_lettres, 
-#                                is.na(prospecte)~".")) %>% 
-#   arrange(session, num_obs) %>%
-#   pivot_wider(names_from = c(session,num_obs), values_from = etat_prosp, id_cols=ID_ind) %>%
-#   replace(is.na(.),"0") -> hist_det
-#   
-# hist_long <- hist_det %>%
-#   pivot_longer(
-#     cols = -ID_ind,
-#     names_to = "sess_obs",
-#     values_to = "etat"
-#   ) %>%
-#   mutate(
-#     session = as.integer(str_sub(sess_obs, 1, 1)),
-#     obs = str_extract(sess_obs, "obs[0-9]+")
-#   )
-# 
-# histories_for_mark <- hist_long %>%
-#   arrange(ID_ind, obs, session) %>%
-#   group_by(ID_ind, obs) %>%
-#   summarise(
-#     ch = paste0(etat, collapse = ""),
-#     .groups = "drop"
-#   )
-#   
-# histories_clean <- histories_for_mark %>%
-#   mutate(ID_obs = paste(ID_ind, obs, sep = "_")) %>%
-#   select(ID_obs, ch)
-# 
-# histories_valid <- histories_clean %>%
-#   # garder seulement les lignes qui ont au moins un A ou B
-#   filter(grepl("[A-Z]", ch))
-# 
-# histories_valid2 <- histories_valid %>%
-#   filter(!grepl("obs6", ID_obs))
-# 
-# # 2. Définir time.intervals : longueur = T - 1 = 2
-# 
-# # Si tu n'as pas de covariables individuelles prêtes, on utilise juste ID et ch
-# histories_for_mark <- histories_valid2 %>% select(ID_obs, ch)
-# 
-# # vérifier les chaînes
-# table(nchar(histories_for_mark$ch))
-# unique(head(histories_for_mark$ch, 20))
-# 
-# # définir time.intervals (T = longueur des ch ; ici T = 3 => length = 2)
-# T <- unique(nchar(histories_for_mark$ch))
-# time.intervals <- rep(1, as.integer(T) - 1)
-# 
-# # Process data en Multistrata : indiquer les labels d'états présents
-# # RMark attend : lettres pour états et "0" pour non-observé — c'est ton cas
-# states <- c("A","B","C","D","E")   # adapte si tu as d'autres états
-```
+# 1. On associe chaque état de phénologie à une lettre
+etat_phenologie <- c(
+  "non_fleuri"    = "N",
+  "juv"           = "J",
+  "fleur"        = "F",
+  "fleurs_fanees" = "B",
+  "fruit"         = "A",
+  "0" = "0"
+)
 
-# Multistrata
+tab_complet_finalA <- tab_complet_final %>%
+  mutate(
+    phenologie_verif = as.character(phenologie_verif),
+    etat = ifelse(is.na(phenologie_verif), "0", etat_phenologie[phenologie_verif])
+  )
+
+# 2. Anonymiser les observateurs par individu et session
+tab_complet_finalA <- tab_complet_finalA %>%
+  group_by(ID_ind, session) %>%
+  mutate(obs_id = paste0("O", row_number())) %>%  # O1 à O5 par session et individu
+  ungroup() %>%
+  mutate(sec = paste0("S", session, "_", obs_id))
+
+# 3. Pivot pour avoir large
+tab_wide <- tab_complet_finalA %>%
+  ungroup() %>%
+  select(ID_ind, sec, etat) %>%
+  pivot_wider(
+    names_from  = sec,
+    values_from = etat,
+    values_fill = "0"
+  )
+
+# 4. Réordonner les colonnes par session
+cols_order <- tab_wide %>%
+  select(-ID_ind) %>%
+  names() %>%
+  {.[order(as.numeric(sub("S(\\d+)_.*", "\\1", .)), match(., unique(.)))]}
+
+tab_wide <- tab_wide %>%
+  select(ID_ind, all_of(cols_order))
+
+# 5. Créer l'histoire de capture
+tab_wide <- tab_wide %>%
+  unite("ch", -ID_ind, sep = "", remove = FALSE)
+
+##On garde seulement la colonne ch, et on rajoute un compte de fréquence
+
+tab_ch_freq <- tab_wide %>%
+  select(ch) %>%               # on ne garde que l'histoire de capture
+  group_by(ch) %>%             # on groupe par histoire unique
+  summarise(freq = n(), .groups = "drop")  # on compte combien d'individus ont cette histoire
+
+# 3 primary periods (sessions) × 5 secondary occasions (observateurs)
+# Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
+# Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
+
+t.int <- c(
+ 0,0,0,0,  
+  1,          
+  0,0,0,0,  
+  1,         
+ 0,0,0,0  
+)
+
+
+crdms.data<-process.data(tab_ch_freq,model="CRDMS",time.interval=t.int,
+			strata.labels = c("0", "N", "J", "F", "B", "A")
+)
+
+crdms.ddl <- make.design.data(crdms.data)
+
+# Créer un index pour fixer p = 0 pour les états jamais observés ("0") si besoin
+crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+
+# Créer une variable de temps pour les Psi si on veut un modèle markovien
+crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
+# Si tu veux contraindre la dernière transition entre sessions
+# ici on peut mettre ctime = 2 pour la 3ème session comme dans l'exemple
+crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
+
+# Définir S (survie apparente) constante pour tous les états
+S.dot <- list(formula = ~1)
+
+# Définir p (probabilité de détection) variable selon la session
+p.session <- list(formula = ~session, share = TRUE)
+```
+# Avant on tente CRDMS des transitions
+#VII_i.i Toutes transitions
 
 ```{r}
-# processed_ms <- process.data(histories_for_mark, model = "Multistrata",
-#                              time.intervals = time.intervals,
-#                              strata.labels = states)
-# 
-# ddl_ms <- make.design.data(processed_ms)
-# 
-# # Exemple de modèles simples
-# S.const <- list(formula = ~1)                       # survie constante
-# p.bystratum <- list(formula = ~ stratum)            # p dépend de l'état observé
-# Psi.bystratum <- list(formula = ~ stratum)          # transitions dépendant de l'état de départ
-# 
-# # Lancer un modèle multistate simple
-# model_ms <- mark(processed_ms, ddl_ms,
-#                  model.parameters = list(S = S.const, p = p.bystratum, Psi = Psi.bystratum))
-# 
-# summary(model_ms)
+# 1. Fixer p=1 pour toutes les strates (détection parfaite)
+crdms.ddl$p$fix <- 1
 
+# 2. Survie constante (ou on peut la fixer à 1 si on ne veut pas l'estimer)
+S.list <- list(formula = ~1)
+
+# 3. Détection constante (fixée à 1)
+p.list <- list(formula = ~1)
+
+# 4. Probabilités de transition Psi dépendant seulement de l'état courant
+#    ici ~stratum = chaque état peut aller vers n'importe quel autre
+Psi.list <- list(formula = ~stratum)
+
+# 5. Estimer le modèle
+model.simple <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(S = S.list, p = p.list, Psi = Psi.list),
+  threads = 2,
+  delete = TRUE
+)
+
+# 6. Résultats des probabilités de transition
+model.simple$results$real
 ```
 
-Résultat correcte pour A et B et pour D et E résultats completement aberrants
-
-#Autres modèles
+#Modèle CRDMS
 
 ```{r}
+# Modèle 1 - Markovien sur la phénologie
+#Hypothèse : La probabilité qu’un individu change d’état dépend de son état actuel (stratum) et du temps (session).
+Psi.markov <- list(formula = ~ctime + stratum)  
 
-# # 5. lancer modèles parcimonieux (Multistrata)
-# mA <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),       # survie constante
-#   p   = list(formula = ~stratum), # détection selon état
-#   Psi = list(formula = ~1)        # transitions constantes
-# ))
-# 
-# mB <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),
-#   p   = list(formula = ~1),
-#   Psi = list(formula = ~stratum)
-# ))
-# 
-# mC <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),
-#   p   = list(formula = ~stratum),
-#   Psi = list(formula = ~stratum)
-# ))
-# 
-# # 6. comparer
-# models <- collect.models()
-# model.table(models)
-# 
+model.1 <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S = S.dot,
+    p = p.session,
+    Psi = Psi.markov
+  ),
+  threads = 2,
+  delete = TRUE
+)
 
+# Modèle 2 - mouvement aléatoire
+#Hypothèse : Les transitions entre états sont aléatoires et ne dépendent pas de l’état actuel.Les changements dépendent seulement du temps (time) – toutes les transitions sont possibles avec une probabilité qui ne dépend pas de l’état courant.
+Psi.rand <- list(formula = ~time)
+
+model.2 <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S = S.dot,
+    p = p.session,
+    Psi = Psi.rand
+  ),
+  threads = 2,
+  delete = TRUE
+)
+
+# Modèle 3 - aucun mouvement (fixe)
+#Hypothèse : Il n’y a aucun changement d’état entre sessions.
+Psi.fix <- list(formula = ~1, fixed = 0)
+
+model.3 <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S = S.dot,
+    p = p.session,
+    Psi = Psi.fix
+  ),
+  threads = 2,
+  delete = TRUE
+)
+
+# Collecte et affichage des modèles
+crdms.res <- collect.models()
+print(crdms.res)
 ```
 
-#Prendre le recouvrement en compte
 
-# ```{r}
-# # 1. Sécuriser noms et types
-# histories_for_mark <- histories_for_mark %>%
-#   rename_with(~ as.character(.), everything())
-# 
-# tab_complet <- tab_complet %>%
-#   rename_with(~ as.character(.), everything())
-# 
-# # 2. Extraire ID_ind depuis ID_obs (tout avant le premier "_")
-# histories_tmp <- histories_for_mark %>%
-#   mutate(ID_ind = sub("_.*$", "", as.character(ID_obs)),
-#          ID_ind = str_trim(ID_ind))
-# 
-# # 3. Préparer tab_complet : ID_ind + covariables à joindre
-# tab_tmp <- tab_complet %>%
-#   mutate(ID_ind = as.character(ID_ind),
-#          ID_ind = str_trim(ID_ind)) %>%
-#   select(ID_ind,
-#          recouvrement_PC1,
-#          site,
-#          session,
-#          taille,
-#          quadrat)
-# 
-# # 4. Jointure des covariables
-# histories_with_recov <- histories_tmp %>%
-#   left_join(tab_tmp, by = "ID_ind")
-# 
-# # 5. Conserver la structure d'origine + nouvelles colonnes
-# histories_for_mark_final <- histories_with_recov %>%
-#   select(all_of(names(histories_for_mark)),
-#          recouvrement_PC1,
-#          site,
-#          session,
-#          taille,
-#          quadrat)
-# 
-# # 6. Contrôles rapides
-# n_total <- nrow(histories_for_mark_final)
-# n_missing <- sum(is.na(histories_for_mark_final$recouvrement_PC1))
-# message("Total lignes : ", n_total,
-#         " — lignes sans recouvrement_PC1 après jointure : ", n_missing)
-# 
-# # 7. Préparation finale : ID_ind + centrage de la covariable continue
-# histories_for_mark_final <- histories_for_mark_final %>%
-#   mutate(ID_ind = sub("_.*$", "", as.character(ID_obs)),
-#          recouvrement_PC1 = as.numeric(recouvrement_PC1),
-#          taille = as.numeric(taille),
-#          recov_c = recouvrement_PC1 - mean(recouvrement_PC1, na.rm = TRUE))
-# 
-# # 8. Vérifier longueurs des chaînes ch
-# len_tab <- table(nchar(histories_for_mark_final$ch))
-# if (length(len_tab) != 1)
-#   stop("Les chaînes ch n'ont pas toutes la même longueur")
-# 
-# T <- as.integer(names(len_tab)[1])
-# time.intervals <- rep(1, T - 1)
-# 
-# # 9. Définir états présents (exclure '0' et '.')
-# states <- sort(
-#   setdiff(
-#     unique(unlist(strsplit(paste(histories_for_mark_final$ch,
-#                                  collapse = ""), ""))),
-#     c("0", ".")
-#   )
-# )
-# message("États détectés : ", paste(states, collapse = ", "))
-# 
-# # 10. Table pour process.data : ID, ch + covariables individuelles
-# histories_rmark <- histories_for_mark_final %>%
-#   transmute(ID = ID_obs,
-#             ch = ch,
-#             recov_c,
-#             site,
-#             session,
-#             taille,
-#             quadrat)
-# 
-# # 11. process.data Multistrata
-# processed_ms <- process.data(histories_rmark,
-#                              model = "Multistrata",
-#                              time.intervals = time.intervals,
-#                              strata.labels = states)
-# 
-# # 12. design data
-# ddl_ms <- make.design.data(processed_ms)
-# 
-# # Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
-# m1 <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),
-#   p   = list(formula = ~ stratum),
-#   Psi = list(formula = ~1)
-# ))
-# 
-# # Modèle 2 : p constant, Psi selon état (test de structure)
-# m2 <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),
-#   p   = list(formula = ~1),
-#   Psi = list(formula = ~ stratum)
-# ))
-# 
-# # Modèle 3 : modèle complet sans covariable (S constant, p ~ stratum, Psi ~ stratum)
-# m3 <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~1),
-#   p   = list(formula = ~ stratum),
-#   Psi = list(formula = ~ stratum)
-# ))
-# 
-# # Modèle 4 : inclure recouvrement_PC1 (cov individuelle) sur S
-# m4 <- mark(processed_ms, ddl_ms, model.parameters = list(
-#   S   = list(formula = ~ recov_c),
-#   p   = list(formula = ~ stratum),
-#   Psi = list(formula = ~ stratum)
-# ))
-# 
-# # Modèle 5 : 
-# m5 <- mark(processed_ms, ddl_ms, model.parameters = list( 
-# S = list(formula = ~1), 
-# p = list(formula = ~ stratum + recov_c), 
-# Psi = list(formula = ~ stratum) ))
-# 
-# # Modèle 5 : 
-# m5 <- mark(processed_ms, ddl_ms, model.parameters = list( 
-# S = list(formula = ~ 1), 
-# p = list(formula = ~ stratum + recov_c), 
-# Psi = list(formula = ~ stratum) ))
-# 
-# 
-# # Rassembler et comparer
-# models_list <- list(m1 = m1, m2 = m2, m3 = m3, m4 = m4, m5 =m5)
-# model.table(models_list)
-# 
-# processed_ms <- process.data(
-#   histories_rmark,
-#   model = "Multistrata",
-#   time.intervals = time.intervals,
-#   strata.labels = states,
-#   groups = "site"
-# )
-# 
-# ddl_ms <- make.design.data(processed_ms)
-# 
-# m6 <- mark(
-#   processed_ms,
-#   ddl_ms,
-#   model.parameters = list(
-#     S   = list(formula = ~ group),                 # survie différente selon site
-#     p   = list(formula = ~ stratum + recov_c),     # détection selon état + recouvrement
-#     Psi = list(formula = ~ stratum)                # transitions selon état
-#   )
-# )
-# 
-# models_list <- list(m6=m6)
-# model.table(models_list)
-```
 
-# CRDMS
-
-processed_crdms \<- process.data(histories_rmark, model = "CRDMS", time.intervals = time.intervals_crdms, strata.labels = states)
-
-# 12. design data
-
-ddl_crdms \<- make.design.data(processed_crdms)
-
-# Modèle 1 : base parcimonieuse (S constant, p selon état, Psi constant)
-
-m1_crdms \<- mark(processed_crdms, ddl_crdms, model.parameters = list( S = list(formula = \~1), p = list(formula = \~ stratum), Psi = list(formula = \~1) ))
