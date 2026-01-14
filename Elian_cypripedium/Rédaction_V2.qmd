@@ -2481,6 +2481,119 @@ prop.table(conf_par_site$conf[[5]], margin = 1)
 # CMR
 
 ## --------------
+###Partie galad
+```{r}
+unique(tab_complet$phenologie_verif)
+#Transformer lignes phenologie ayant des NA en 0
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie_verif = replace_na(phenologie_verif, "0")
+  )
+
+#Faire la même chose avec les tailles
+tab_complet <- tab_complet %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille)),
+    taille = replace_na(taille, 0)
+  )
+
+#Regarder le nombre d'observateurs par quadra
+tab_obs <- tab_complet %>% 
+  group_by(id_quadrat_fin, observateur) %>% 
+  summarise(n = 1, .groups = "drop") %>% 
+  ungroup()
+
+#Regarder le nombre de quadra observés par observateur
+tab_obs2 <- tab_obs %>% 
+  group_by(observateur) %>% 
+  summarise(nb_quadra = n()) %>% 
+  arrange(desc(nb_quadra))
+  
+#Regarder le nombre d'observations par quadra
+tab_obs_tot <- tab_obs %>% 
+  group_by(id_quadrat_fin) %>% 
+  summarise(nb_obs = n()) %>% 
+  ungroup()
+
+#Regarder pourcentages d'observations
+nb_obs <- tab_obs_tot %>% 
+  count(nb_obs) %>% 
+  mutate(pourcentage = round((n * 100) / sum(n), 2))
+
+nb_obs
+#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+enlever <- tab_obs_tot %>% 
+  filter(nb_obs <5)
+enlever
+#quadra à enlever :
+# TCb.Q9.2
+# TCb.Q7.2
+# CM.Q7.2
+Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
+
+#extraire informations quadra avec 5 et 6 obs
+tab_obs_tot_5obs <- tab_obs_tot %>% 
+  filter(nb_obs == 5)
+
+tab_obs_tot_6obs <- tab_obs_tot %>% 
+  filter(nb_obs == 6)
+
+#Transvaser ces infos dans tableau complet
+tab_complet_5obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
+
+tab_complet_6obs <- tab_complet %>% 
+  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
+
+#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
+#Extraire nb obs par observateur
+tab_complet_5obs <- tab_complet_5obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+tab_tmp <- tab_complet_6obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+#Garder 5 observations par individu/session/quadra/site
+tab_complet_5obs_6 <- tab_tmp %>%
+  group_by(id_ind_fin) %>%
+  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
+  ungroup()
+
+#Vérification si nombre de lignes semble bon
+nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
+nrow(tab_complet_5obs_6)
+
+#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
+tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+ind_av_filtrage <- nrow(tab_complet_final)
+
+#Enlever les trois quadra ayant été partiellement supprimés
+tab_complet_final <- tab_complet_final %>% 
+  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+ind_ap_filtrage <- nrow(tab_complet_final)
+#pourcentage indiv perdus :
+(1-(ind_ap_filtrage/ind_av_filtrage))*100
+
+#Vérification histoires de capture
+verif_sessions <- tab_complet_final %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
+```
+
 
 ## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
 
