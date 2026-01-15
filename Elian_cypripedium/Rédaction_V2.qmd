@@ -2564,17 +2564,19 @@ ms_model <- mark(
   ms_data,
   ms_ddl,
   model.parameters = list(
-    Psi = list(formula = ~stratum),
-    p = list(formula = ~1)
+    Psi = list(formula = ~stratum + tostratum),
+    p   = list(formula = ~1)
   )
 )
+
 
 # Résultats MARK
 ms_model$results$real
 
 ```
 
-### VII_i.ii Transitions session 1 → 2
+### VII_i.ii Transitions session 1 → 2 
+# Sans RMark
 
 ```{r}
 ###MARK Session 1-2 ----
@@ -2587,7 +2589,7 @@ data <- data_original
 # -------------------------------
 # 2. Préparer les données phénologiques (sessions 1 et 2)
 # -------------------------------
-phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4)
 
 phenology_data_numeric <- data %>%
   dplyr::select(ID_ind, phenoS1, phenoS2) %>%
@@ -2618,8 +2620,8 @@ transitions <- phenology_long %>%
   mutate(prob = n / sum(n))
 
 # Créer la matrice 5x5
-num_states <- 5
-states <- c("j","nf","f","ff","F")
+num_states <- 4
+states <- c("j","nf","f","ff")
 Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
 
 for(i in 1:num_states){
@@ -2638,7 +2640,7 @@ Psi_matrix_norm <- Psi_matrix / rowSums(Psi_matrix)
 dot_code <- "digraph pheno_transitions { 
   rankdir=LR;
   node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
-  j; nf; f; ff; F;
+  j; nf; f; ff;
 "
 
 for(i in 1:num_states){
@@ -2654,6 +2656,11 @@ for(i in 1:num_states){
 dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 
+```
+
+# Avec RMark
+
+```{r}
 # -------------------------------
 # 5. Partie RMark
 # -------------------------------
@@ -2668,7 +2675,7 @@ stopifnot(all(nchar(phenology_data_numeric$ch) == 2))
 ms_data <- process.data(
   phenology_data_numeric,
   model = "Multistrata",
-  strata.labels = c("1","2","3","4","5")
+  strata.labels = c("1","2","3","4")
 )
 
 ms_ddl <- make.design.data(ms_data)
@@ -2678,28 +2685,82 @@ ms_model <- mark(
   ms_data,
   ms_ddl,
   model.parameters = list(
-    Psi = list(formula = ~stratum),
-    p = list(formula = ~1)
+    Psi = list(formula = ~stratum + tostratum),
+    p   = list(formula = ~1)
   )
 )
 
 # Résultats MARK
-ms_model$results$real
+df<- ms_model$results$real
+
+# Les noms de transition sont en rownames
+df <- df %>%
+  rownames_to_column(var = "full_name")  # crée une colonne full_name
+
+# Séparer la colonne full_name en colonnes param, from, to, etc.
+df <- df %>%
+  separate(full_name,
+           into = c("param","from","to","group","c","a","o","t"),
+           sep = " ",
+           fill = "right") %>%
+  rename(estimate = estimate,
+         se       = se,
+         lcl      = lcl,
+         ucl      = ucl)
+
+# Filtrer les transitions Psi et extraire les numéros de strate
+df_psi <- df %>%
+  filter(param == "Psi") %>%
+  mutate(
+    from = as.character(str_extract(from, "\\d+")),
+    to   = as.character(str_extract(to, "\\d+"))
+  ) %>%
+  filter(!is.na(from) & !is.na(to))
+
+# Identifier les strates réellement présentes
+states <- sort(unique(c(df_psi$from, df_psi$to)))
+num_states <- length(states)
+
+# Construire la matrice de transition (remplie uniquement avec les estimates existants)
+Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
+rownames(Psi_matrix) <- states
+colnames(Psi_matrix) <- states
+
+for(i in 1:nrow(df_psi)){
+  from_state <- df_psi$from[i]
+  to_state   <- df_psi$to[i]
+  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
+}
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
 
 ```
 
 ### VII_i.iii Transitions session 2 → 3
-
+#Sans RMark
 ```{r}
-###MARK Session 2-3 ----
+### Session 2-3 ----
 
 # -------------------------------
-# 1. Charger les données
-# -------------------------------
-data <- data_original
-
-# -------------------------------
-# 2. Préparer les données phénologiques (sessions 2 et 3)
+# 1. Préparer les données phénologiques (sessions 2 et 3)
 # -------------------------------
 phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
 
@@ -2713,7 +2774,7 @@ phenology_data_numeric <- data %>%
   filter(!is.na(phenoS2) & !is.na(phenoS3))
 
 # -------------------------------
-# 3. Calcul empirique des transitions 2 → 3
+# 2. Calcul empirique des transitions 2 → 3
 # -------------------------------
 phenology_long <- phenology_data_numeric %>%
   pivot_longer(cols = c(phenoS2, phenoS3),
@@ -2731,16 +2792,17 @@ transitions <- phenology_long %>%
   group_by(state) %>%
   mutate(prob = n / sum(n))
 
-# Créer la matrice 5x5
-num_states <- 5
-states <- c("j","nf","f","ff","F")
+# -------------------------------
+# 3. Créer la matrice 5x5 (strates j, nf, f, ff, F)
+# -------------------------------
+states <- c("1","2","3","4","5")  # 5 strates
+num_states <- length(states)
 Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
 
-for(i in 1:num_states){
-  for(j in 1:num_states){
-    val <- transitions %>% filter(state == i, next_state == j) %>% pull(prob)
-    if(length(val) > 0) Psi_matrix[i,j] <- mean(val)
-  }
+for(i in 1:nrow(transitions)){
+  from_state <- transitions$state[i]
+  to_state   <- transitions$next_state[i]
+  Psi_matrix[from_state, to_state] <- transitions$prob[i]
 }
 
 # Normalisation par ligne
@@ -2752,15 +2814,83 @@ Psi_matrix_norm <- Psi_matrix / rowSums(Psi_matrix)
 dot_code <- "digraph pheno_transitions { 
   rankdir=LR;
   node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
-  j; nf; f; ff; F;
 "
 
 for(i in 1:num_states){
   for(j in 1:num_states){
     prob <- Psi_matrix_norm[i,j]
-    if(!is.na(prob) && prob > 0){
+    if(!is.na(prob) && prob >= 0.01){   # seuil d’affichage
       dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
-                         " [label=\"", round(prob, 2), "\"];\n")
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+```
+
+#Avec RMark
+```{r}
+### MARK Session 2-3 ----
+
+# -------------------------------
+# 1. Préparer les données phénologiques (sessions 2 et 3)
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenology_data_numeric <- data %>%
+  dplyr::select(ID_ind, phenoS2, phenoS3) %>%
+  mutate(
+    phenoS2 = as.character(phenology_codes[phenoS2]),
+    phenoS3 = as.character(phenology_codes[phenoS3])
+  ) %>%
+  filter(!is.na(phenoS2) & !is.na(phenoS3))  # supprimer NA
+
+# -------------------------------
+# 2. Calcul empirique des transitions
+# -------------------------------
+phenology_long <- phenology_data_numeric %>%
+  pivot_longer(cols = c(phenoS2, phenoS3),
+               names_to = "session",
+               values_to = "state") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Transitions successives
+transitions <- phenology_long %>%
+  group_by(ID_ind) %>%
+  arrange(session) %>%
+  mutate(next_state = lead(state)) %>%
+  filter(!is.na(next_state)) %>%
+  count(state, next_state) %>%
+  group_by(state) %>%
+  mutate(prob = n / sum(n))
+
+# Créer la matrice 5x5 pour les strates existantes + F
+states <- c("1","2","3","4","5")
+num_states <- length(states)
+Psi_matrix <- matrix(0, nrow=num_states, ncol=num_states, dimnames = list(states, states))
+
+for(i in 1:nrow(transitions)){
+  from_state <- transitions$state[i]
+  to_state   <- transitions$next_state[i]
+  Psi_matrix[from_state, to_state] <- transitions$prob[i]
+}
+
+# -------------------------------
+# 3. Visualisation avec DiagrammeR
+# -------------------------------
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.01){   # seuil affichage
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
     }
   }
 }
@@ -2769,43 +2899,97 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 
 # -------------------------------
-# 5. Partie RMark
+# 4. Partie RMark pour phenoS2 → phenoS3
 # -------------------------------
 # Créer le champ "ch" pour MARK
 phenology_data_numeric <- phenology_data_numeric %>%
   mutate(ch = paste0(phenoS2, phenoS3))
 
-# Vérification
 stopifnot(all(nchar(phenology_data_numeric$ch) == 2))
 
 # Préparer les données pour RMark
 ms_data <- process.data(
   phenology_data_numeric,
   model = "Multistrata",
-  strata.labels = c("1","2","3","4","5")
+  strata.labels = c("1","2","3","4","5")  # inclure F
 )
 
 ms_ddl <- make.design.data(ms_data)
 
-# Modèle Multistrata avec RMark
+# Modèle Multistrata
 ms_model <- mark(
   ms_data,
   ms_ddl,
   model.parameters = list(
-    Psi = list(formula = ~stratum),
-    p = list(formula = ~1)
+    Psi = list(formula = ~stratum + tostratum),
+    p   = list(formula = ~1)
   )
 )
 
 # Résultats MARK
-ms_model$results$real
+df <- ms_model$results$real %>%
+  rownames_to_column(var = "full_name") %>%
+  separate(full_name,
+           into = c("param","from","to","group","c","a","o","t"),
+           sep = " ",
+           fill = "right") %>%
+  rename(estimate = estimate,
+         se       = se,
+         lcl      = lcl,
+         ucl      = ucl)
+
+# Filtrer les transitions Psi et nettoyer
+df_psi <- df %>%
+  filter(param == "Psi") %>%
+  mutate(
+    from = str_trim(str_extract(from, "\\d+")),
+    to   = str_trim(str_extract(to, "\\d+"))
+  ) %>%
+  filter(!is.na(from) & !is.na(to))
+
+# Identifier les strates réellement présentes
+states <- sort(unique(c(df_psi$from, df_psi$to)))
+num_states <- length(states)
+
+# Construire la matrice
+Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
+rownames(Psi_matrix) <- states
+colnames(Psi_matrix) <- states
+
+for(i in 1:nrow(df_psi)){
+  from_state <- df_psi$from[i]
+  to_state   <- df_psi$to[i]
+  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
+}
+
+# Graphe DiagrammeR (afficher seulement transitions >= 0.01)
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.01){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
 
 ```
 
 ## --------------
 
 # RMARK
-# Préparation tableau 
+
+# Préparation tableau
+
 ```{r}
 unique(tab_complet$phenologie_verif)
 #Transformer lignes phenologie ayant des NA en 0
@@ -3011,7 +3195,9 @@ S.dot <- list(formula = ~1)
 # Définir p (probabilité de détection) variable selon la session
 p.session <- list(formula = ~session, share = TRUE)
 ```
+
 # Avant on tente CRDMS des transitions
+
 #VII_i.i Toutes transitions
 
 ```{r}
@@ -3096,6 +3282,3 @@ model.3 <- mark(
 crdms.res <- collect.models()
 print(crdms.res)
 ```
-
-
-
