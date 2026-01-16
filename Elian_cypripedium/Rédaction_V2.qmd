@@ -17,13 +17,13 @@ knitr::opts_chunk$set(
 
 # -------------------------------
 
-# INTRODUCTION
+# INTRODUCTION /OK
 
 Le Sabot de Vénus (Cypripedium calceolus L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu : - Au niveau international par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ; - Au niveau européen par la Directive Habitat en tant qu’espèce d’intérêt communautaire devant être protégée (Annexe II et IV) ; - Au niveau national en tant qu’espèce protégée en France (Arrêté du 20 janvier 1982). Enfin, le Sabot de Vénus est présent sur la liste rouge nationale de 2019 en tant qu’espèce « Quasi-menacée » en accord avec son statut sur la liste rouge européenne de l’UICN. Bien que majoritairement situé en contexte de plaine, le territoire du Parc national de forêts, avec son microclimat froid et humide et ses reliefs variés abrite plusieurs populations du Sabot de Vénus. Ce parc est situé à la frontière entre les départements de la Côte-d’Or dans la région Bourgogne-Franche-Comté et de la Haute-Marne dans la région Grand-Est. Son statut de parc national depuis 2019 lui confère le devoir de protéger la biodiversité notamment en développant la connaissance des espèces et leur suivi scientifique. C’est dans ce cadre qu’un suivi de Cypripedium calceolus est requis. Pour cela, une étude pilote a été réalisée en 2025 pour émettre des points de vigilance méthodologique quant à l’établissement d’un nouveau protocole de suivi robuste et standardisé à l’échelle du territoire du Parc national de forêts. Cette étude a permis le suivi de 5 sites présents dans le Cœur du parc. Dans chaque site, des quadrats de 100 m² ont été placés en suivant un échantillonnage stratifié permettant de prendre en compte des différences de densité d’individus observées. Chaque quadrat a été prospecté sur trois sessions permettant de couvrir plusieurs stades phénologiques de l’espèce et de faire varier sa détectabilité : - La session 1 du 22 au 24 mai correspondant au stade phénologique attendu de végétatif ; - La session 2 du 3 au 5 juin correspondant au stade phénologique attendu du pic de floraison ; - La session 3 du 2 au 4 juillet correspondant au stade phénologique attendu de fructification. Deux opérateurs ont réalisé le suivi en notant pour chaque individu le stade phénologique, la taille, le nombre de fleurs et de fruits et la présence de prédation. De plus, ils ont aussi évalué pour chaque quadrat le recouvrement de cinq strates végétales. Enfin, lors de chaque session, entre 4 et 6 observateurs ont prospecté chaque quadrat pendant une durée contrainte de 10 à 15 minutes. Pour chaque individu observé, ils ont renseigné le stade phénologique. Cette approche permet d’évaluer à la fois les erreurs d’attribution des stades phénologiques et les taux de détection, en comparaison avec le nombre total d’individus recensés par les opérateurs. Un premier rapport auquel il faut se référer est celui de Léa DESCLOS en 2025 qui permet d’aborder le protocole plus en profondeur et qui donne déjà des clés sur les résultats de cette étude pilote. L’objectif de ce rapport d’analyse est de mettre en lumière l’écologie du Sabot de Vénus sur le parc puis de mieux comprendre les contraintes liées à la détection du sabot de Vénus. Cela pourra servir d’appui à la mise en place d’un protocole de suivi de Cypripedium calceolus.
 
 # -------------------------------
 
-# INFORMATIONS
+# INFORMATIONS /OK
 
 1\_ Pour l’interprétation, les tests de significativité reposent généralement sur la p‑value. Les seuils couramment utilisés sont : p \< 0.001 : très hautement significatif ; p \< 0.01 : hautement significatif ; p \< 0.05 : significatif ; p \< 0.1 : tendance ; p ≥ 0.1 : non significatif.
 
@@ -43,11 +43,11 @@ La méthode d’analyse présentée suit toujours la même logique :
 
 # --------------------------------------------------
 
-# Chargement des packages
+# Chargement des packages /OK
+
+Le chargement des packages peut être très long selon l'ordinateur, prévoir à l'avance l'installation des packages.
 
 ```{r, message = FALSE, warning = FALSE}
-library(MuMIn)        # sélection de modèles, AICc, multimodel inference
-
 library(tidyverse)
 
 library(ggalluvial)   # diagrammes alluviaux (transitions, flux entre catégories)
@@ -81,13 +81,13 @@ library(kableExtra)   # Tableau propre
 
 # --------------------------------------------------
 
-# Ouverture des tableaux de données
+# Ouverture des tableaux de données /OK
 
 ## --------------
 
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
 
-### Tableau : recouvrement
+### Tableau : recouvrement /OK
 
 Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : - strate muscinale - strate herbacée \< à 1m de hauteur - strate arbustive basse entre 1 et 3m de hauteur - strate arbustive haute entre 3 et 7m de hauteur - strate arborescente \> à 7m de hauteur
 
@@ -97,7 +97,7 @@ recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
 head(recouvrement)
 ```
 
-### Tableau : détections individuelles
+### Tableau : détections individuelles /OK
 
 Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe. Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
 
@@ -111,7 +111,7 @@ verification$site <- trimws(verification$site)
 head(verification)
 ```
 
-### Tableau : taille et phénologie vérifiées
+### Tableau : taille et phénologie vérifiées /OK
 
 Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour chaque individu la phénologie et la taille ont été renseigné par session, le nombre de fleurs et de fruits et la présence de prédation ont aussi été renseignés.
 
@@ -133,7 +133,7 @@ data_original <- data_original %>%
 head(data_original)
 ```
 
-### Tableau : autonotation des observateurs
+### Tableau : autonotation des observateurs /OK
 
 Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique : - Question A : Niveau de connaissances naturalistes, hors botanique - Question B : Niveau de connaissances en botanique - Question C : Niveau d'expérience pratique du suivi de l’espèce - Question D : Niveau de connaissances théoriques de l’espèce - Question E : Niveau de connaissance pratique des sites d’étude - Question F : Liste des sites d’étude connus Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
 
@@ -149,7 +149,7 @@ head(experience)
 
 # --------------------------------------------------
 
-# Compilation tableau complet
+# Compilation tableau complet /OK
 
 Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul tableau récapitulatif.
 
@@ -426,9 +426,9 @@ tab_complet <- tab_complet %>%
 
 ```
 
-### Joindre des données supplémentaires
+### Joindre des données supplémentaires /OK
 
-Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau « recouvrement » contenant les différentes strates.
+Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau 'recouvrement' contenant les différentes strates.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Extraire la partie quadrat de tab_complet (tout avant le dernier point)
@@ -470,17 +470,17 @@ check_sessions %>%
 
 # --------------------------------------------------
 
-# ANALYSES PRELIMINAIRES
+# ANALYSES PRELIMINAIRES /OK
 
 ## --------------
 
 Avant de commencer des analyses complexes, difficiles à interpréter ou qui fournissent une compilation des informations, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets.
 
-# I\_ Analyse générale avec modélisation
+# I\_ Analyse générale avec modélisation /OK
 
 ## --------------
 
-## Modèle taille
+## Modèle taille /OK
 
 ## --------------
 
@@ -1936,9 +1936,7 @@ Méthode d'interprétation : Ces graphiques permettent de comparer visuellement 
 Résultats : Nous n’avons observé aucune différence significative entre les sexes, quelle que soit la variable d’erreur considérée.
 
 # --------------------------------------------------
-
 # PROBABILITE DE DETECTION
-
 ## --------------
 
 ## V_i GLM
@@ -2451,13 +2449,17 @@ prop.table(conf_par_site$conf[[5]], margin = 1)
 ```
 
 # --------------------------------------------------
-
-# CMR
+# PROBABILITE DE TRANSITION
 
 ## --------------
+# CMR
+## --------------
 
-## VII_iAnalyse des transitions phénologiques avec et sans MARK ###VII_i.i Toutes transitions
+## VII_iAnalyse des transitions phénologiques avec et sans MARK 
 
+###VII_i.i Toutes transitions
+
+#### Sans Mark
 ```{r}
 # -------------------------------
 # 1. Charger les données
@@ -2546,20 +2548,27 @@ phenology_data_numeric <- phenology_data_numeric %>%
 # Vérification
 stopifnot(all(nchar(phenology_data_numeric$ch) == 3))
 
-# -------------------------------
-# 6. Préparer les données pour RMark
-# -------------------------------
+```
+#### Avec Mark
+
+```{r}
+# Créer le champ "ch" pour MARK
+phenology_data_numeric <- phenology_data_numeric %>%
+  mutate(ch = paste0(phenoS1, phenoS2))
+
+# Vérification
+stopifnot(all(nchar(phenology_data_numeric$ch) == 2))
+
+# Préparer les données pour RMark
 ms_data <- process.data(
   phenology_data_numeric,
   model = "Multistrata",
-  strata.labels = c("1", "2", "3", "4", "5")
+  strata.labels = c("1","2","3","4","5")
 )
 
 ms_ddl <- make.design.data(ms_data)
 
-# -------------------------------
-# 7. Modèle Multistrata avec RMark
-# -------------------------------
+# Modèle Multistrata avec RMark
 ms_model <- mark(
   ms_data,
   ms_ddl,
@@ -2569,17 +2578,74 @@ ms_model <- mark(
   )
 )
 
-
 # Résultats MARK
-ms_model$results$real
+df<- ms_model$results$real
 
+# Les noms de transition sont en rownames
+df <- df %>%
+  rownames_to_column(var = "full_name")  # crée une colonne full_name
+
+# Séparer la colonne full_name en colonnes param, from, to, etc.
+df <- df %>%
+  separate(full_name,
+           into = c("param","from","to","group","c","a","o","t"),
+           sep = " ",
+           fill = "right") %>%
+  rename(estimate = estimate,
+         se       = se,
+         lcl      = lcl,
+         ucl      = ucl)
+
+# Filtrer les transitions Psi et extraire les numéros de strate
+df_psi <- df %>%
+  filter(param == "Psi") %>%
+  mutate(
+    from = as.character(str_extract(from, "\\d+")),
+    to   = as.character(str_extract(to, "\\d+"))
+  ) %>%
+  filter(!is.na(from) & !is.na(to))
+
+# Identifier les strates réellement présentes
+states <- sort(unique(c(df_psi$from, df_psi$to)))
+num_states <- length(states)
+
+# Construire la matrice de transition (remplie uniquement avec les estimates existants)
+Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
+rownames(Psi_matrix) <- states
+colnames(Psi_matrix) <- states
+
+for(i in 1:nrow(df_psi)){
+  from_state <- df_psi$from[i]
+  to_state   <- df_psi$to[i]
+  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
+}
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
 ```
 
+
 ### VII_i.ii Transitions session 1 → 2 
-# Sans RMark
+#### Sans Mark
 
 ```{r}
-###MARK Session 1-2 ----
+### Session 1-2 ----
 
 # -------------------------------
 # 1. Charger les données
@@ -2658,7 +2724,7 @@ grViz(dot_code)
 
 ```
 
-# Avec RMark
+#### Avec RMark
 
 ```{r}
 # -------------------------------
@@ -2755,7 +2821,7 @@ grViz(dot_code)
 ```
 
 ### VII_i.iii Transitions session 2 → 3
-#Sans RMark
+#### Sans RMark
 ```{r}
 ### Session 2-3 ----
 
@@ -2830,7 +2896,7 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
 
-#Avec RMark
+#### Avec RMark
 ```{r}
 ### MARK Session 2-3 ----
 
@@ -2986,9 +3052,13 @@ grViz(dot_code)
 
 ## --------------
 
-# RMARK
+# CRDMS 
 
-# Préparation tableau
+Capture-Recapture Data for Multi-State models
+
+Dans les modèles multistrates de capture-recapture, le format CRDMS est utilisé comme structure interne de données car il permet de représenter de manière cohérente l’histoire complète de chaque individu au cours du temps, en intégrant à la fois les états occupés (strates) et les observations associées. Son principe repose sur l’encodage des trajectoires individuelles sous une forme standardisée qui décrit les transitions possibles entre strates, ainsi que les paramètres à estimer (probabilités de transition, de détection et éventuellement de survie).
+
+### Préparation tableau
 
 ```{r}
 unique(tab_complet$phenologie_verif)
@@ -3104,7 +3174,7 @@ check_sessions %>%
   filter(!ok_sessions)
 ```
 
-#Préparation CRDMS
+### Préparation CRDMS
 
 ```{r}
 # 1. On associe chaque état de phénologie à une lettre
@@ -3196,37 +3266,6 @@ S.dot <- list(formula = ~1)
 p.session <- list(formula = ~session, share = TRUE)
 ```
 
-# Avant on tente CRDMS des transitions
-
-#VII_i.i Toutes transitions
-
-```{r}
-# 1. Fixer p=1 pour toutes les strates (détection parfaite)
-crdms.ddl$p$fix <- 1
-
-# 2. Survie constante (ou on peut la fixer à 1 si on ne veut pas l'estimer)
-S.list <- list(formula = ~1)
-
-# 3. Détection constante (fixée à 1)
-p.list <- list(formula = ~1)
-
-# 4. Probabilités de transition Psi dépendant seulement de l'état courant
-#    ici ~stratum = chaque état peut aller vers n'importe quel autre
-Psi.list <- list(formula = ~stratum)
-
-# 5. Estimer le modèle
-model.simple <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(S = S.list, p = p.list, Psi = Psi.list),
-  threads = 2,
-  delete = TRUE
-)
-
-# 6. Résultats des probabilités de transition
-model.simple$results$real
-```
-
 #Modèle CRDMS
 
 ```{r}
@@ -3281,4 +3320,122 @@ model.3 <- mark(
 # Collecte et affichage des modèles
 crdms.res <- collect.models()
 print(crdms.res)
+```
+
+
+##test pour covariable : 
+
+```{r}
+
+# 1. Associer chaque état de phénologie à une lettre
+etat_phenologie <- c(
+  "non_fleuri"     = "N",
+  "juv"            = "J",
+  "fleur"          = "F",
+  "fleurs_fanees"  = "B",
+  "fruit"          = "A",
+  "0"              = "0"
+)
+
+tab_complet_finalA <- tab_complet_final %>%
+  mutate(
+    phenologie_verif = as.character(phenologie_verif),
+    etat = ifelse(is.na(phenologie_verif),
+                  "0",
+                  etat_phenologie[phenologie_verif])
+  )
+
+# 2. Anonymiser les observateurs par individu et session
+tab_complet_finalA <- tab_complet_finalA %>%
+  group_by(ID_ind, session) %>%
+  mutate(obs_id = paste0("O", row_number())) %>%
+  ungroup() %>%
+  mutate(sec = paste0("S", session, "_", obs_id))
+
+# 3. Pivot pour avoir les colonnes des états
+tab_wide <- tab_complet_finalA %>%
+  select(ID_ind, sec, etat) %>%
+  pivot_wider(
+    names_from  = sec,
+    values_from = etat,
+    values_fill = "0"
+  )
+
+# 4. Réordonner les colonnes par session
+cols_order <- tab_wide %>%
+  select(-ID_ind) %>%
+  names() %>%
+  {.[order(
+    as.numeric(sub("S(\\d+)_.*", "\\1", .)),
+    match(., unique(.))
+  )]}
+
+tab_wide <- tab_wide %>%
+  select(ID_ind, all_of(cols_order))
+
+# 5. Ajouter le site comme covariable
+site_ind <- tab_complet_final %>%
+  select(ID_ind, site) %>%
+  distinct()
+
+tab_wide <- tab_wide %>%
+  left_join(site_ind, by = "ID_ind")
+
+# 6. Créer l'histoire de capture uniquement avec les colonnes d'états
+state_cols <- grep("^S[0-9]+_O[0-9]+$", names(tab_wide), value = TRUE)
+
+tab_wide <- tab_wide %>%
+  unite("ch", all_of(state_cols), sep = "", remove = FALSE)
+
+# 7. Compter la fréquence des histoires par site
+tab_ch_freq <- tab_wide %>%
+  group_by(ch, site) %>%
+  summarise(freq = n(), .groups = "drop")
+
+
+t.int <- c(
+  0,0,0,0,
+  1,
+  0,0,0,0,
+  1,
+  0,0,0,0
+)
+
+crdms.data <- process.data(
+  tab_ch_freq,
+  model = "CRDMS",
+  time.interval = t.int,
+  strata.labels = c("0","N","J","F","B","A")
+)
+
+crdms.ddl <- make.design.data(crdms.data)
+crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+
+crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
+crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
+
+S.dot <- list(formula = ~1)
+
+p.session <- list(
+  formula = ~session,
+  share = TRUE
+)
+
+Psi.markov.site <- list(formula = ~stratum + tostratum + ctime + site)
+
+
+model.1 <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S   = S.dot,
+    p   = p.session,
+    Psi = Psi.markov.site
+  ),
+  threads = 2,
+  delete = TRUE
+)
+
+
 ```
