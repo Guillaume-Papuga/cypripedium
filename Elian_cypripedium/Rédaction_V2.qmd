@@ -3225,10 +3225,16 @@ tab_wide <- tab_wide %>%
 
 ##On garde seulement la colonne ch, et on rajoute un compte de fréquence
 
+#Rajouter les fréquences
 tab_ch_freq <- tab_wide %>%
   select(ch) %>%               # on ne garde que l'histoire de capture
   group_by(ch) %>%             # on groupe par histoire unique
   summarise(freq = n(), .groups = "drop")  # on compte combien d'individus ont cette histoire
+
+#Sans les fréquences (Pareil)
+tab_ch_freq <- tab_wide %>%
+  select(ch) %>%               # on ne garde que l'histoire de capture
+  group_by(ch)  # on compte combien d'individus ont cette histoire
 
 # 3 primary periods (sessions) × 5 secondary occasions (observateurs)
 # Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
@@ -3271,7 +3277,7 @@ p.session <- list(formula = ~session, share = TRUE)
 ```{r}
 # Modèle 1 - Markovien sur la phénologie
 #Hypothèse : La probabilité qu’un individu change d’état dépend de son état actuel (stratum) et du temps (session).
-Psi.markov <- list(formula = ~ctime + stratum)  
+Psi.markov <- list(formula = ~ctime + stratum + tostratum)  
 
 model.1 <- mark(
   crdms.data,
