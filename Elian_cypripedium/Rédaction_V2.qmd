@@ -54,6 +54,8 @@ library(ggalluvial)   # diagrammes alluviaux (transitions, flux entre catégorie
 library(lme4) #modèle mixtes
 
 library(emmeans) #prédictions de modèles linéaires
+library(DHARMa) #dispersions pour glm
+library(performance) #r^2 pour glm
 
 library(stats)
 library(plotly)
@@ -95,6 +97,14 @@ Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de 
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
 #Premières lignes du tableau pour lecteur
 head(recouvrement)
+#Remettre le bon nom de site
+recouvrement <- recouvrement %>%
+  mutate(
+    Site = ifelse(grepl("^TCb", ID_Quadrat),
+                  "Tete Cendree Bas",
+                  Site)
+  )
+
 ```
 
 ### Tableau : détections individuelles /OK
@@ -431,23 +441,10 @@ tab_complet <- tab_complet %>%
 Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau 'recouvrement' contenant les différentes strates.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
-# Extraire la partie quadrat de tab_complet (tout avant le dernier point)
-tab_complet <- tab_complet %>%
-  mutate(
-    ID_Quadrat_clean = str_replace(id_quadrat_fin, "\\.[0-9]+$", "")
-  )
-
-# Nettoyer recouvrement pour correspondre au format de tab_complet
-recouvrement_clean <- recouvrement %>%
-  mutate(
-    ID_Quadrat_clean = str_replace_all(ID_Quadrat, "_", ".")
-  ) %>%
-  dplyr::select(ID_Quadrat_clean, starts_with("S_"))
-
 # Faire le left_join pour ajouter les colonnes S_ au tableau complet
 tab_complet <- tab_complet %>%
-  left_join(recouvrement_clean, by = "ID_Quadrat_clean") %>% 
-  dplyr::select(-ID_Quadrat_clean)
+  left_join(recouvrement, by = join_by("ID_quadrat" == "ID_Quadrat")) %>% 
+  dplyr::select(-Site, -Quadrat)
 
 #Vérification histoires de capture
 verif_sessions <- tab_complet %>%
@@ -524,23 +521,44 @@ data_taille$site <- factor(data_taille$site)
 data_taille$session <- factor(data_taille$session)
 data_taille$ID_ind <- factor(data_taille$ID_ind)
 data_taille$ID_quadrat <- factor(data_taille$ID_quadrat)
-
+data_taille$marquage <- factor(data_taille$marquage)
+data_taille$quadrat <- factor(data_taille$quadrat)
 head(data_taille)
 ```
 
 ### Construction modèle
 
+Un modèle linéaire généralisé mixte a été réalisé pour étudier la variation de la taille des individus.
+
+Les variables explicatives du modèle sont : - le site : on s'attend à ce que certains site aient des individus plus grands que d'autres - la session : on s'attend à voir les individus grandir au cours du temps - l'interaction du site et de la session : on s'attend à ce que la taille dans les sites ne réagisse pas de la même manière au cours du temps - la phénologie : les premiers stades devraient être plus petits
+
+De plus, des variables avec un effet ont été ajoutées : - les individus emboités dans les quadrats emboités dans les sites : un même individu étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle - les quadrat emboités dans les sites : un même quadrat étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle
+
 ```{r}
 #Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
 
 mod_glmm_gamma <- glmer(
-  taille ~ phenologie_verif + site * session + (1 | ID_ind) + (1|ID_quadrat),
+  taille ~ phenologie_verif + site * session + (1|site:quadrat:marquage) + (1|site:quadrat),
   family = Gamma(link = "log"),
-  data = data_taille
+  data = data_taille,
+  control = glmerControl(
+    optimizer = "bobyqa",
+    optCtrl = list(maxfun = 2e5)
+  )
 )
 
 summary(mod_glmm_gamma)
 Anova(mod_glmm_gamma, type = 3)
+
+#Vérification de la surdispersion
+res <- simulateResiduals(mod_glmm_gamma)
+testDispersion(res)
+plot(res)
+#Le diagnostic de dispersion effectué avec DHARMa n’a montré aucune surdispersion (dispersion = 0,007, p < 0,001).
+
+#Ajustement du modèle
+r2(mod_glmm_gamma)
+#Le modèle présente un bon ajustement, avec un R² marginal de 0,52 et un R² conditionnel de 0,81, indiquant que les effets fixes expliquaient environ la moitié de la variabilité observée, tandis que l’effet aléatoire individuel en expliquait une part supplémentaire importante.
 
 #prédictions du modèle
 emm <- emmeans(
@@ -1936,7 +1954,9 @@ Méthode d'interprétation : Ces graphiques permettent de comparer visuellement 
 Résultats : Nous n’avons observé aucune différence significative entre les sexes, quelle que soit la variable d’erreur considérée.
 
 # --------------------------------------------------
+
 # PROBABILITE DE DETECTION
+
 ## --------------
 
 ## V_i GLM
@@ -1981,7 +2001,9 @@ tab_complet <- tab_complet %>%
     phenologie_verif = as.factor(phenologie_verif),
     taille = as.numeric(gsub(",", ".", taille)),
     ID_ind = as.factor(ID_ind),
-    ID_quadrat = as.factor(ID_quadrat)
+    ID_quadrat = as.factor(ID_quadrat),
+    marquage = as.factor(marquage),
+    quadrat = as.factor(quadrat)
   )
 str(tab_complet)
 
@@ -1997,14 +2019,26 @@ experience_final <- experience %>%
 
 tab_complet <- tab_complet %>% 
   left_join(experience_final, by = "observateur")
+
+#Ajouter l'information du nombre d'individus par quadrat
+tab_complet <- tab_complet %>% 
+  left_join(nb_indiv_quadrat, by = "id_quadrat_fin")
+
+#Standardiser ce nombre d'individus
+nb_individus <- tab_complet$nb_individus
+nb_individus_sc <- scale(nb_individus)
+tab_complet$nb_individus_sc <- nb_individus_sc
+
 ```
 
-Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site, la session et leur interaction : On s'attend à ce que la détectabilité augmente avec le temps, quelle varie potentiellement entre sites et que cet détectabilité entre sites change au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
+Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site : On s'attend à ce que la détectabilité varie entre sites - la session : On s'attend à ce que la détectabilité augmente avec le temps - l'interaction site et session : on s'attend à ce que la détection dans les sites ne réagisse pas de la même manière au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - l'interaction site et phénologie : on s'attend à ce la détection dans les sites ne soit pas la même en fonction des stades phénologiques - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur
+
+Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
 
 ```{r, echo=FALSE}
 #Modèle stade phénologique
 glmm_final_pheno <- glmer(
-  detection ~ site * session + phenologie_verif + S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
+  detection ~ site + session + site:session + phenologie_verif + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
@@ -2012,10 +2046,20 @@ glmm_final_pheno <- glmer(
 
 summary(glmm_final_pheno)
 Anova(glmm_final_pheno, type = 3)
+#effet faible de la strate herbacée, effet de la phénologie, du risque d'erreur et de l'interaction site-session
+#Vérification surdispersion
+# Simuler les résidus
+res_bin <- simulateResiduals(glmm_final_pheno)
+plot(res_bin)  # QQ-plot, résidus vs prédictions
+testDispersion(res_bin)
+#surdispersion <1,1 modèle valide
+
+r2(glmm_final_pheno)
+#Les variables fixes du modèle expliquent 18% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 54% ce qui montre une forte influence des effets aléatoires.
 
 #Modèle taille
 glmm_final_taille <- glmer(
-  detection ~ site * session + taille_sc + S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
+  detection ~ site + session + site:session + taille_sc + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
@@ -2023,6 +2067,17 @@ glmm_final_taille <- glmer(
 
 summary(glmm_final_taille)
 Anova(glmm_final_taille, type = 3)
+#Effet de la session, de la taille, du risque d'erreur et de l'interaction site:session
+#Vérification surdispersion
+# Simuler les résidus
+res_glmm_final_taille <- simulateResiduals(glmm_final_taille)
+plot(res_glmm_final_taille)  # QQ-plot, résidus vs prédictions
+testDispersion(res_glmm_final_taille)
+#surdispersion <1,1 modèle valide
+
+r2(glmm_final_taille)
+#Les variables fixes du modèle expliquent 18,5% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 55% ce qui montre une forte influence des effets aléatoires.
+
 
 ```
 
@@ -2030,84 +2085,7 @@ Pour chaque variabe ayant un effet significatif sur la détectabilité, son effe
 
 #Partie modèle phénologie
 
-```{r, message=FALSE, echo=FALSE}
-#Pour le stade phénologique
-emm_phenologie <- emmeans(
-  glmm_final_pheno,
-  ~ phenologie_verif,          # prédire toutes les combinaisons
-  type = "response"          # retourne la probabilité (échelle 0-1)
-)
-
-# Convertir en data.frame pour ggplot
-emm_phenologie_df <- as.data.frame(emm_phenologie)
-
-ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-                position = position_dodge(width = 0.8),
-                width = 0.2) +
-  scale_y_continuous(limits = c(0,1)) +
-  labs(
-    x = "Stade phénologique",
-    y = "Probabilité de détection",,
-    title = "Probabilité marginale de détection par stade phénologique"
-  ) +
-  theme_classic(base_size = 14)
-
-```
-
-```{r, message=FALSE, echo=FALSE}
-#prédictions marginales du modèle
-#Pour la strate herbacée
-emm_S_herbacee <- emmeans(
-  glmm_final_pheno,
-  ~ S_herbacee,
-  at = list(
-    S_herbacee = seq(
-      from=1, to=10 , by = 1
-    )
-  ),
-  type = "response"
-)
-
-emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
-
-ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
-  geom_line(size = 1) +
-  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-              alpha = 0.25) +
-  labs(x = "Recouvrement herbacé (en %)",
-       y = "Probabilité de détection")+
-  theme_minimal()
-
-```
-
-```{r, message=FALSE, echo=FALSE}
-#pour le risque d'erreur lié à l'autonotation
-emm_risque_erreur <- emmeans(
-  glmm_final_pheno,
-  ~ risque_erreur,
-  at = list(
-    risque_erreur = seq(
-      min(tab_complet$risque_erreur, na.rm = TRUE),
-      max(tab_complet$risque_erreur, na.rm = TRUE),
-      length.out = 100
-    )
-  ),
-  type = "response"
-)
-
-emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
-
-ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
-  geom_line(size = 1) +
-  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-              alpha = 0.25) +
-  labs(x = "Risque d'erreur (basé sur l'autonotation des observateurs)",
-       y = "Probabilité de détection")+
-  theme_minimal()
-```
-
+##Pour l'interaction site et session
 ```{r, message=FALSE, echo=FALSE}
 #Pour l'interaction session x site
 emm_site_session <- emmeans(
@@ -2134,8 +2112,152 @@ ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
   theme_classic(base_size = 14)
 ```
 
-#Partie modèle Taille
+##Pour le stade phénologique
+```{r, message=FALSE, echo=FALSE}
+#Pour le stade phénologique
+emm_phenologie <- emmeans(
+  glmm_final_pheno,
+  ~ phenologie_verif,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
 
+# Convertir en data.frame pour ggplot
+emm_phenologie_df <- as.data.frame(emm_phenologie)
+
+ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Stade phénologique",
+    y = "Probabilité de détection",,
+    title = "Probabilité marginale de détection par stade phénologique"
+  ) +
+  theme_classic(base_size = 14)
+
+```
+
+#Pour le nombre de ramets par quadrat
+```{r}
+#pour la densité d'individus
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
+sd_densite <- sd(tab_complet$nb_individus, na.rm = T)
+mu_densite
+sd_densite
+
+emm_densite <- emmeans(
+  glmm_final_pheno,
+  ~ nb_individus_sc,
+  at = list(
+    nb_individus_sc = seq(
+      min(tab_complet$nb_individus_sc, na.rm = TRUE),
+      max(tab_complet$nb_individus_sc, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_densite_df <- as.data.frame(emm_densite)
+
+emm_densite_df$densite_reelle <-
+  emm_densite_df$nb_individus_sc * sd_densite + mu_densite
+
+ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
+  geom_line(linewidth = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Nombre d'individus dans un quadrat",
+       y = "Probabilité de détection")+
+  theme_minimal()
+```
+
+##Pour le risque d'erreur
+```{r, message=FALSE, echo=FALSE}
+#pour le risque d'erreur lié à l'autonotation
+emm_risque_erreur <- emmeans(
+  glmm_final_pheno,
+  ~ risque_erreur,
+  at = list(
+    risque_erreur = seq(
+      min(tab_complet$risque_erreur, na.rm = TRUE),
+      max(tab_complet$risque_erreur, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
+
+ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Risque d'erreur (basé sur l'autonotation des observateurs)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+```
+
+##Pour la strate herbacée
+```{r, message=FALSE, echo=FALSE}
+#prédictions marginales du modèle
+#Pour la strate herbacée
+emm_S_herbacee <- emmeans(
+  glmm_final_pheno,
+  ~ S_herbacee,
+  at = list(
+    S_herbacee = seq(
+      from=1, to=10 , by = 1
+    )
+  ),
+  type = "response"
+)
+
+emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
+
+ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Recouvrement herbacé (en %)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+```
+
+#Partie modèle Taille
+##Pour l'interaction site et session
+```{r, message=FALSE, echo=FALSE}
+#Pour l'interaction session x site
+emm_site_session <- emmeans(
+  glmm_final_taille,
+  ~ site * session,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_site_session_df <- as.data.frame(emm_site_session)
+
+ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",
+    fill = "Session",
+    title = "Probabilité marginale de détection par site et session"
+  ) +
+  theme_classic(base_size = 14)
+```
+
+##Pour la taille
 ```{r, message=FALSE, echo=FALSE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
@@ -2171,32 +2293,43 @@ ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
   theme_minimal()
 ```
 
-```{r, message=FALSE, echo=FALSE}
-#prédictions marginales du modèle
-#Pour la strate herbacée
-emm_S_herbacee <- emmeans(
+#Pour le nombre de ramets par quadrat
+```{r}
+#pour la densité d'individus
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
+sd_densite <- sd(tab_complet$nb_individus, na.rm = T)
+mu_densite
+sd_densite
+
+emm_densite <- emmeans(
   glmm_final_taille,
-  ~ S_herbacee,
+  ~ nb_individus_sc,
   at = list(
-    S_herbacee = seq(
-      from=1, to=10 , by = 1
+    nb_individus_sc = seq(
+      min(tab_complet$nb_individus_sc, na.rm = TRUE),
+      max(tab_complet$nb_individus_sc, na.rm = TRUE),
+      length.out = 100
     )
   ),
   type = "response"
 )
 
-emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
+emm_densite_df <- as.data.frame(emm_densite)
 
-ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
-  geom_line(size = 1) +
+emm_densite_df$densite_reelle <-
+  emm_densite_df$nb_individus_sc * sd_densite + mu_densite
+
+ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
+  geom_line(linewidth = 1) +
   geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
               alpha = 0.25) +
-  labs(x = "Recouvrement herbacé (en %)",
+  labs(x = "Nombre d'individus dans un quadrat",
        y = "Probabilité de détection")+
   theme_minimal()
-
 ```
 
+##Pour le risque d'erreur
 ```{r, message=FALSE, echo=FALSE}
 #pour le risque d'erreur lié à l'autonotation
 emm_risque_erreur <- emmeans(
@@ -2223,31 +2356,34 @@ ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
   theme_minimal()
 ```
 
+##Pour la strate herbacée
 ```{r, message=FALSE, echo=FALSE}
-#Pour l'interaction session x site
-emm_site_session <- emmeans(
+#prédictions marginales du modèle
+#Pour la strate herbacée
+emm_S_herbacee <- emmeans(
   glmm_final_taille,
-  ~ site * session,          # prédire toutes les combinaisons
-  type = "response"          # retourne la probabilité (échelle 0-1)
+  ~ S_herbacee,
+  at = list(
+    S_herbacee = seq(
+      from=1, to=10 , by = 1
+    )
+  ),
+  type = "response"
 )
 
-# Convertir en data.frame pour ggplot
-emm_site_session_df <- as.data.frame(emm_site_session)
+emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
 
-ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-                position = position_dodge(width = 0.8),
-                width = 0.2) +
-  scale_y_continuous(limits = c(0,1)) +
-  labs(
-    x = "Site",
-    y = "Probabilité de détection",
-    fill = "Session",
-    title = "Probabilité marginale de détection par site et session"
-  ) +
-  theme_classic(base_size = 14)
+ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Recouvrement herbacé (en %)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
 ```
+
+
 
 ### Sélection de modèles
 
@@ -2448,18 +2584,434 @@ prop.table(conf_par_site$conf[[5]], margin = 1)
 
 ```
 
+## V_iii Détection en fonction du nombre d'observateurs
+
+```{r}
+#fonction bootstrap
+bootstrap_detection <- function(df, k, B = 100) {
+  
+  obs <- unique(tab_complet$observateur)
+  marquages <- unique(tab_complet$id_ind_fin)
+  
+  # sécurité si pas assez d'observateurs
+  if (length(obs) < k) return(NA)
+  
+  res <- numeric(B)
+  
+  for (b in seq_len(B)) {
+    
+    # tirage aléatoire d'observateurs
+    obs_sel <- sample(obs, k, replace = FALSE)
+    
+    df_sub <- tab_complet[tab_complet$observateur %in% obs_sel, ]
+    
+    # détection par individu : au moins un 1
+    det_ind <- aggregate(
+      detection ~ id_ind_fin,
+      data = df_sub,
+      FUN = max
+    )
+    
+    # taux de détection
+    res[b] <- mean(det_ind$detection)
+  }
+  
+  return(res)
+}
+
+set.seed(123)
+
+#Appliquer pour chaque quadrat, site, session
+resultats_bootstrap <- tab_complet %>%
+  group_by(site, quadrat, session) %>%
+  group_modify(~{
+    
+    res_k <- lapply(1:5, function(k) {
+      
+      taux <- bootstrap_detection(.x, k = k, B = 100)
+      
+      if (all(is.na(taux))) return(NULL)
+      
+      data.frame(
+        n_observateurs = k,
+        mean_detection = mean(taux),
+        sd_detection   = sd(taux),
+        q025 = quantile(taux, 0.025),
+        q975 = quantile(taux, 0.975)
+      )
+    })
+    
+    bind_rows(res_k)
+  }) %>%
+  ungroup()
+
+ggplot(resultats_bootstrap,
+       aes(x = n_observateurs, y = mean_detection, fill = session)) +
+  geom_line() +
+  geom_point() +
+  geom_ribbon(aes(ymin = q025, ymax = q975),
+              alpha = 0.2) +
+  facet_wrap(~site) +
+  labs(
+    x = "Nombre d'observateurs",
+    y = "Taux de détection",
+    title = "Effet du nombre d'observateurs sur la détectabilité"
+  ) +
+  theme_minimal()
+
+#Essayer avec les observateurs les moins bons
+tab_complet_debut <- tab_complet %>%
+  group_by(id_ind_fin) %>%
+  slice_max(risque_erreur, n = 2, with_ties = FALSE) %>%
+  ungroup()
+
+tab_complet_debut_detect <- tab_complet_debut %>% 
+  group_by(site, quadrat, session) %>% 
+  summarise(tx_detect = mean(detection)) %>% 
+  ungroup()
+
+ggplot(tab_complet_debut_detect,
+       aes(x = session, y = tx_detect, fill = session)) +
+  geom_boxplot() +
+  facet_wrap(~site) +
+  labs(
+    x = "session",
+    y = "Taux de détection",
+    title = "Effet d'avoir deux observateurs débutants sur la détection"
+  ) +
+  theme_minimal()
+
+tab_complet_debut_detect2 <- tab_complet_debut_detect %>% 
+  group_by()
+
+```
+
 # --------------------------------------------------
+
 # PROBABILITE DE TRANSITION
 
 ## --------------
-# CMR
+
+# CMR Galad
+
 ## --------------
 
-## VII_iAnalyse des transitions phénologiques avec et sans MARK 
+## VII_iAnalyse des transitions phénologiques avec et sans MARK
 
 ###VII_i.i Toutes transitions
 
 #### Sans Mark
+
+```{r}
+# -------------------------------
+# 1. Charger les données
+# -------------------------------
+data<- data_original
+
+# -------------------------------
+# 2. Préparer les données phénologiques
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenologie_transi_tot <- data %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  mutate(
+    phenoS1 = phenology_codes[phenoS1],
+    phenoS2 = phenology_codes[phenoS2],
+    phenoS3 = phenology_codes[phenoS3]
+  )
+
+# transformer les individus avec NA dans phenoS1,  ou phenoS3 par des 0 en se disant qu'individu était sûrement absent ou est mort
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(phenoS1 = replace_na(phenoS1, 0),
+         phenoS3 = replace_na(phenoS3, 0)
+         )
+
+#Vérification des phénologie à la session 2 = NA
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2))
+#44 lignes
+
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2) & phenoS1 == 0)
+#43 lignes
+
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2) & phenoS3 == 0)
+#1 ligne
+#Toutes les phénologies en NA à la session 2 sont collées à des phénologies en 0 soit à la S1 soit à la S3 donc on peut aussi les transformer en 0
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(phenoS2 = replace_na(phenoS2, 0))
+
+# -------------------------------
+# 3. Calcul empirique des transitions 1 → 2 → 3
+# -------------------------------
+phenologie_transi_tot_long <- phenologie_transi_tot %>%
+  pivot_longer(cols = c(phenoS1, phenoS2, phenoS3),
+               names_to = "session",
+               values_to = "etat") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Calculer les transitions successives
+transitions_transi_tot <- phenologie_transi_tot_long %>%
+  group_by(ID_ind) %>%
+  mutate(etat_suivant = lead(etat)) %>%
+  ungroup() %>%
+  filter(!is.na(etat_suivant))
+
+#Calculer le nombre d'individus avec les mêmes transitions
+nb_transitions_transi_tot <- transitions_transi_tot %>%
+  count(etat, etat_suivant, name = "n")
+
+nb_transitions_transi_tot
+
+#Probabilité de transition
+psi_transi_tot <- nb_transitions_transi_tot %>%
+  group_by(etat) %>%
+  filter(etat != 0 & etat_suivant !=0) %>% #on enlève les individus absents qui ne font pas partie des proba de transitions phénologiques
+  mutate(psi = n / sum(n)) %>%
+  ungroup()
+  
+
+psi_transi_tot
+
+#Retransformer phénologie en caractères
+codes_pheno <- c(
+  "1" = "j",   # juvénile
+  "2" = "nf",  # non fleuri
+  "3" = "f",   # fleuri
+  "4" = "ff",  # fleurs fanées
+  "5" = "F"    # fruit
+)
+
+psi_lisible_transi_tot <- psi_transi_tot %>%
+  mutate(
+    etat = codes_pheno[as.character(etat)],
+    etat_suivant = codes_pheno[as.character(etat_suivant)]
+  )
+
+psi_lisible_transi_tot
+
+#Matrice de probabilité de transition
+matrice_psi_transi_tot <- psi_lisible_transi_tot %>%
+  select(etat, etat_suivant, psi) %>%
+  pivot_wider(
+    names_from = etat_suivant,
+    values_from = psi,
+    values_fill = 0
+  )
+
+psi_matrix_transi_tot <- matrice_psi_transi_tot %>%
+  column_to_rownames("etat") %>%  # 'etat' devient les noms de lignes
+  as.matrix()
+
+psi_matrix_transi_tot
+
+#Vérification
+rowSums(psi_matrix_transi_tot)
+
+states <- c("j", "nf", "f", "ff", "F")
+
+psi_matrix_full_transi_tot <- matrix(
+  0,
+  nrow = length(states),
+  ncol = length(states),
+  dimnames = list(states, states)
+)
+
+# Insertion de ta matrice observée
+psi_matrix_full_transi_tot[
+  rownames(psi_matrix_transi_tot),
+  colnames(psi_matrix_transi_tot)
+] <- psi_matrix_transi_tot
+
+# -------------------------------
+# 4. Visualisation avec DiagrammeR
+# -------------------------------
+library(DiagrammeR)
+
+states <- c("j", "nf", "f", "ff", "F")
+num_states <- length(states)
+
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+  j; nf; f; ff; F;
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_matrix_full_transi_tot[i,j]
+    if(!is.na(prob) && prob > 0){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob, 3), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+
+#### Avec Mark
+
+```{r}
+# Créer le champ "ch" pour MARK
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(ch = paste0(phenoS1, phenoS2, phenoS3))
+
+# Vérification
+stopifnot(all(nchar(phenologie_transi_tot$ch) == 3))
+
+# Préparer les données pour RMark
+ms_data <- process.data(
+  phenologie_transi_tot,
+  model = "Multistrata",
+  strata.labels = c("1","2","3","4","5")
+)
+
+ms_ddl <- make.design.data(ms_data)
+
+# interdiction totale par défaut
+ms_ddl$Psi$fix <- 0
+
+#Mettre les présupposé pour chaque stade phénologique :
+# j (1)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "1" &
+  ms_ddl$Psi$tostratum %in% c("1","2","3","4", "5")
+] <- NA
+
+# nf (2)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "2" &
+  ms_ddl$Psi$tostratum %in% c("2","3","4","5")
+] <- NA
+
+# f (3)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "3" &
+  ms_ddl$Psi$tostratum %in% c("3","4","5")
+] <- NA
+
+# ff (4) : absorbant
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "4" &
+  ms_ddl$Psi$tostratum %in% c("4","5")
+] <- NA
+
+# F (5) : terminal (aucune transition)
+# tout reste à 0
+
+#CMR multistate de type Arnason-Schwarz
+# Modèle Multistrata avec RMark
+ms_model <- mark(
+  data = ms_data,
+  ddl  = ms_ddl,
+  model.parameters = list(
+    S = list(formula = ~ stratum),
+    Psi = list(formula = ~ stratum:tostratum),
+    p   = list(formula = ~1, fixed = 1)
+  )
+)
+
+# Résultats MARK
+df<- ms_model$results$real
+
+# Les noms de transition sont en rownames
+df <- df %>%
+  rownames_to_column(var = "full_name")  # crée une colonne full_name
+
+# Séparer la colonne full_name en colonnes param, from, to, etc.
+df <- df %>%
+  separate(full_name,
+           into = c("param","from","to","group","c","a","o","t"),
+           sep = " ",
+           fill = "right") %>%
+  rename(estimate = estimate,
+         se       = se,
+         lcl      = lcl,
+         ucl      = ucl)
+
+# Filtrer les transitions Psi et extraire les numéros de strate
+df_psi <- df %>%
+  filter(param == "Psi") %>%
+  mutate(
+    from = as.character(str_extract(from, "\\d+")),
+    to   = as.character(str_extract(to, "\\d+"))
+  ) %>%
+  filter(!is.na(from) & !is.na(to))
+
+# Identifier les strates réellement présentes
+states <- sort(unique(c(df_psi$from, df_psi$to)))
+num_states <- length(states)
+
+# Construire la matrice de transition (remplie uniquement avec les estimates existants)
+Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
+rownames(Psi_matrix) <- states
+colnames(Psi_matrix) <- states
+
+for(i in 1:nrow(df_psi)){
+  from_state <- df_psi$from[i]
+  to_state   <- df_psi$to[i]
+  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
+}
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "juv",
+  "2" = "nf",
+  "3" = "f",
+  "4" = "ff",
+  "5" = "F"
+)
+
+
+# renommage lignes / colonnes
+dimnames(Psi_matrix) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Ajouter proba de rester au même stade phéno :
+diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
+
+states <- c("j", "nf", "f", "ff", "F")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+```
+
+## --------------
+
+# CMR
+
+## --------------
+
+## VII_iAnalyse des transitions phénologiques avec et sans MARK
+
+###VII_i.i Toutes transitions
+
+#### Sans Mark
+
 ```{r}
 # -------------------------------
 # 1. Charger les données
@@ -2549,6 +3101,7 @@ phenology_data_numeric <- phenology_data_numeric %>%
 stopifnot(all(nchar(phenology_data_numeric$ch) == 3))
 
 ```
+
 #### Avec Mark
 
 ```{r}
@@ -2640,8 +3193,8 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
 
+### VII_i.ii Transitions session 1 → 2
 
-### VII_i.ii Transitions session 1 → 2 
 #### Sans Mark
 
 ```{r}
@@ -2821,7 +3374,9 @@ grViz(dot_code)
 ```
 
 ### VII_i.iii Transitions session 2 → 3
+
 #### Sans RMark
+
 ```{r}
 ### Session 2-3 ----
 
@@ -2897,6 +3452,7 @@ grViz(dot_code)
 ```
 
 #### Avec RMark
+
 ```{r}
 ### MARK Session 2-3 ----
 
@@ -3052,7 +3608,7 @@ grViz(dot_code)
 
 ## --------------
 
-# CRDMS 
+# CRDMS
 
 Capture-Recapture Data for Multi-State models
 
@@ -3328,8 +3884,7 @@ crdms.res <- collect.models()
 print(crdms.res)
 ```
 
-
-##test pour covariable : 
+##test pour covariable :
 
 ```{r}
 
