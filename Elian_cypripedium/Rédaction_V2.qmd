@@ -524,23 +524,51 @@ data_taille$site <- factor(data_taille$site)
 data_taille$session <- factor(data_taille$session)
 data_taille$ID_ind <- factor(data_taille$ID_ind)
 data_taille$ID_quadrat <- factor(data_taille$ID_quadrat)
-
+data_taille$marquage <- factor(data_taille$marquage)
+data_taille$quadrat <- factor(data_taille$quadrat)
 head(data_taille)
 ```
 
 ### Construction modèle
+Un modèle linéaire généralisé mixte a été réalisé pour étudier la variation de la taille des individus.
+
+Les variables explicatives du modèle sont :
+- le site : on s'attend à ce que certains site aient des individus plus grands que d'autres
+- la session : on s'attend à voir les individus grandir au cours du temps
+- l'interaction du site et de la session : on s'attend à ce que la taille dans les sites ne réagisse pas de la même manière au cours du temps
+- la phénologie : les premiers stades devraient être plus petits
+
+De plus, des variables avec un effet ont été ajoutées :
+- les individus emboités dans les quadrats emboités dans les sites : un même individu étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle
+- les quadrat emboités dans les sites : un même quadrat étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle
 
 ```{r}
 #Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
 
 mod_glmm_gamma <- glmer(
-  taille ~ phenologie_verif + site * session + (1 | ID_ind) + (1|ID_quadrat),
+  taille ~ phenologie_verif + site * session + (1|site:quadrat:marquage) + (1|site:quadrat),
   family = Gamma(link = "log"),
-  data = data_taille
+  data = data_taille,
+  control = glmerControl(
+    optimizer = "bobyqa",
+    optCtrl = list(maxfun = 2e5)
+  )
 )
 
 summary(mod_glmm_gamma)
 Anova(mod_glmm_gamma, type = 3)
+
+#Vérification de la surdispersion
+library(DHARMa)
+res <- simulateResiduals(mod_glmm_gamma)
+testDispersion(res)
+plot(res)
+#Le diagnostic de dispersion effectué avec DHARMa n’a montré aucune surdispersion (dispersion = 0,007, p < 0,001).
+
+#Ajustement du modèle
+library(performance)
+r2(mod_glmm_gamma)
+#Le modèle présente un bon ajustement, avec un R² marginal de 0,52 et un R² conditionnel de 0,81, indiquant que les effets fixes expliquaient environ la moitié de la variabilité observée, tandis que l’effet aléatoire individuel en expliquait une part supplémentaire importante.
 
 #prédictions du modèle
 emm <- emmeans(
@@ -1981,7 +2009,9 @@ tab_complet <- tab_complet %>%
     phenologie_verif = as.factor(phenologie_verif),
     taille = as.numeric(gsub(",", ".", taille)),
     ID_ind = as.factor(ID_ind),
-    ID_quadrat = as.factor(ID_quadrat)
+    ID_quadrat = as.factor(ID_quadrat),
+    marquage = as.factor(marquage),
+    quadrat = as.factor(quadrat)
   )
 str(tab_complet)
 
@@ -1999,12 +2029,23 @@ tab_complet <- tab_complet %>%
   left_join(experience_final, by = "observateur")
 ```
 
-Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site, la session et leur interaction : On s'attend à ce que la détectabilité augmente avec le temps, quelle varie potentiellement entre sites et que cet détectabilité entre sites change au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
+Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. 
+Les modèles sont des GLMM binomiaux avec comme variable réponse détection. 
+Les variables explicatives fixes sont : 
+- le site : On s'attend à ce que la détectabilité varie entre sites
+- la session : On s'attend à ce que la détectabilité augmente avec le temps
+- l'interaction site et session : on s'attend à ce que la détection dans les sites ne réagisse pas de la même manière au cours du temps
+- la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri 
+- l'interaction site et phénologie : on s'attend à ce la détection dans les sites ne soit pas la même en fonction des stades phénologiques
+- les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses 
+- le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur
+
+Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
 
 ```{r, echo=FALSE}
 #Modèle stade phénologique
 glmm_final_pheno <- glmer(
-  detection ~ site * session + phenologie_verif + S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
+  detection ~ site + session + phenologie_verif + site:session + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
@@ -2013,9 +2054,19 @@ glmm_final_pheno <- glmer(
 summary(glmm_final_pheno)
 Anova(glmm_final_pheno, type = 3)
 
+#Vérification surdispersion
+# Simuler les résidus
+res_bin <- simulateResiduals(glmm_final_pheno)
+plot(res_bin)  # QQ-plot, résidus vs prédictions
+testDispersion(res_bin)
+#surdispersion <1,1 modèle valide
+
+r2(glmm_final_pheno)
+#Les variables fixes du modèle expliquent 35% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 64% ce qui montre une forte influence des effets aléatoires.
+
 #Modèle taille
 glmm_final_taille <- glmer(
-  detection ~ site * session + taille_sc + S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|ID_ind) + (1|ID_quadrat),
+  detection ~ site + session + taille_sc + site:session + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + risque_erreur + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
@@ -2023,6 +2074,16 @@ glmm_final_taille <- glmer(
 
 summary(glmm_final_taille)
 Anova(glmm_final_taille, type = 3)
+#Vérification surdispersion
+# Simuler les résidus
+res_glmm_final_taille <- simulateResiduals(glmm_final_taille)
+plot(res_glmm_final_taille)  # QQ-plot, résidus vs prédictions
+testDispersion(res_glmm_final_taille)
+#surdispersion <1,1 modèle valide
+
+r2(glmm_final_taille)
+#Les variables fixes du modèle expliquent 25% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 56% ce qui montre une forte influence des effets aléatoires.
+
 
 ```
 
@@ -2450,6 +2511,315 @@ prop.table(conf_par_site$conf[[5]], margin = 1)
 
 # --------------------------------------------------
 # PROBABILITE DE TRANSITION
+
+## --------------
+# CMR Galad
+## --------------
+
+## VII_iAnalyse des transitions phénologiques avec et sans MARK 
+
+###VII_i.i Toutes transitions
+
+#### Sans Mark
+```{r}
+# -------------------------------
+# 1. Charger les données
+# -------------------------------
+data<- data_original
+
+# -------------------------------
+# 2. Préparer les données phénologiques
+# -------------------------------
+phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
+
+phenologie_transi_tot <- data %>%
+  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
+  mutate(
+    phenoS1 = phenology_codes[phenoS1],
+    phenoS2 = phenology_codes[phenoS2],
+    phenoS3 = phenology_codes[phenoS3]
+  )
+
+# transformer les individus avec NA dans phenoS1,  ou phenoS3 par des 0 en se disant qu'individu était sûrement absent ou est mort
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(phenoS1 = replace_na(phenoS1, 0),
+         phenoS3 = replace_na(phenoS3, 0)
+         )
+
+#Vérification des phénologie à la session 2 = NA
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2))
+#44 lignes
+
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2) & phenoS1 == 0)
+#43 lignes
+
+phenologie_transi_tot %>% 
+  filter(is.na(phenoS2) & phenoS3 == 0)
+#1 ligne
+#Toutes les phénologies en NA à la session 2 sont collées à des phénologies en 0 soit à la S1 soit à la S3 donc on peut aussi les transformer en 0
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(phenoS2 = replace_na(phenoS2, 0))
+
+# -------------------------------
+# 3. Calcul empirique des transitions 1 → 2 → 3
+# -------------------------------
+phenologie_transi_tot_long <- phenologie_transi_tot %>%
+  pivot_longer(cols = c(phenoS1, phenoS2, phenoS3),
+               names_to = "session",
+               values_to = "etat") %>%
+  mutate(session = as.integer(gsub("phenoS", "", session)))
+
+# Calculer les transitions successives
+transitions_transi_tot <- phenologie_transi_tot_long %>%
+  group_by(ID_ind) %>%
+  mutate(etat_suivant = lead(etat)) %>%
+  ungroup() %>%
+  filter(!is.na(etat_suivant))
+
+#Calculer le nombre d'individus avec les mêmes transitions
+nb_transitions_transi_tot <- transitions_transi_tot %>%
+  count(etat, etat_suivant, name = "n")
+
+nb_transitions_transi_tot
+
+#Probabilité de transition
+psi_transi_tot <- nb_transitions_transi_tot %>%
+  group_by(etat) %>%
+  filter(etat != 0 & etat_suivant !=0) %>% #on enlève les individus absents qui ne font pas partie des proba de transitions phénologiques
+  mutate(psi = n / sum(n)) %>%
+  ungroup()
+  
+
+psi_transi_tot
+
+#Retransformer phénologie en caractères
+codes_pheno <- c(
+  "1" = "j",   # juvénile
+  "2" = "nf",  # non fleuri
+  "3" = "f",   # fleuri
+  "4" = "ff",  # fleurs fanées
+  "5" = "F"    # fruit
+)
+
+psi_lisible_transi_tot <- psi_transi_tot %>%
+  mutate(
+    etat = codes_pheno[as.character(etat)],
+    etat_suivant = codes_pheno[as.character(etat_suivant)]
+  )
+
+psi_lisible_transi_tot
+
+#Matrice de probabilité de transition
+matrice_psi_transi_tot <- psi_lisible_transi_tot %>%
+  select(etat, etat_suivant, psi) %>%
+  pivot_wider(
+    names_from = etat_suivant,
+    values_from = psi,
+    values_fill = 0
+  )
+
+psi_matrix_transi_tot <- matrice_psi_transi_tot %>%
+  column_to_rownames("etat") %>%  # 'etat' devient les noms de lignes
+  as.matrix()
+
+psi_matrix_transi_tot
+
+#Vérification
+rowSums(psi_matrix_transi_tot)
+
+states <- c("j", "nf", "f", "ff", "F")
+
+psi_matrix_full_transi_tot <- matrix(
+  0,
+  nrow = length(states),
+  ncol = length(states),
+  dimnames = list(states, states)
+)
+
+# Insertion de ta matrice observée
+psi_matrix_full_transi_tot[
+  rownames(psi_matrix_transi_tot),
+  colnames(psi_matrix_transi_tot)
+] <- psi_matrix_transi_tot
+
+# -------------------------------
+# 4. Visualisation avec DiagrammeR
+# -------------------------------
+library(DiagrammeR)
+
+states <- c("j", "nf", "f", "ff", "F")
+num_states <- length(states)
+
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+  j; nf; f; ff; F;
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_matrix_full_transi_tot[i,j]
+    if(!is.na(prob) && prob > 0){
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob, 3), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+#### Avec Mark
+
+```{r}
+# Créer le champ "ch" pour MARK
+phenologie_transi_tot <- phenologie_transi_tot %>%
+  mutate(ch = paste0(phenoS1, phenoS2, phenoS3))
+
+# Vérification
+stopifnot(all(nchar(phenologie_transi_tot$ch) == 3))
+
+# Préparer les données pour RMark
+ms_data <- process.data(
+  phenologie_transi_tot,
+  model = "Multistrata",
+  strata.labels = c("1","2","3","4","5")
+)
+
+ms_ddl <- make.design.data(ms_data)
+
+# interdiction totale par défaut
+ms_ddl$Psi$fix <- 0
+
+#Mettre les présupposé pour chaque stade phénologique :
+# j (1)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "1" &
+  ms_ddl$Psi$tostratum %in% c("1","2","3","4", "5")
+] <- NA
+
+# nf (2)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "2" &
+  ms_ddl$Psi$tostratum %in% c("2","3","4","5")
+] <- NA
+
+# f (3)
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "3" &
+  ms_ddl$Psi$tostratum %in% c("3","4","5")
+] <- NA
+
+# ff (4) : absorbant
+ms_ddl$Psi$fix[
+  ms_ddl$Psi$stratum == "4" &
+  ms_ddl$Psi$tostratum %in% c("4","5")
+] <- NA
+
+# F (5) : terminal (aucune transition)
+# tout reste à 0
+
+#CMR multistate de type Arnason-Schwarz
+# Modèle Multistrata avec RMark
+ms_model <- mark(
+  data = ms_data,
+  ddl  = ms_ddl,
+  model.parameters = list(
+    S = list(formula = ~ stratum),
+    Psi = list(formula = ~ stratum:tostratum),
+    p   = list(formula = ~1, fixed = 1)
+  )
+)
+
+# Résultats MARK
+df<- ms_model$results$real
+
+# Les noms de transition sont en rownames
+df <- df %>%
+  rownames_to_column(var = "full_name")  # crée une colonne full_name
+
+# Séparer la colonne full_name en colonnes param, from, to, etc.
+df <- df %>%
+  separate(full_name,
+           into = c("param","from","to","group","c","a","o","t"),
+           sep = " ",
+           fill = "right") %>%
+  rename(estimate = estimate,
+         se       = se,
+         lcl      = lcl,
+         ucl      = ucl)
+
+# Filtrer les transitions Psi et extraire les numéros de strate
+df_psi <- df %>%
+  filter(param == "Psi") %>%
+  mutate(
+    from = as.character(str_extract(from, "\\d+")),
+    to   = as.character(str_extract(to, "\\d+"))
+  ) %>%
+  filter(!is.na(from) & !is.na(to))
+
+# Identifier les strates réellement présentes
+states <- sort(unique(c(df_psi$from, df_psi$to)))
+num_states <- length(states)
+
+# Construire la matrice de transition (remplie uniquement avec les estimates existants)
+Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
+rownames(Psi_matrix) <- states
+colnames(Psi_matrix) <- states
+
+for(i in 1:nrow(df_psi)){
+  from_state <- df_psi$from[i]
+  to_state   <- df_psi$to[i]
+  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
+}
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "juv",
+  "2" = "nf",
+  "3" = "f",
+  "4" = "ff",
+  "5" = "F"
+)
+
+
+# renommage lignes / colonnes
+dimnames(Psi_matrix) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Ajouter proba de rester au même stade phéno :
+diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
+
+states <- c("j", "nf", "f", "ff", "F")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- Psi_matrix[i,j]
+    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
+      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+```
+
+
+
 
 ## --------------
 # CMR

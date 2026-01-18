@@ -1,0 +1,911 @@
+
+   Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:51    Page  001
+    
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+   Welcome to MARK galad on machine LAPTOP-0G3JH30A in subdirectory 
+   "C:\Users\galad\Documents\R\scriptes\projet_biodiv_data\cypripedium\Elian_cypripedium" running file "mark111.inp".
+   This version was compiled by GCC version 12.2.0 using the options: 
+     -cpp -iprefix c:\tdm-gcc-64\mingw64\bin\../lib/gcc/x86_64-w64-mingw32/12.2.0/
+     -D_MT -D_REENTRANT -U_REENTRANT -D ieee -D dbleprecision -m64 -mtune=generic
+     -march=x86-64 -mthreads -O3 -std=f2018 -fsignaling-nans
+     -ffpe-summary=invalid,zero,overflow,underflow -funroll-loops -ffast-math
+     -fall-intrinsics -fopenmp.
+
+   This problem will use 7 of 8 possible threads.
+   Static thread allocation is used.
+   Schedule kind is omp_sched_dynamic with chunk size 1
+
+
+  INPUT --- proc title ;
+
+   For procedure title CPU Time was 0.001 seconds and System Time was 0.001 seconds.
+
+
+  INPUT --- proc chmatrix occasions= 3 groups= 1 etype= Multistrata 
+  INPUT --- Nodes= 101 strata=6 ICMeans  NoHist hist= 31 ;
+
+  INPUT ---    time interval 1 1 ;
+
+  INPUT ---     strata=0 1 2 3 4 5;
+
+  INPUT ---    glabel(1)=Group 1;
+
+      Number of unique encounter histories read was 31.
+
+      Number of individual covariates read was 0.
+      Time interval lengths are all equal to 1.
+
+      Data type number is 9
+      Data type is Multi-state with Live Recaptures
+
+   For procedure chmatrix CPU Time was 0.001 seconds and System Time was 0.001 seconds.
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:51    Page  002
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+
+
+  INPUT --- proc estimate link=Parm-Specific NOLOOP varest=2ndPart    ;
+
+
+  INPUT --- model={ S(~stratum)p(~1)Psi(~stratum + tostratum) };
+
+  INPUT ---    group=1 S 0:Stratum0   rows=2 cols=2 Triang ;
+  INPUT ---        1 1 ;
+  INPUT ---        1 ;
+
+  INPUT ---    group=1 S 1:Stratum1   rows=2 cols=2 Triang ;
+  INPUT ---        2 2 ;
+  INPUT ---        2 ;
+
+  INPUT ---    group=1 S 2:Stratum2   rows=2 cols=2 Triang ;
+  INPUT ---        3 3 ;
+  INPUT ---        3 ;
+
+  INPUT ---    group=1 S 3:Stratum3   rows=2 cols=2 Triang ;
+  INPUT ---        4 4 ;
+  INPUT ---        4 ;
+
+  INPUT ---    group=1 S 4:Stratum4   rows=2 cols=2 Triang ;
+  INPUT ---        5 5 ;
+  INPUT ---        5 ;
+
+  INPUT ---    group=1 S 5:Stratum5   rows=2 cols=2 Triang ;
+  INPUT ---        6 6 ;
+  INPUT ---        6 ;
+
+  INPUT ---    group=1 p 0:Stratum0   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  INPUT ---    group=1 p 1:Stratum1   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  INPUT ---    group=1 p 2:Stratum2   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  INPUT ---    group=1 p 3:Stratum3   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:51    Page  003
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+
+  INPUT ---    group=1 p 4:Stratum4   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  INPUT ---    group=1 p 5:Stratum5   rows=2 cols=2 Triang ;
+  INPUT ---        7 7 ;
+  INPUT ---        7 ;
+
+  INPUT ---    group=1 Psi 0 to 1   rows=2 cols=2 Triang ;
+  INPUT ---        8 9 ;
+  INPUT ---        10 ;
+
+  INPUT ---    group=1 Psi 0 to 2   rows=2 cols=2 Triang ;
+  INPUT ---        11 12 ;
+  INPUT ---        13 ;
+
+  INPUT ---    group=1 Psi 0 to 3   rows=2 cols=2 Triang ;
+  INPUT ---        14 15 ;
+  INPUT ---        16 ;
+
+  INPUT ---    group=1 Psi 0 to 4   rows=2 cols=2 Triang ;
+  INPUT ---        17 18 ;
+  INPUT ---        19 ;
+
+  INPUT ---    group=1 Psi 0 to 5   rows=2 cols=2 Triang ;
+  INPUT ---        20 21 ;
+  INPUT ---        22 ;
+
+  INPUT ---    group=1 Psi 1 to 0   rows=2 cols=2 Triang ;
+  INPUT ---        23 24 ;
+  INPUT ---        25 ;
+
+  INPUT ---    group=1 Psi 1 to 2   rows=2 cols=2 Triang ;
+  INPUT ---        26 27 ;
+  INPUT ---        28 ;
+
+  INPUT ---    group=1 Psi 1 to 3   rows=2 cols=2 Triang ;
+  INPUT ---        29 30 ;
+  INPUT ---        31 ;
+
+  INPUT ---    group=1 Psi 1 to 4   rows=2 cols=2 Triang ;
+  INPUT ---        32 33 ;
+  INPUT ---        34 ;
+
+  INPUT ---    group=1 Psi 1 to 5   rows=2 cols=2 Triang ;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:51    Page  004
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---        35 36 ;
+  INPUT ---        37 ;
+
+  INPUT ---    group=1 Psi 2 to 0   rows=2 cols=2 Triang ;
+  INPUT ---        38 39 ;
+  INPUT ---        40 ;
+
+  INPUT ---    group=1 Psi 2 to 1   rows=2 cols=2 Triang ;
+  INPUT ---        41 42 ;
+  INPUT ---        43 ;
+
+  INPUT ---    group=1 Psi 2 to 3   rows=2 cols=2 Triang ;
+  INPUT ---        44 45 ;
+  INPUT ---        46 ;
+
+  INPUT ---    group=1 Psi 2 to 4   rows=2 cols=2 Triang ;
+  INPUT ---        47 48 ;
+  INPUT ---        49 ;
+
+  INPUT ---    group=1 Psi 2 to 5   rows=2 cols=2 Triang ;
+  INPUT ---        50 51 ;
+  INPUT ---        52 ;
+
+  INPUT ---    group=1 Psi 3 to 0   rows=2 cols=2 Triang ;
+  INPUT ---        53 54 ;
+  INPUT ---        55 ;
+
+  INPUT ---    group=1 Psi 3 to 1   rows=2 cols=2 Triang ;
+  INPUT ---        56 57 ;
+  INPUT ---        58 ;
+
+  INPUT ---    group=1 Psi 3 to 2   rows=2 cols=2 Triang ;
+  INPUT ---        59 60 ;
+  INPUT ---        61 ;
+
+  INPUT ---    group=1 Psi 3 to 4   rows=2 cols=2 Triang ;
+  INPUT ---        62 63 ;
+  INPUT ---        64 ;
+
+  INPUT ---    group=1 Psi 3 to 5   rows=2 cols=2 Triang ;
+  INPUT ---        65 66 ;
+  INPUT ---        67 ;
+
+  INPUT ---    group=1 Psi 4 to 0   rows=2 cols=2 Triang ;
+  INPUT ---        68 69 ;
+  INPUT ---        70 ;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  005
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+
+  INPUT ---    group=1 Psi 4 to 1   rows=2 cols=2 Triang ;
+  INPUT ---        71 72 ;
+  INPUT ---        73 ;
+
+  INPUT ---    group=1 Psi 4 to 2   rows=2 cols=2 Triang ;
+  INPUT ---        74 75 ;
+  INPUT ---        76 ;
+
+  INPUT ---    group=1 Psi 4 to 3   rows=2 cols=2 Triang ;
+  INPUT ---        77 78 ;
+  INPUT ---        79 ;
+
+  INPUT ---    group=1 Psi 4 to 5   rows=2 cols=2 Triang ;
+  INPUT ---        80 81 ;
+  INPUT ---        82 ;
+
+  INPUT ---    group=1 Psi 5 to 0   rows=2 cols=2 Triang ;
+  INPUT ---        83 84 ;
+  INPUT ---        85 ;
+
+  INPUT ---    group=1 Psi 5 to 1   rows=2 cols=2 Triang ;
+  INPUT ---        86 87 ;
+  INPUT ---        88 ;
+
+  INPUT ---    group=1 Psi 5 to 2   rows=2 cols=2 Triang ;
+  INPUT ---        89 90 ;
+  INPUT ---        91 ;
+
+  INPUT ---    group=1 Psi 5 to 3   rows=2 cols=2 Triang ;
+  INPUT ---        92 93 ;
+  INPUT ---        94 ;
+
+  INPUT ---    group=1 Psi 5 to 4   rows=2 cols=2 Triang ;
+  INPUT ---        95 96 ;
+  INPUT ---        97 ;
+
+  INPUT ---    design matrix constraints=97 covariates=18;
+  INPUT ---        1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        1 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        1 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        1 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        1 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  006
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 1 0 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 1 0 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  007
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 1 0 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 1 0 0 0 0 0 1;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 1 0 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 1 0 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0;
+  INPUT ---        0 0 0 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0;
+
+  INPUT ---    links=97;
+
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  008
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    Logit;
+
+  INPUT ---    mlogit(1);
+
+  INPUT ---    mlogit(2);
+
+  INPUT ---    mlogit(3);
+
+  INPUT ---    mlogit(1);
+
+  INPUT ---    mlogit(2);
+
+  INPUT ---    mlogit(3);
+
+  INPUT ---    mlogit(1);
+
+  INPUT ---    mlogit(2);
+
+  INPUT ---    mlogit(3);
+
+  INPUT ---    mlogit(1);
+
+  INPUT ---    mlogit(2);
+
+  INPUT ---    mlogit(3);
+
+  INPUT ---    mlogit(1);
+
+  INPUT ---    mlogit(2);
+
+  INPUT ---    mlogit(3);
+
+  INPUT ---    mlogit(4);
+
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  009
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---    mlogit(5);
+
+  INPUT ---    mlogit(6);
+
+  INPUT ---    mlogit(4);
+
+  INPUT ---    mlogit(5);
+
+  INPUT ---    mlogit(6);
+
+  INPUT ---    mlogit(4);
+
+  INPUT ---    mlogit(5);
+
+  INPUT ---    mlogit(6);
+
+  INPUT ---    mlogit(4);
+
+  INPUT ---    mlogit(5);
+
+  INPUT ---    mlogit(6);
+
+  INPUT ---    mlogit(4);
+
+  INPUT ---    mlogit(5);
+
+  INPUT ---    mlogit(6);
+
+  INPUT ---    mlogit(7);
+
+  INPUT ---    mlogit(8);
+
+  INPUT ---    mlogit(9);
+
+  INPUT ---    mlogit(7);
+
+  INPUT ---    mlogit(8);
+
+  INPUT ---    mlogit(9);
+
+  INPUT ---    mlogit(7);
+
+  INPUT ---    mlogit(8);
+
+  INPUT ---    mlogit(9);
+
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  010
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---    mlogit(7);
+
+  INPUT ---    mlogit(8);
+
+  INPUT ---    mlogit(9);
+
+  INPUT ---    mlogit(7);
+
+  INPUT ---    mlogit(8);
+
+  INPUT ---    mlogit(9);
+
+  INPUT ---    mlogit(10);
+
+  INPUT ---    mlogit(11);
+
+  INPUT ---    mlogit(12);
+
+  INPUT ---    mlogit(10);
+
+  INPUT ---    mlogit(11);
+
+  INPUT ---    mlogit(12);
+
+  INPUT ---    mlogit(10);
+
+  INPUT ---    mlogit(11);
+
+  INPUT ---    mlogit(12);
+
+  INPUT ---    mlogit(10);
+
+  INPUT ---    mlogit(11);
+
+  INPUT ---    mlogit(12);
+
+  INPUT ---    mlogit(10);
+
+  INPUT ---    mlogit(11);
+
+  INPUT ---    mlogit(12);
+
+  INPUT ---    mlogit(13);
+
+  INPUT ---    mlogit(14);
+
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  011
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---    mlogit(15);
+
+  INPUT ---    mlogit(13);
+
+  INPUT ---    mlogit(14);
+
+  INPUT ---    mlogit(15);
+
+  INPUT ---    mlogit(13);
+
+  INPUT ---    mlogit(14);
+
+  INPUT ---    mlogit(15);
+
+  INPUT ---    mlogit(13);
+
+  INPUT ---    mlogit(14);
+
+  INPUT ---    mlogit(15);
+
+  INPUT ---    mlogit(13);
+
+  INPUT ---    mlogit(14);
+
+  INPUT ---    mlogit(15);
+
+  INPUT ---    mlogit(16);
+
+  INPUT ---    mlogit(17);
+
+  INPUT ---    mlogit(18);
+
+  INPUT ---    mlogit(16);
+
+  INPUT ---    mlogit(17);
+
+  INPUT ---    mlogit(18);
+
+  INPUT ---    mlogit(16);
+
+  INPUT ---    mlogit(17);
+
+  INPUT ---    mlogit(18);
+
+  INPUT ---    mlogit(16);
+
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  012
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---    mlogit(17);
+
+  INPUT ---    mlogit(18);
+
+  INPUT ---    mlogit(16);
+
+  INPUT ---    mlogit(17);
+
+  INPUT ---    mlogit(18);
+  INPUT ---       blabel(1)=S:(Intercept);
+  INPUT ---       blabel(2)=S:stratum1;
+  INPUT ---       blabel(3)=S:stratum2;
+  INPUT ---       blabel(4)=S:stratum3;
+  INPUT ---       blabel(5)=S:stratum4;
+  INPUT ---       blabel(6)=S:stratum5;
+  INPUT ---       blabel(7)=p:(Intercept);
+  INPUT ---       blabel(8)=Psi:(Intercept);
+  INPUT ---       blabel(9)=Psi:stratum1;
+  INPUT ---       blabel(10)=Psi:stratum2;
+  INPUT ---       blabel(11)=Psi:stratum3;
+  INPUT ---       blabel(12)=Psi:stratum4;
+  INPUT ---       blabel(13)=Psi:stratum5;
+  INPUT ---       blabel(14)=Psi:tostratum1;
+  INPUT ---       blabel(15)=Psi:tostratum2;
+  INPUT ---       blabel(16)=Psi:tostratum3;
+  INPUT ---       blabel(17)=Psi:tostratum4;
+  INPUT ---       blabel(18)=Psi:tostratum5;
+  INPUT ---       rlabel(1)=S s0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(2)=S s1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(3)=S s2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(4)=S s3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(5)=S s4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(6)=S s5 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(7)=p s0 g1 c1 a1 o1 t2;
+  INPUT ---       rlabel(8)=Psi s0 to1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(9)=Psi s0 to1 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(10)=Psi s0 to1 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(11)=Psi s0 to2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(12)=Psi s0 to2 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(13)=Psi s0 to2 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(14)=Psi s0 to3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(15)=Psi s0 to3 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(16)=Psi s0 to3 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(17)=Psi s0 to4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(18)=Psi s0 to4 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(19)=Psi s0 to4 g1 c2 a0 o2 t2;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  013
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---       rlabel(20)=Psi s0 to5 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(21)=Psi s0 to5 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(22)=Psi s0 to5 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(23)=Psi s1 to0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(24)=Psi s1 to0 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(25)=Psi s1 to0 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(26)=Psi s1 to2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(27)=Psi s1 to2 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(28)=Psi s1 to2 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(29)=Psi s1 to3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(30)=Psi s1 to3 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(31)=Psi s1 to3 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(32)=Psi s1 to4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(33)=Psi s1 to4 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(34)=Psi s1 to4 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(35)=Psi s1 to5 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(36)=Psi s1 to5 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(37)=Psi s1 to5 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(38)=Psi s2 to0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(39)=Psi s2 to0 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(40)=Psi s2 to0 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(41)=Psi s2 to1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(42)=Psi s2 to1 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(43)=Psi s2 to1 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(44)=Psi s2 to3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(45)=Psi s2 to3 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(46)=Psi s2 to3 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(47)=Psi s2 to4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(48)=Psi s2 to4 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(49)=Psi s2 to4 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(50)=Psi s2 to5 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(51)=Psi s2 to5 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(52)=Psi s2 to5 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(53)=Psi s3 to0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(54)=Psi s3 to0 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(55)=Psi s3 to0 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(56)=Psi s3 to1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(57)=Psi s3 to1 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(58)=Psi s3 to1 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(59)=Psi s3 to2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(60)=Psi s3 to2 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(61)=Psi s3 to2 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(62)=Psi s3 to4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(63)=Psi s3 to4 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(64)=Psi s3 to4 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(65)=Psi s3 to5 g1 c1 a0 o1 t1;
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  014
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+  INPUT ---       rlabel(66)=Psi s3 to5 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(67)=Psi s3 to5 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(68)=Psi s4 to0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(69)=Psi s4 to0 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(70)=Psi s4 to0 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(71)=Psi s4 to1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(72)=Psi s4 to1 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(73)=Psi s4 to1 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(74)=Psi s4 to2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(75)=Psi s4 to2 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(76)=Psi s4 to2 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(77)=Psi s4 to3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(78)=Psi s4 to3 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(79)=Psi s4 to3 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(80)=Psi s4 to5 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(81)=Psi s4 to5 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(82)=Psi s4 to5 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(83)=Psi s5 to0 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(84)=Psi s5 to0 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(85)=Psi s5 to0 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(86)=Psi s5 to1 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(87)=Psi s5 to1 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(88)=Psi s5 to1 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(89)=Psi s5 to2 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(90)=Psi s5 to2 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(91)=Psi s5 to2 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(92)=Psi s5 to3 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(93)=Psi s5 to3 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(94)=Psi s5 to3 g1 c2 a0 o2 t2;
+  INPUT ---       rlabel(95)=Psi s5 to4 g1 c1 a0 o1 t1;
+  INPUT ---       rlabel(96)=Psi s5 to4 g1 c1 a1 o2 t2;
+  INPUT ---       rlabel(97)=Psi s5 to4 g1 c2 a0 o2 t2;
+   Model is { S(~stratum)p(~1)Psi(~stratum + tostratum) }
+
+ Link Function Used is PARM-SPECIFIC
+
+ Variance Estimation Procedure Used is 2ndPart 
+ -2logL(saturated) = 917.92556     
+ Effective Sample Size = 765
+
+ Number of function evaluations was 56 for 18 parameters.
+ For numerical optimization, CPU Time was 0.484 seconds and System Time was 0.203 seconds.
+ -2logL { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 1284.0346     
+ Penalty { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 0.0000000     
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:52    Page  015
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+ Gradient { S(~stratum)p(~1)Psi(~stratum + tostratum) }:
+  0.20389577E-03 -0.17925965E-05  0.20387031E-03   0.0000000       0.0000000    
+   0.0000000     -0.70653676E-04  0.91732922E-03  0.65738811E-04  0.74933310E-03
+  0.51528814E-04   0.0000000       0.0000000     -0.72164628E-03  0.24055250E-03
+  0.13434215E-02 -0.11052269E-03  0.18552624E-03
+ Maximum ABS(G) { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 0.0013434     
+ To compute VC matrix, CPU Time was 0.234 seconds and System Time was 0.125 seconds.
+ S Vector { S(~stratum)p(~1)Psi(~stratum + tostratum) }:
+   230.9415      81.09830      28.36671      24.29737      21.91516    
+   18.57853      16.32472      7.972561      5.000411     0.4120258E-04
+  0.3519146E-04 0.1919325E-04 0.1329591E-04 0.4092545E-07 0.1989650E-14
+  0.1154851E-14 0.1992589E-15 0.1893688E-21
+ To invert VC matrix, CPU Time was 0.001 seconds and System Time was 0.001 seconds.
+ Ratio Threshold = 50.000000       Max Gap (14/15) = 20569171.       Next Max Gap (17/18) = 1052226.7     
+ Gap Method for Num. of Estimated Parameters { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 14          
+ Threshold { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 0.0026868               
+ Numerical Threshold Method for Num. of Estimated Parameters { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 9          
+ Number of Estimated Parameters { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 14          
+
+   * *  WARNING  * *   Number of parameters estimated from gap method (=14) and threshold method (=9) differ.  Inspect full output. 
+ Ratios of S Vector { S(~stratum)p(~1)Psi(~stratum + tostratum) }:
+   1/2    2.847674       2/3    2.858925       3/4    1.167481       4/5    1.108702       5/6    1.179596    
+   6/7    1.138061       7/8    2.047613       8/9    1.594381       9/10    121361.6       10/11    1.170812    
+   11/12    1.833534       12/13    1.443545       13/14    324.8813       14/15   0.2056917E+08   15/16    1.722862    
+   16/17    5.795733       17/18    1052227.    
+ DEVIANCE { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 366.10906               
+ DEVIANCE Degrees of Freedom { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 17          
+ c-hat { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 21.535827               
+ AIC { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 1302.0346               
+ AICc { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 1302.2730               
+ BIC { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 1343.7935               
+ Pearson Chisquare { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 1149.8552               
+ Possible Encounter Histories { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 161          
+ Pearson Chisquare df { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 147          
+ Pearson chat { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 7.8221439               
+ Sum(Observed/Expected) { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 189.34937               
+ s-bar { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 0.1817268               
+ Fletcher chat { S(~stratum)p(~1)Psi(~stratum + tostratum) } = 6.6192492               
+
+
+ PARM-SPECIFIC Link Function Parameters of { S(~stratum)p(~1)Psi(~stratum + tostratum) }
+                                                              95% Confidence Interval
+    Parameter                  Beta         Standard Error     Lower           Upper
+ -------------------------  --------------  --------------  --------------  --------------
+    1:S:(Intercept)          20.403159       0.0000000       20.403159       20.403159    
+    2:S:stratum1            -16.024231       0.0000000      -16.024231      -16.024231    
+    3:S:stratum2            -16.513863       0.0000000      -16.513863      -16.513863    
+    4:S:stratum3             32.459299       0.0000000       32.459299       32.459299    
+    5:S:stratum4             21.395424       27253300.      -53416447.       53416490.    
+    6:S:stratum5            -0.9485219       42997594.      -84275288.       84275286.    
+    7:p:(Intercept)          14.765515       168.57086      -315.63339       345.16442    
+    8:Psi:(Intercept)       -30.554563       120.27089      -266.28550       205.17638    
+    9:Psi:stratum1          -3.6422467       103.93443      -207.35373       200.06924    
+   10:Psi:stratum2          -3.9278845       103.93452      -207.63956       199.78379    
+   11:Psi:stratum3          -1.6650934       103.93527      -205.37822       202.04803    
+   12:Psi:stratum4          -21.291601       4943.1409      -9709.8480       9667.2648    
+   13:Psi:stratum5           0.0000000       0.0000000       0.0000000       0.0000000    
+   14:Psi:tostratum1         31.498967       0.0000000       31.498967       31.498967    
+   15:Psi:tostratum2         33.316853       0.0000000       33.316853       33.316853    
+   16:Psi:tostratum3         31.245801       0.0000000       31.245801       31.245801    
+   17:Psi:tostratum4         31.168036       0.0000000       31.168036       31.168036    
+   18:Psi:tostratum5         30.993689       0.0000000       30.993689       30.993689    
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:53    Page  016
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+
+
+        Real Function Parameters of { S(~stratum)p(~1)Psi(~stratum + tostratum) }
+                                                               95% Confidence Interval
+     Parameter                Estimate       Standard Error     Lower           Upper
+ --------------------------  --------------  --------------  --------------  --------------
+     1:S s0 g1 c1 a0 o1 t1    1.0000000       0.0000000       1.0000000       1.0000000       
+     2:S s1 g1 c1 a0 o1 t1    0.9876165       0.0061538       0.9674762       0.9953450       
+     3:S s2 g1 c1 a0 o1 t1    0.9799505       0.0070175       0.9604273       0.9899427       
+     4:S s3 g1 c1 a0 o1 t1    1.0000000       0.0000000       1.0000000       1.0000000       
+     5:S s4 g1 c1 a0 o1 t1    1.0000000       0.0000000       1.0000000       1.0000000       
+     6:S s5 g1 c1 a0 o1 t1    1.0000000       0.3288206       0.3555117       1.6444883       
+     7:p s0 g1 c1 a1 o1 t2    0.9999996       0.6516551E-04  0.9605266E-137   1.0000000       
+     8:Psi s0 to1 g1 c1 a0    0.1036735       0.4352011       0.1193038E-04   0.9991090       
+     9:Psi s0 to1 g1 c1 a1    0.1036735       0.4352011       0.1193038E-04   0.9991090       
+    10:Psi s0 to1 g1 c2 a0    0.1036735       0.4352011       0.1193038E-04   0.9991090       
+    11:Psi s0 to2 g1 c1 a0    0.6385068       2.6761232       0.2387211E-09   1.0000000       
+    12:Psi s0 to2 g1 c1 a1    0.6385068       2.6761232       0.2387212E-09   1.0000000       
+    13:Psi s0 to2 g1 c2 a0    0.6385068       2.6761232       0.2387212E-09   1.0000000       
+    14:Psi s0 to3 g1 c1 a0    0.0804858       0.3377159       0.1142462E-04   0.9985111       
+    15:Psi s0 to3 g1 c1 a1    0.0804858       0.3377159       0.1142462E-04   0.9985111       
+    16:Psi s0 to3 g1 c2 a0    0.0804858       0.3377159       0.1142462E-04   0.9985111       
+    17:Psi s0 to4 g1 c1 a0    0.0744640       0.3124223       0.1113861E-04   0.9982822       
+    18:Psi s0 to4 g1 c1 a1    0.0744640       0.3124223       0.1113862E-04   0.9982822       
+    19:Psi s0 to4 g1 c2 a0    0.0744640       0.3124223       0.1113862E-04   0.9982822       
+    20:Psi s0 to5 g1 c1 a0    0.0625502       0.2624931       0.1032231E-04   0.9976868       
+    21:Psi s0 to5 g1 c1 a1    0.0625502       0.2624931       0.1032231E-04   0.9976868       
+    22:Psi s0 to5 g1 c2 a0    0.0625502       0.2624931       0.1032231E-04   0.9976868       
+    23:Psi s1 to0 g1 c1 a0    0.9046430E-15   0.0000000       0.9046430E-15   0.9046430E-15   
+    24:Psi s1 to0 g1 c1 a1    0.9046430E-15   0.0000000       0.9046430E-15   0.9046430E-15   
+    25:Psi s1 to0 g1 c2 a0    0.9046430E-15   0.0000000       0.9046430E-15   0.9046430E-15   
+    26:Psi s1 to2 g1 c1 a0    0.2665647       0.0238188       0.2225427       0.3157581       
+    27:Psi s1 to2 g1 c1 a1    0.2665647       0.0238188       0.2225427       0.3157581       
+    28:Psi s1 to2 g1 c2 a0    0.2665647       0.0238188       0.2225427       0.3157581       
+    29:Psi s1 to3 g1 c1 a0    0.0336013       0.0078328       0.0212110       0.0528386       
+    30:Psi s1 to3 g1 c1 a1    0.0336013       0.0078328       0.0212110       0.0528386       
+    31:Psi s1 to3 g1 c2 a0    0.0336013       0.0078328       0.0212110       0.0528386       
+    32:Psi s1 to4 g1 c1 a0    0.0310873       0.0070249       0.0199087       0.0482339       
+    33:Psi s1 to4 g1 c1 a1    0.0310873       0.0070249       0.0199087       0.0482339       
+    34:Psi s1 to4 g1 c2 a0    0.0310873       0.0070249       0.0199087       0.0482339       
+    35:Psi s1 to5 g1 c1 a0    0.0261135       0.0063259       0.0162006       0.0418340       
+    36:Psi s1 to5 g1 c1 a1    0.0261135       0.0063259       0.0162006       0.0418340       
+    37:Psi s1 to5 g1 c2 a0    0.0261135       0.0063259       0.0162006       0.0418340       
+    38:Psi s2 to0 g1 c1 a0    0.9145399E-15   0.0000000       0.9145399E-15   0.9145399E-15   
+    39:Psi s2 to0 g1 c1 a1    0.9145399E-15   0.0000000       0.9145399E-15   0.9145399E-15   
+    40:Psi s2 to0 g1 c2 a0    0.9145399E-15   0.0000000       0.9145399E-15   0.9145399E-15   
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:53    Page  017
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+    41:Psi s2 to1 g1 c1 a0    0.0437553       0.0095314       0.0284458       0.0667382       
+    42:Psi s2 to1 g1 c1 a1    0.0437553       0.0095314       0.0284458       0.0667382       
+    43:Psi s2 to1 g1 c2 a0    0.0437553       0.0095314       0.0284458       0.0667382       
+    44:Psi s2 to3 g1 c1 a0    0.0339689       0.0075503       0.0219086       0.0523131       
+    45:Psi s2 to3 g1 c1 a1    0.0339689       0.0075503       0.0219086       0.0523131       
+    46:Psi s2 to3 g1 c2 a0    0.0339689       0.0075503       0.0219086       0.0523131       
+    47:Psi s2 to4 g1 c1 a0    0.0314274       0.0070293       0.0202180       0.0485438       
+    48:Psi s2 to4 g1 c1 a1    0.0314274       0.0070293       0.0202180       0.0485438       
+    49:Psi s2 to4 g1 c2 a0    0.0314274       0.0070293       0.0202180       0.0485438       
+    50:Psi s2 to5 g1 c1 a0    0.0263992       0.0063384       0.0164472       0.0421152       
+    51:Psi s2 to5 g1 c1 a1    0.0263992       0.0063384       0.0164472       0.0421152       
+    52:Psi s2 to5 g1 c2 a0    0.0263992       0.0063384       0.0164472       0.0421152       
+    53:Psi s3 to0 g1 c1 a0    0.1983744E-14   0.0000000       0.1983744E-14   0.1983744E-14   
+    54:Psi s3 to0 g1 c1 a1    0.1983744E-14   0.0000000       0.1983744E-14   0.1983744E-14   
+    55:Psi s3 to0 g1 c2 a0    0.1983744E-14   0.0000000       0.1983744E-14   0.1983744E-14   
+    56:Psi s3 to1 g1 c1 a0    0.0949103       0.0250072       0.0559520       0.1564977       
+    57:Psi s3 to1 g1 c1 a1    0.0949103       0.0250072       0.0559520       0.1564977       
+    58:Psi s3 to1 g1 c2 a0    0.0949103       0.0250072       0.0559520       0.1564977       
+    59:Psi s3 to2 g1 c1 a0    0.5845357       0.0562699       0.4718507       0.6890236       
+    60:Psi s3 to2 g1 c1 a1    0.5845357       0.0562699       0.4718507       0.6890236       
+    61:Psi s3 to2 g1 c2 a0    0.5845357       0.0562699       0.4718507       0.6890236       
+    62:Psi s3 to4 g1 c1 a0    0.0681698       0.0152587       0.0436901       0.1048614       
+    63:Psi s3 to4 g1 c1 a1    0.0681698       0.0152587       0.0436901       0.1048614       
+    64:Psi s3 to4 g1 c2 a0    0.0681698       0.0152587       0.0436901       0.1048614       
+    65:Psi s3 to5 g1 c1 a0    0.0572630       0.0137575       0.0355497       0.0909874       
+    66:Psi s3 to5 g1 c1 a1    0.0572630       0.0137575       0.0355497       0.0909874       
+    67:Psi s3 to5 g1 c2 a0    0.0572630       0.0137575       0.0355497       0.0909874       
+    68:Psi s4 to0 g1 c1 a0    0.3044366E-22   0.1506291E-18  -0.2952025E-18   0.2952634E-18   
+    69:Psi s4 to0 g1 c1 a1    0.3044366E-22   0.1506291E-18  -0.2952025E-18   0.2952634E-18   
+    70:Psi s4 to0 g1 c2 a0    0.3044366E-22   0.1506291E-18  -0.2952025E-18   0.2952634E-18   
+    71:Psi s4 to1 g1 c1 a0    0.1456547E-08   0.7204773E-05  -0.1411990E-04   0.1412281E-04   
+    72:Psi s4 to1 g1 c1 a1    0.1456547E-08   0.7204773E-05  -0.1411990E-04   0.1412281E-04   
+    73:Psi s4 to1 g1 c2 a0    0.1456547E-08   0.7204773E-05  -0.1411990E-04   0.1412281E-04   
+    74:Psi s4 to2 g1 c1 a0    0.8970616E-08   0.4437291E-04  -0.8696194E-04   0.8697989E-04   
+    75:Psi s4 to2 g1 c1 a1    0.8970616E-08   0.4437291E-04  -0.8696194E-04   0.8697989E-04   
+    76:Psi s4 to2 g1 c2 a0    0.8970616E-08   0.4437291E-04  -0.8696194E-04   0.8697989E-04   
+    77:Psi s4 to3 g1 c1 a0    0.1130774E-08   0.5593345E-05  -0.1096182E-04   0.1096409E-04   
+    78:Psi s4 to3 g1 c1 a1    0.1130774E-08   0.5593345E-05  -0.1096182E-04   0.1096409E-04   
+    79:Psi s4 to3 g1 c2 a0    0.1130774E-08   0.5593345E-05  -0.1096182E-04   0.1096409E-04   
+    80:Psi s4 to5 g1 c1 a0    0.8787900E-09   0.4346912E-05  -0.8519068E-05   0.8520826E-05   
+    81:Psi s4 to5 g1 c1 a1    0.8787900E-09   0.4346912E-05  -0.8519068E-05   0.8520826E-05   
+    82:Psi s4 to5 g1 c2 a0    0.8787900E-09   0.4346912E-05  -0.8519068E-05   0.8520826E-05   
+    83:Psi s5 to0 g1 c1 a0    0.2311490E-14   0.0000000       0.2311490E-14   0.2311490E-14   
+    84:Psi s5 to0 g1 c1 a1    0.2311490E-14   0.0000000       0.2311490E-14   0.2311490E-14   
+    85:Psi s5 to0 g1 c2 a0    0.2311490E-14   0.0000000       0.2311490E-14   0.2311490E-14   
+    86:Psi s5 to1 g1 c1 a0    0.1105910       0.0000000       0.1105910       0.1105910       
+
+  Program  MARK  - Survival Rate Estimation with Capture-Recapture Data
+   gfortran(dble/PIM2) Vers. 10.1 March 2023  18-Jan-2026 08:30:53    Page  018
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ 
+    87:Psi s5 to1 g1 c1 a1    0.1105910       0.0000000       0.1105910       0.1105910       
+    88:Psi s5 to1 g1 c2 a0    0.1105910       0.0000000       0.1105910       0.1105910       
+    89:Psi s5 to2 g1 c1 a0    0.6811103       0.0000000       0.6811103       0.6811103       
+    90:Psi s5 to2 g1 c1 a1    0.6811103       0.0000000       0.6811103       0.6811103       
+    91:Psi s5 to2 g1 c2 a0    0.6811103       0.0000000       0.6811103       0.6811103       
+    92:Psi s5 to3 g1 c1 a0    0.0858561       0.0000000       0.0858561       0.0858561       
+    93:Psi s5 to3 g1 c1 a1    0.0858561       0.0000000       0.0858561       0.0858561       
+    94:Psi s5 to3 g1 c2 a0    0.0858561       0.0000000       0.0858561       0.0858561       
+    95:Psi s5 to4 g1 c1 a0    0.0794325       0.0000000       0.0794325       0.0794325       
+    96:Psi s5 to4 g1 c1 a1    0.0794325       0.0000000       0.0794325       0.0794325       
+    97:Psi s5 to4 g1 c2 a0    0.0794325       0.0000000       0.0794325       0.0794325       
+
+ To compute parameter estimates, CPU Time was 0.016 seconds and System Time was 0.031 seconds.
+
+ Attempted ordering of parameters by estimatibility:
+   8 15  9 17 16  1 18 10  2 14 11  7  3 12 13  5  4  6
+ Beta number 6 is a singular value.
+
+   For procedure estimate CPU Time was 0.859 seconds and System Time was 1.328 seconds.
+
+
+  INPUT --- proc stop;
+
+     For this job, CPU Time in minutes was 0.015 and System Time in minutes was 0.023.
+
+     Time Start = 08:30:51.784   Time End = 08:30:53.133
+
+     Wall Clock Time in minutes for this job was 0.022.
+
+     Maximum of 22 words used of 4096 words allocated.
+
+
+          E X E C U T I O N   S U C C E S S F U L 
