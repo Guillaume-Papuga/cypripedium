@@ -1,0 +1,7 @@
+"0","verification <- read.csv(""data/raw/detections_individuelles_verifsTC+LD_18dec.csv"", sep = "";"")"
+"0",""
+"0","# Certains noms des sites ont des espaces invisibles, correction :"
+"0","verification$site <- trimws(verification$site)"
+"0",""
+"0","#Premières lignes du tableau pour lecteur"
+"0","head(verification)"
