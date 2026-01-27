@@ -1004,6 +1004,12 @@ Modèle statistique utilisé quand la variable réponse est catégorielle avec p
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
+tab_complet$phenologie_verif <- relevel(
+  factor(tab_complet$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+
 mod_pheno <- multinom(
   phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
   data = tab_complet
