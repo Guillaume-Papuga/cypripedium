@@ -48,8 +48,7 @@ experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f"
 
 ```
 
-#Analyse tableau recouvrements végétaux
-###Pour chaque strate de recouvrement
+#Analyse tableau recouvrements végétaux ###Pour chaque strate de recouvrement
 
 ***Strate muscilagineuse***
 
@@ -108,8 +107,7 @@ recouvrement_par_strate <- recouvrement %>%
   
 ```
 
-####Visualisation des données 
-#####Pour chaque site
+####Visualisation des données #####Pour chaque site
 
 ***Combe Michaut***
 
@@ -155,8 +153,7 @@ recouvrement_par_strate %>%
 
 ```
 
-#####Pour tous les sites
-######Boxplot
+#####Pour tous les sites ######Boxplot
 
 ```{r}
 #| echo: false
@@ -207,7 +204,6 @@ plot(rand)
 
 ```
 
-
 #Analyse tableau vérification
 
 ```{r}
@@ -230,7 +226,6 @@ ggplot(verification, aes(x = fleur, fill = site))+
   facet_wrap(~ session)+
   labs(x = "Présence des fleurs", y = "Nombre d'occurences")
 ```
-
 
 ```{r}
 ggplot(verification, aes(x = fleurs_fanees, fill = site))+
@@ -260,6 +255,7 @@ ggplot(verification, aes(x = adequation, fill = observateur))+
 ```
 
 ##Transformation phenologie en facteur
+
 ```{r}
 verification2 <- verification %>% 
   pivot_longer(
@@ -275,6 +271,7 @@ verification2$phenologie <- factor(verification2$phenologie,
 ```
 
 ###Analyses phénologie
+
 ```{r}
 ggplot(verification2, aes(x = presence, fill = site))+
   geom_bar(position = "dodge")+
@@ -282,7 +279,6 @@ ggplot(verification2, aes(x = presence, fill = site))+
 
 
 ```
-
 
 ```{r}
 verification2 %>% 
@@ -293,7 +289,9 @@ ggplot(aes(x = presence, fill = site))+
 
 
 ```
+
 ###Analyse adéquation
+
 ```{r}
 verification3 <- verification %>% 
   group_by(observateur) %>% 
@@ -318,6 +316,7 @@ cor.test(verification3$tx_erreur, verification3$id_total)
 cor.test(verification3$tx_erreur, verification3$id_total, method = "spearman")
 
 ```
+
 ####Taux d'erreur par observateur
 
 ```{r}
@@ -396,6 +395,7 @@ ggplot(data = verification6, aes(x = tx_erreur, y=id_total))+
 ```
 
 ####Taux d'erreur par observateur en fonction des sessions
+
 ```{r}
 verification7 <- verification %>% 
   group_by(observateur, session) %>% 
@@ -432,6 +432,7 @@ ggplot(data = verification7, aes(x = as.factor(session), y = tx_erreur))+
 ```
 
 ####Taux d'erreur comparé à autonotation
+
 ```{r}
 experience <- experience %>%
   mutate(score_moyen = rowMeans(across(A:E)))
@@ -478,7 +479,6 @@ ggplot(experience, aes(x = ID.observateur, y = risque_erreur, fill = sexe)) +
 
 ```
 
-
 #COmparaison tx d'erreur et auutonotation
 
 ```{r}
@@ -491,8 +491,8 @@ ggplot(data = experience2, aes( x = risque_erreur, y = tx_erreur))+
   labs(x = "Risque d'erreur basé sur autonotation", y = "Taux d'erreur d'attribution de la phénologie")
 ```
 
-
 #Analyse tableau Taille et phéno verif LD
+
 ```{r}
 transition_pheno <- data_original %>% 
   dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3)
@@ -535,6 +535,7 @@ ggplot(transition_pheno3,
 ```
 
 #Analyse proba de détection
+
 ```{r}
 
 #ajout information session à l'ID individuel####
@@ -811,11 +812,8 @@ tab_complet <- tab_complet %>%
 
 
 ```
-#Préparation jeu de données pour crdms pour analyse dynamique des pops####
-#Point méthodologique
-Le Multistate va être utilisé pour prendre en compte transitions phénologiques des individus
-Le robust design pour prendre en compte variations entre sessions étant des périodes primaires et en même temps prendre en compte plusieurs observations dans chaque session (observateurs) étant notre période secondaire.
-Le closed correspond au fait qu'on ne considère pas de variations des paramètres démographiques au sein de notre période secondaire
+
+#Préparation jeu de données pour crdms pour analyse dynamique des pops#### #Point méthodologique Le Multistate va être utilisé pour prendre en compte transitions phénologiques des individus Le robust design pour prendre en compte variations entre sessions étant des périodes primaires et en même temps prendre en compte plusieurs observations dans chaque session (observateurs) étant notre période secondaire. Le closed correspond au fait qu'on ne considère pas de variations des paramètres démographiques au sein de notre période secondaire
 
 #La variable site ne va pas être utilisé en état car il n'y a probablement pas de migrations entre sites (les plantes ne bougeant pas) mais comme covariable car chaque site peut influencer la survie des individus et n'a pas la même densité d'individus
 
@@ -935,5 +933,3 @@ anova(model3_autonotation)
 
 AIC(model1_autonotation, model2_autonotation, model3_autonotation)
 ```
-
-

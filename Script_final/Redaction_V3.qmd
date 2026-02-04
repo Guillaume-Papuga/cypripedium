@@ -94,7 +94,7 @@ Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les an
 Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : - strate muscinale - strate herbacée \< à 1m de hauteur - strate arbustive basse entre 1 et 3m de hauteur - strate arbustive haute entre 3 et 7m de hauteur - strate arborescente \> à 7m de hauteur
 
 ```{r, message=FALSE, echo=FALSE}
-recouvrement <- read.csv("data/raw/Recouvrement VF.csv",sep = ";")
+recouvrement <- read.csv("data/raw/Recouvrement VF.csv", sep = ";")
 #Premières lignes du tableau pour lecteur
 head(recouvrement)
 #Remettre le bon nom de site
@@ -104,7 +104,6 @@ recouvrement <- recouvrement %>%
                   "Tete Cendree Bas",
                   Site)
   )
-
 ```
 
 ### Tableau : détections individuelles /OK
