@@ -2148,8 +2148,17 @@ ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
                 position = position_dodge(width = 0.8),
                 width = 0.2) +
   scale_y_continuous(limits = c(0,1)) +
+  scale_x_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fannées",
+      fruit = "Fruits"
+    )
+  ) +
   labs(
-    x = "Stade phénologique",
+    x = "Stades phénologiques",
     y = "Probabilité de détection",,
     title = "Probabilité marginale de détection par stade phénologique"
   ) +
@@ -2543,13 +2552,29 @@ ggplot(heat_df,
     limits = c(-1, 1),
     name = "Qualité d'observation\n(échelle relative)"
   ) +
+  scale_x_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fannées",
+      fruit = "Fruits"
+    )
+  ) +
+  scale_y_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fannées",
+      fruit = "Fruits"
+    )
+  ) +
   
   labs(
     x = "Phénologie observée",
-    y = "Phénologie vérifiée",
-    title = "Matrice de confusion – phénologie Sabot de Vénus",
-    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
-  ) +
+    y = "Phénologie réelle",
+    title = "Matrice de confusion de la phénologie"  ) +
   
   theme_minimal(base_size = 13) +
   theme(
@@ -2573,13 +2598,29 @@ ggplot(heat_df,
     limits = c(-1, 1),
     name = "Qualité d'observation\n(échelle relative)"
   ) +
+  scale_x_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fannées",
+      fruit = "Fruits"
+    )
+  ) +
+  scale_y_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fannées",
+      fruit = "Fruits"
+    )
+  ) +
   
   labs(
     x = "Phénologie observée",
-    y = "Phénologie vérifiée",
-    title = "Matrice de confusion – phénologie Sabot de Vénus",
-    subtitle = "Vert = bonnes classifications | Rouge = erreurs"
-  ) +
+    y = "Phénologie réelle",
+    title = "Matrice de confusion de la phénologie"  ) +
   
   theme_minimal(base_size = 13) +
   theme(
@@ -2983,11 +3024,11 @@ for(i in 1:nrow(df_psi)){
 
 #Convertir chiffres en abréviation phénologie
 pheno_labels <- c(
-  "1" = "juv",
-  "2" = "nf",
-  "3" = "f",
-  "4" = "ff",
-  "5" = "F"
+  "1" = "Juvénile",
+  "2" = "Non fleuri",
+  "3" = "Fleur",
+  "4" = "Fleur fannée",
+  "5" = "Fruit"
 )
 
 
@@ -2999,21 +3040,33 @@ dimnames(Psi_matrix) <- list(
 
 #Ajouter proba de rester au même stade phéno :
 diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
+#enlever la valeur pour la transition de Fruit à Fruit puisque non observée dans la réalité
+Psi_matrix["Fruit", "Fruit"] <- 0
 
-states <- c("j", "nf", "f", "ff", "F")
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
 num_states <- length(states)
 
 # Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
 dot_code <- "digraph pheno_transitions { 
   rankdir=LR;
-  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
 "
 
 for(i in 1:num_states){
   for(j in 1:num_states){
     prob <- Psi_matrix[i,j]
-    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
-      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
                          " [label=\"", round(prob,2), "\"];\n")
     }
   }
