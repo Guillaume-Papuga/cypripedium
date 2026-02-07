@@ -3913,6 +3913,7 @@ grViz(dot_code)
 
 # CRDMS
 
+## --------------
 Capture-Recapture Data for Multi-State models
 
 Dans les modèles multistrates de capture-recapture, le format CRDMS est utilisé comme structure interne de données car il permet de représenter de manière cohérente l’histoire complète de chaque individu au cours du temps, en intégrant à la fois les états occupés (strates) et les observations associées. Son principe repose sur l’encodage des trajectoires individuelles sous une forme standardisée qui décrit les transitions possibles entre strates, ainsi que les paramètres à estimer (probabilités de transition, de détection et éventuellement de survie).
@@ -4032,6 +4033,135 @@ check_sessions <- verif_sessions %>%
 check_sessions %>%
   filter(!ok_sessions)
 ```
+### Préparation CRDMS Galad
+```{r}
+### codage numérique
+phenology_codes <- c(
+  "juv" = 1,
+  "non_fleuri" = 2,
+  "fleur" = 3,
+  "fleurs_fanees" = 4,
+  "fruit" = 5,
+  "0" = 0
+)
+
+#Remplacer les valeurs de NA pour la phénologie en 0 : pas vu par l'observateur
+tab_complet_final <- tab_complet_final %>% 
+  mutate(phenologie = replace_na(phenologie, "0"))
+
+#Enlever un individu bizarre
+data_original %>% 
+  filter(site == "Tete Cendree Haut" & quadrat == 1 & marquage == 0)
+tab_complet_final <- tab_complet_final %>% 
+  filter(ID_ind != "TCh.Q1.00")
+
+#Histoires de capture par session
+tab_session <- tab_complet_final %>%
+  
+  ungroup() %>%   # sécurité
+  
+  ### 1. conversion phéno -> chiffre
+  mutate(code = phenology_codes[as.character(phenologie)]) %>%
+  
+  ### 2. ordre numérique propre
+  mutate(
+    obs_num = dense_rank(observateur)
+  ) %>%
+  
+  arrange(obs_num) %>%
+  
+  ### 3. concaténer par individu × session
+  group_by(site, quadrat, marquage, session) %>%
+  summarise(
+    ch_session = paste0(code, collapse = ""),
+    .groups = "drop"
+  )
+
+#Vérification bon nombre par histoire de capture
+tab_session %>%
+  filter(str_length(ch_session) != 5)
+
+#Compilation des histoires de capture des trois sessions
+tab_final <- tab_session %>%
+  
+  ungroup() %>%
+  
+  ### ordre chronologique
+  arrange(session) %>%
+  
+  ### concaténation des 3 sessions
+  group_by(site, quadrat, marquage) %>%
+  summarise(
+    ch_final = paste0(ch_session, collapse = ""),
+    .groups = "drop"
+  )
+
+#Vérification bon nombre par histoire de capture
+tab_final %>%
+  filter(str_length(ch_final) != 15)
+
+
+# 3 primary periods (sessions) × 5 secondary occasions (observateurs)
+# Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
+# Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
+
+t.int <- c(
+ 0,0,0,0,  
+  1,          
+  0,0,0,0,  
+  1,         
+ 0,0,0,0  
+)
+
+crdms_input <- tab_final %>%
+  rename(ch = ch_final) %>%
+  group_by(site, ch) %>% 
+  summarise(freq= n(), .groups = "drop")
+
+#Enlever histoires de captures avec seulement des 0
+crdms_input <- crdms_input %>%
+  filter(!grepl("^0+$", ch))
+
+#Modèle
+crdms.data<-process.data(crdms_input,
+                         model="CRDMS",
+                         groups = "site",
+                         time.interval=t.int,
+			strata.labels = c("0", "1", "2", "3", "4", "5")
+)
+
+crdms.ddl <- make.design.data(crdms.data)
+
+# Créer un index pour fixer p = 0 et c= 0pour les états jamais observés ("0") si besoin
+crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+
+crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
+crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
+
+# Définir S (survie apparente) constante pour tous les états
+S.dot <- list(formula = ~1)
+
+# Définir p (probabilité de détection) variable selon la session
+p.session <- list(formula = ~1)
+
+# Définir psi (proba de transition) variable selon la session
+Psi.model <- list(formula = ~1)
+
+mod <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S = S.dot,
+    p = p.session,
+    Psi = Psi.model
+  ), threads = 2, delete = TRUE
+)
+
+
+
+```
+
 
 ### Préparation CRDMS
 
