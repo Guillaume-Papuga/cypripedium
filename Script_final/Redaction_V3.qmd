@@ -4009,7 +4009,7 @@ nrow(tab_complet_5obs_6)
 tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
 ind_av_filtrage <- nrow(tab_complet_final)
 
-#Enlever les trois quadra ayant été partiellement supprimés
+#Enlever les trois quadra ayant été tpartiellement supprimés
 tab_complet_final <- tab_complet_final %>% 
   filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
 ind_ap_filtrage <- nrow(tab_complet_final)
@@ -4055,20 +4055,27 @@ data_original %>%
 tab_complet_final <- tab_complet_final %>% 
   filter(ID_ind != "TCh.Q1.00")
 
+#On travaille avec la phénologie avérée des opératrices donc il faut garder sa valeur sauf quand l'observateur n'a rien mis et dans ce cas mettre un 0
+tab_complet_final <- tab_complet_final %>%
+  mutate(
+    phenologie_final = if_else(
+      phenologie == "0",
+      "0",
+      phenologie_verif
+    )
+  )
+
 #Histoires de capture par session
 tab_session <- tab_complet_final %>%
   
   ungroup() %>%   # sécurité
   
   ### 1. conversion phéno -> chiffre
-  mutate(code = phenology_codes[as.character(phenologie)]) %>%
+  mutate(code = phenology_codes[as.character(phenologie_final)]) %>%
   
-  ### 2. ordre numérique propre
-  mutate(
-    obs_num = dense_rank(observateur)
-  ) %>%
-  
-  arrange(obs_num) %>%
+  ### 2. ordre non obs puis obs
+  arrange(site, quadrat, marquage, session, code != 0) %>%
+
   
   ### 3. concaténer par individu × session
   group_by(site, quadrat, marquage, session) %>%
@@ -4119,44 +4126,103 @@ crdms_input <- tab_final %>%
   summarise(freq= n(), .groups = "drop")
 
 #Enlever histoires de captures avec seulement des 0
+crdms_input %>%
+  filter(grepl("^0+$", ch))
+#6 individus enlevés
+
 crdms_input <- crdms_input %>%
   filter(!grepl("^0+$", ch))
 
 #Modèle
 crdms.data<-process.data(crdms_input,
                          model="CRDMS",
-                         groups = "site",
+                         group="site",
                          time.interval=t.int,
-			strata.labels = c("0", "1", "2", "3", "4", "5")
+			strata.labels = c("1", "2", "3", "4", "5") #on ne mets pas le 0 sinon le modèle va calculer aussi la probabilité de passer de l'état 0 aux autres états
 )
 
 crdms.ddl <- make.design.data(crdms.data)
 
-# Créer un index pour fixer p = 0 et c= 0pour les états jamais observés ("0") si besoin
+#Beaucoup de paramètres
+# S = probabilité de survie
+# Psi = proba de transition d'état
+# p = proba de capture initiale
+# c = proba de recapture
+# f0 = proba de première capture 
+# ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
+#Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
+
+# Créer un index pour fixer p = 0 et c = 0 pour les états jamais observés ("0") si besoin
 crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
 crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+crdms.ddl$f0$fix[crdms.ddl$f$stratum == "0"] <- 0   # IMPORTANT (évite f0 instable)
 
 crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
 crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
 
-# Définir S (survie apparente) constante pour tous les états
-S.dot <- list(formula = ~1)
+#Estimer un seul psi
+crdms.ddl$Psi$share <- TRUE
 
-# Définir p (probabilité de détection) variable selon la session
-p.session <- list(formula = ~1)
+# interdiction totale par défaut
+crdms.ddl$Psi$fix <- 0
+
+
+#Contraindre les transitions d'état possibles
+#Mettre les présupposé pour chaque stade phénologique :
+# j (1)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "1" &
+  crdms.ddl$Psi$tostratum %in% c("1","2","3","4", "5")
+] <- NA
+
+# nf (2)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "2" &
+  crdms.ddl$Psi$tostratum %in% c("2","3","4","5")
+] <- NA
+
+# f (3)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "3" &
+  crdms.ddl$Psi$tostratum %in% c("3","4","5")
+] <- NA
+
+# ff (4) : absorbant
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "4" &
+  crdms.ddl$Psi$tostratum %in% c("4","5")
+] <- NA
+
+# F (5) : terminal (aucune transition)
+# tout reste à 0
+
+# Définir S (survie apparente) constante pour tous les états
+S.dot <- list(formula = ~1, fixed = 1)
+
+# Définir p (probabilité de détection) variable selon la session + dire que c a la même proba
+p.session <- list(formula = ~session + site, share = TRUE)
 
 # Définir psi (proba de transition) variable selon la session
-Psi.model <- list(formula = ~1)
+Psi.model <- list(formula = ~ site)
 
+# Ne pas inclure f0 des calculs
+f.fixed <- list(fixed = 0)
+
+#Modèle 1
 mod <- mark(
   crdms.data,
   ddl = crdms.ddl,
   model.parameters = list(
     S = S.dot,
     p = p.session,
-    Psi = Psi.model
-  ), threads = 2, delete = TRUE
+    Psi = Psi.model,
+    f0 = f.fixed
+  )
 )
+
+mod
+
+
 
 
 
