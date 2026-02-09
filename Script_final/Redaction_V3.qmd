@@ -996,6 +996,7 @@ Résultats : Les strates muscinale et arbustive basse ont les coefficients les p
 
 Modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas de RDA car elle suggère que la variable réponse est continue, elle cherche des relations linéaires.
 
+##### Toutes sessions
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 tab_complet$phenologie_verif <- relevel(
@@ -1043,6 +1044,7 @@ tableau <- data.frame(
 kable(tableau, format = "html", booktabs = TRUE,
       caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
   kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+
 ```
 
 Méthode d'interprétation : Dans ce tableau de régression multinomiale, chaque ligne indique l’effet d’une strate de végétation sur la probabilité d’appartenir à un état phénologique donné, comparé à la catégorie de référence. La colonne *Coefficient* montre si la strate augmente (valeur positive) ou diminue (valeur négative) cette probabilité, tandis que l’erreur standard (*SE*), la statistique *z* et la *p‑value* renseignent sur la précision de l’estimation et sa significativité. La colonne *Signif* résume visuellement cette significativité. Ensemble, ces informations permettent d’identifier quelles strates influencent réellement la transition d’un état phénologique à un autre et dans quel sens.
@@ -1051,6 +1053,133 @@ Résultats : Les résultats montrent un gradient phénologique structuré par l�
 
 La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
 
+##### Session 2 (Pour Fleurs)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Sous-échantillon : session 2 uniquement
+tab_s2 <- tab_complet %>%
+  filter(session == 2)
+
+# Re-nivellement sur le sous-tableau
+tab_s2$phenologie_verif <- relevel(
+  factor(tab_s2$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+# Modèle multinomial (session 2 uniquement)
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
+    S_arbustive_haute + S_arborescente,
+  data = tab_s2
+)
+
+# Extraction des résultats
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Tableau final
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+kable(
+  tableau,
+  format = "html",
+  booktabs = TRUE,
+  caption = "Régression multinomiale (session 2 uniquement)"
+) %>%
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+```
+
+##### Session 3 (Fleurs fanées et Fruits)
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Sous-échantillon : session 2 uniquement
+tab_s3 <- tab_complet %>%
+  filter(session == 3)
+
+# Re-nivellement sur le sous-tableau
+tab_s3$phenologie_verif <- relevel(
+  factor(tab_s3$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+# Modèle multinomial (session 2 uniquement)
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
+    S_arbustive_haute + S_arborescente,
+  data = tab_s3
+)
+
+# Extraction des résultats
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Tableau final
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+kable(
+  tableau,
+  format = "html",
+  booktabs = TRUE,
+  caption = "Régression multinomiale (session 2 uniquement)"
+) %>%
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+```
 ## --------------
 
 # II\_ Analyse de la variation dans le temps
@@ -1599,6 +1728,60 @@ Méthode d'interpretation : La RDA permet d’évaluer si les variables environn
 
 Résultats : L’effet global du recouvrement sur la phénologie n’est pas significatif (p = 0.19), ce qui indique que, dans l’ensemble, les strates végétales n’expliquent pas fortement la variation phénologique entre quadrats. Lorsqu’on examine les strates individuellement, seule la strate arbustive basse présente un effet significatif (p = 0.037), suggérant qu’elle influence modestement la distribution des stades phénologiques. Les autres strates (muscinale, herbacée, arbustive haute, arborescente) ne montrent aucun effet détectable. Enfin, aucun des axes RDA n’est significatif (tous p \> 0.15), ce qui confirme que la structure ordonnée extraite par la RDA est faible et que les gradients phénologiques ne sont pas clairement associés aux gradients de recouvrement. En résumé, le recouvrement végétal n’explique que très faiblement la phénologie, avec un signal limité provenant de la strate arbustive basse.
 
+
+### Nombre de quadrats et d'individus par strates
+```{r, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
+
+data_long <- data_joined %>%
+  select(ID_quadrat, ID_ind, starts_with("S_")) %>%
+  pivot_longer(
+    cols = starts_with("S_"),
+    names_to = "strate",
+    values_to = "recouvrement"
+  )
+
+data_count <- data_long %>%
+  group_by(strate, recouvrement) %>%
+  summarise(
+    nb_quadrats = n_distinct(ID_quadrat),
+    nb_individus = n_distinct(ID_ind),
+    .groups = "drop"
+  )
+coef_scale <- max(data_count$nb_quadrats, na.rm = TRUE) /
+              max(data_count$nb_individus, na.rm = TRUE)
+ggplot(data_count, aes(x = recouvrement)) +
+  geom_col(
+    aes(y = nb_quadrats),
+    fill = "grey70"
+  ) +
+  geom_line(
+    aes(y = nb_individus * coef_scale),
+    color = "black",
+    linewidth = 1
+  ) +
+  geom_point(
+    aes(y = nb_individus * coef_scale),
+    color = "black",
+    size = 2
+  ) +
+  facet_wrap(~ strate, scales = "free_y") +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(
+    name = "Nombre de quadrats",
+    sec.axis = sec_axis(
+      ~ . / coef_scale,
+      name = "Nombre d'individus"
+    )
+  ) +
+  labs(
+    x = "Indice de recouvrement (0–10)"
+  ) +
+  theme_minimal()
+
+
+```
+
+
 ## --------------
 
 # IV\_ Niveau des observateurs
@@ -1821,6 +2004,9 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
 ## Analyses complémentaires
 
 ###Visualiser les 3 variables en 3D
+```{r}
+
+```
 
 ```{r}
 # ------------------------------------------------------------
@@ -1898,6 +2084,15 @@ anova(model2_autonotation)
 
 summary(model3_autonotation)
 anova(model3_autonotation)
+
+#Avec apprentissage
+model3_autonotation_app <- lm(
+  risque_erreur ~ tx_erreur + nb_ind,
+  data = tx_erreur_fin
+)
+
+summary(model3_autonotation_app)
+anova(model3_autonotation_app)
 
 # ------------------------------------------------------------
 # Comparaison des modèles
@@ -3914,6 +4109,7 @@ grViz(dot_code)
 # CRDMS
 
 ## --------------
+
 Capture-Recapture Data for Multi-State models
 
 Dans les modèles multistrates de capture-recapture, le format CRDMS est utilisé comme structure interne de données car il permet de représenter de manière cohérente l’histoire complète de chaque individu au cours du temps, en intégrant à la fois les états occupés (strates) et les observations associées. Son principe repose sur l’encodage des trajectoires individuelles sous une forme standardisée qui décrit les transitions possibles entre strates, ainsi que les paramètres à estimer (probabilités de transition, de détection et éventuellement de survie).
@@ -4033,7 +4229,9 @@ check_sessions <- verif_sessions %>%
 check_sessions %>%
   filter(!ok_sessions)
 ```
+
 ### Préparation CRDMS Galad
+
 ```{r}
 ### codage numérique
 phenology_codes <- c(
@@ -4227,7 +4425,6 @@ mod
 
 
 ```
-
 
 ### Préparation CRDMS
 
