@@ -1602,8 +1602,8 @@ data_joined <- data_joined %>%
   mutate(
     tailleS1 = as.numeric(gsub(",", ".", tailleS1)),
     tailleS2 = as.numeric(gsub(",", ".", tailleS2)),
-    tailleS3 = as.numeric(gsub(",", ".", tailleS3)),
-    taille_moyenne = rowMeans(dplyr::select(., tailleS1, tailleS2, tailleS3), na.rm = TRUE)
+    tailleS3 = as.numeric(gsub(",", ".", tailleS3))) %>% 
+  mutate(taille_moyenne = rowMeans(dplyr::select(., tailleS1, tailleS2, tailleS3), na.rm = TRUE)
   )
 
 # Transformer les strates en format long pour facettes
@@ -4346,7 +4346,8 @@ crdms.ddl <- make.design.data(crdms.data)
 # Psi = proba de transition d'état
 # p = proba de capture initiale
 # c = proba de recapture
-# f0 = proba de première capture 
+# f0 = nombre d'individus jamais capturés
+
 # ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
 #Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
 
@@ -4359,7 +4360,7 @@ crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
 crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
 
 #Estimer un seul psi
-crdms.ddl$Psi$share <- TRUE
+#crdms.ddl$Psi$share <- TRUE
 
 # interdiction totale par défaut
 crdms.ddl$Psi$fix <- 0
@@ -4401,10 +4402,8 @@ S.dot <- list(formula = ~1, fixed = 1)
 p.session <- list(formula = ~session + site, share = TRUE)
 
 # Définir psi (proba de transition) variable selon la session
-Psi.model <- list(formula = ~ site)
+Psi.model <- list(formula = ~ ctime + site)
 
-# Ne pas inclure f0 des calculs
-f.fixed <- list(fixed = 0)
 
 #Modèle 1
 mod <- mark(
@@ -4413,8 +4412,7 @@ mod <- mark(
   model.parameters = list(
     S = S.dot,
     p = p.session,
-    Psi = Psi.model,
-    f0 = f.fixed
+    Psi = Psi.model
   )
 )
 
