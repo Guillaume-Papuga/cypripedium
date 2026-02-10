@@ -59,7 +59,6 @@ library(performance) #r^2 pour glm
 
 library(stats)
 library(plotly)
-
 library(ggrepel)      # étiquettes non superposées sur graphiques ggplot
 library(ggpmisc)      # annotations statistiques (équations, R²) sur ggplot
 
