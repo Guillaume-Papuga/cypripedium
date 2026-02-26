@@ -532,7 +532,7 @@ Les variables explicatives du modèle sont : - le site : on s'attend à ce que c
 De plus, des variables avec un effet ont été ajoutées : - les individus emboités dans les quadrats emboités dans les sites : un même individu étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle - les quadrat emboités dans les sites : un même quadrat étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle
 
 ```{r}
-#Modèle (on utlise glmmTMB pour faire les prédictions car algorithme trop lent avec glmer de lme4)
+#Modèle
 
 mod_glmm_gamma <- glmer(
   taille ~ phenologie_verif + site * session + (1|site:quadrat:marquage) + (1|site:quadrat),
@@ -1781,6 +1781,23 @@ ggplot(data_count, aes(x = recouvrement)) +
 
 ```
 
+### Indices de strates végétales
+
+```{r}
+#Préparation indice végétation
+recouvrement <- recouvrement %>% 
+  mutate(hauteur_totale = S_arbustive_basse*2 + S_arbustive_haute*5 + S_arborescente*10,
+         hauteur_moy = hauteur_totale / (S_arbustive_basse+S_arbustive_haute+S_arborescente)
+           )
+
+ggplot(recouvrement, aes(x = Quadrat, y = hauteur_moy))+
+  geom_point()+
+  facet_wrap(~Site)
+
+
+```
+
+
 ## --------------
 
 # IV\_ Niveau des observateurs
@@ -2005,10 +2022,6 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
 ###Visualiser les 3 variables en 3D
 
 ```{r}
-
-```
-
-```{r}
 # ------------------------------------------------------------
 # Visualisation des 3 axes en 3D 
 # ------------------------------------------------------------
@@ -2087,7 +2100,7 @@ anova(model3_autonotation)
 
 #Avec apprentissage
 model3_autonotation_app <- lm(
-  risque_erreur ~ tx_erreur + nb_ind,
+  risque_erreur ~ tx_erreur + nb_detect,
   data = tx_erreur_fin
 )
 
@@ -2159,40 +2172,11 @@ Résultats : Nous n’avons observé aucune différence significative entre les 
 
 ## --------------
 
-## V_i GLM
+## V_i GLMM
 
 On a plusieurs strates et on veut seulement une covariable "recouvrement". On utilise donc une ACP pour compiler les variables avec l'inertie sur l'axe 1 et 2.
 
 ```{r, message=FALSE, echo=FALSE}
-# Extraire juste les colonnes numériques pour la PCA
-recouvrement_num <- tab_complet %>%
-  ungroup() %>%  # enlever le grouping
-  dplyr::select(S_muscinale:S_arborescente) %>%
-  mutate(across(everything(), as.numeric)) %>%
-  as.data.frame()
-
-# Vérifier
-str(recouvrement_num)
-
-acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
-
-#Calcul des % de chaque axe :
-pc<-round(acp1$eig/sum(acp1$eig)*100,2)
-pc
-
-# % cumulés
-cumsum(pc) 
-
-#visualisation sur un graph
-barplot(acp1$eig)
-
-###Graphique de l'ACP####
-s.corcircle(acp1$co, xax=1, yax=2, box = F, clabel = 0.5) 
-
-# Ajouter la première et deuxième composante au tableau
-tab_complet$recouvrement_PC1 <- acp1$li[,1]
-tab_complet$recouvrement_PC2 <- acp1$li[,2]
-
 # préparation variables pour GLMM
 tab_complet <- tab_complet %>% 
   mutate(
@@ -2229,6 +2213,28 @@ nb_individus <- tab_complet$nb_individus
 nb_individus_sc <- scale(nb_individus)
 tab_complet$nb_individus_sc <- nb_individus_sc
 
+#Ajouter le nombre d'individus observés par Observateur
+nbobs_observateurs <- tx_erreur_fin %>% 
+  select(Observateur, nb_detect)
+
+tab_complet <- tab_complet %>% 
+  left_join(nbobs_observateurs, by = join_by(observateur == Observateur))
+#Scaler la variable
+tab_complet$nb_detect_sc <- scale(tab_complet$nb_detect)
+
+#Ajout de l'indice de densité de végétation
+dens_vege <- recouvrement %>% 
+  select(ID_Quadrat, hauteur_totale, hauteur_moy)
+
+tab_complet <- tab_complet %>% 
+  left_join(dens_vege, by = join_by(ID_quadrat == ID_Quadrat))
+
+#Scaler la variable
+tab_complet$hauteur_moy_sc <- scale(tab_complet$hauteur_moy)
+
+ggplot(tab_complet)+
+  geom_violin(aes(x = hauteur_moy, y = detection))
+  
 ```
 
 Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site : On s'attend à ce que la détectabilité varie entre sites - la session : On s'attend à ce que la détectabilité augmente avec le temps - l'interaction site et session : on s'attend à ce que la détection dans les sites ne réagisse pas de la même manière au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - l'interaction site et phénologie : on s'attend à ce la détection dans les sites ne soit pas la même en fonction des stades phénologiques - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur
@@ -2238,7 +2244,7 @@ Les variables explicatives aléatoires sont : - l'individu emboité dans quadra 
 ```{r, echo=FALSE}
 #Modèle stade phénologique
 glmm_final_pheno <- glmer(
-  detection ~ site + session + site:session + phenologie_verif + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
+  detection ~ site + session + site:session + phenologie_verif + nb_individus_sc + risque_erreur + nb_detect_sc + hauteur_moy_sc + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
@@ -2266,29 +2272,6 @@ testDispersion(res_bin)
 
 r2(glmm_final_pheno)
 #Les variables fixes du modèle expliquent 35% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 64% ce qui montre une forte influence des effets aléatoires.
-
-#Modèle taille
-glmm_final_taille <- glmer(
-  detection ~ site + session + site:session + taille_sc + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
-  data = tab_complet,
-  family = binomial,
-  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
-)
-
-summary(glmm_final_taille)
-Anova(glmm_final_taille, type = 3)
-#Effet de la session, de la taille, du risque d'erreur et de l'interaction site:session
-#Vérification surdispersion
-# Simuler les résidus
-res_glmm_final_taille <- simulateResiduals(glmm_final_taille)
-plot(res_glmm_final_taille)  # QQ-plot, résidus vs prédictions
-testDispersion(res_glmm_final_taille)
-#surdispersion <1,1 modèle valide
-
-r2(glmm_final_taille)
-#Les variables fixes du modèle expliquent 18,5% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 55% ce qui montre une forte influence des effets aléatoires.
-
-
 
 ```
 
@@ -2361,7 +2344,7 @@ ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
 
 ```
 
-#Pour le nombre de ramets par quadrat
+##Pour le nombre de ramets par quadrat
 
 ```{r}
 #pour la densité d'individus
@@ -2426,230 +2409,84 @@ ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
   theme_minimal()
 ```
 
-##Pour la strate herbacée
-
-```{r, message=FALSE, echo=FALSE}
-#prédictions marginales du modèle
-#Pour la strate herbacée
-emm_S_herbacee <- emmeans(
-  glmm_final_pheno,
-  ~ S_herbacee,
-  at = list(
-    S_herbacee = seq(
-      from=1, to=10 , by = 1
-    )
-  ),
-  type = "response"
-)
-
-emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
-
-ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
-  geom_line(size = 1) +
-  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-              alpha = 0.25) +
-  labs(x = "Recouvrement herbacé (en %)",
-       y = "Probabilité de détection")+
-  theme_minimal()
-
-```
-
-#Partie modèle Taille ##Pour l'interaction site et session
-
-```{r, message=FALSE, echo=FALSE}
-#Pour l'interaction session x site
-emm_site_session <- emmeans(
-  glmm_final_taille,
-  ~ site * session,          # prédire toutes les combinaisons
-  type = "response"          # retourne la probabilité (échelle 0-1)
-)
-
-# Convertir en data.frame pour ggplot
-emm_site_session_df <- as.data.frame(emm_site_session)
-
-ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-                position = position_dodge(width = 0.8),
-                width = 0.2) +
-  scale_y_continuous(limits = c(0,1)) +
-  labs(
-    x = "Site",
-    y = "Probabilité de détection",
-    fill = "Session",
-    title = "Probabilité marginale de détection par site et session"
-  ) +
-  theme_classic(base_size = 14)
-```
-
-##Pour la taille
+##Pour le nombre de détection par observateur
 
 ```{r, message=FALSE, echo=FALSE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
-mu_taille <- mean(tab_complet$taille, na.rm = T)
-sd_taille <- sd(tab_complet$taille, na.rm = T)
-mu_taille
-sd_taille
+mu_nb_detect <- mean(tab_complet$nb_detect, na.rm = T)
+sd_nb_detect <- sd(tab_complet$nb_detect, na.rm = T)
+mu_nb_detect
+sd_nb_detect
 
-emm_taille <- emmeans(
-  glmm_final_taille,
-  ~ taille_sc,
+emm_nb_detect <- emmeans(
+  glmm_final_pheno,
+  ~ nb_detect_sc,
   at = list(
-    taille_sc = seq(
-      min(tab_complet$taille_sc, na.rm = TRUE),
-      max(tab_complet$taille_sc, na.rm = TRUE),
+    nb_detect_sc = seq(
+      min(tab_complet$nb_detect_sc, na.rm = TRUE),
+      max(tab_complet$nb_detect_sc, na.rm = TRUE),
       length.out = 100
     )
   ),
   type = "response"
 )
 
-emm_taille_df <- as.data.frame(emm_taille)
+emm_nb_detect_df <- as.data.frame(emm_nb_detect)
 
-emm_taille_df$taille_reelle <-
-  emm_taille_df$taille_sc * sd_taille + mu_taille
+emm_nb_detect_df$nb_detect_reelle <-
+  emm_nb_detect_df$nb_detect_sc * sd_nb_detect + mu_nb_detect
 
-ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
+ggplot(emm_nb_detect_df, aes(x = nb_detect_reelle, y = prob)) +
   geom_line(size = 1) +
   geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
               alpha = 0.25) +
-  labs(x = "Taille des individus (cm)",
+  labs(x = "Nombre d'individus détectés (par observateur)",
        y = "Probabilité de détection")+
   theme_minimal()
+
+
 ```
 
-#Pour le nombre de ramets par quadrat
+##Pour la densité de couvert végétal
 
-```{r}
-#pour la densité d'individus
+```{r, message=FALSE, echo=FALSE}
+#pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
-mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
-sd_densite <- sd(tab_complet$nb_individus, na.rm = T)
-mu_densite
-sd_densite
+mu_hauteur_moy <- mean(tab_complet$hauteur_moy, na.rm = T)
+sd_hauteur_moy <- sd(tab_complet$hauteur_moy, na.rm = T)
+mu_hauteur_moy
+sd_hauteur_moy
 
-emm_densite <- emmeans(
-  glmm_final_taille,
-  ~ nb_individus_sc,
+emm_hauteur_moy <- emmeans(
+  glmm_final_pheno,
+  ~ hauteur_moy_sc,
   at = list(
-    nb_individus_sc = seq(
-      min(tab_complet$nb_individus_sc, na.rm = TRUE),
-      max(tab_complet$nb_individus_sc, na.rm = TRUE),
+    hauteur_moy_sc = seq(
+      min(tab_complet$hauteur_moy_sc, na.rm = TRUE),
+      max(tab_complet$hauteur_moy_sc, na.rm = TRUE),
       length.out = 100
     )
   ),
   type = "response"
 )
 
-emm_densite_df <- as.data.frame(emm_densite)
+emm_hauteur_moy_df <- as.data.frame(emm_hauteur_moy)
 
-emm_densite_df$densite_reelle <-
-  emm_densite_df$nb_individus_sc * sd_densite + mu_densite
+emm_hauteur_moy_df$hauteur_moy_reelle <-
+  emm_hauteur_moy_df$hauteur_moy_sc * sd_hauteur_moy + mu_hauteur_moy
 
-ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
-  geom_line(linewidth = 1) +
-  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-              alpha = 0.25) +
-  labs(x = "Nombre d'individus dans un quadrat",
-       y = "Probabilité de détection")+
-  theme_minimal()
-```
-
-##Pour le risque d'erreur
-
-```{r, message=FALSE, echo=FALSE}
-#pour le risque d'erreur lié à l'autonotation
-emm_risque_erreur <- emmeans(
-  glmm_final_taille,
-  ~ risque_erreur,
-  at = list(
-    risque_erreur = seq(
-      min(tab_complet$risque_erreur, na.rm = TRUE),
-      max(tab_complet$risque_erreur, na.rm = TRUE),
-      length.out = 100
-    )
-  ),
-  type = "response"
-)
-
-emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
-
-ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
+ggplot(emm_hauteur_moy_df, aes(x = hauteur_moy_reelle, y = prob)) +
   geom_line(size = 1) +
   geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
               alpha = 0.25) +
-  labs(x = "Risque d'erreur (basé sur autonotation des observateurs",
-       y = "Probabilité de détection")+
-  theme_minimal()
-```
-
-##Pour la strate herbacée
-
-```{r, message=FALSE, echo=FALSE}
-#prédictions marginales du modèle
-#Pour la strate herbacée
-emm_S_herbacee <- emmeans(
-  glmm_final_taille,
-  ~ S_herbacee,
-  at = list(
-    S_herbacee = seq(
-      from=1, to=10 , by = 1
-    )
-  ),
-  type = "response"
-)
-
-emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
-
-ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
-  geom_line(size = 1) +
-  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-              alpha = 0.25) +
-  labs(x = "Recouvrement herbacé (en %)",
+  labs(x = "Densité moyenne de couvert végétal",
        y = "Probabilité de détection")+
   theme_minimal()
 
-```
-
-### Sélection de modèles
-
-```{r}
-
-# #Dredge ne fonctionne pas avec NA
-# vars <- c("detection", "site", "session", "taille_sc",
-#           "phenologie_verif", "recouvrement_PC1", "ID_ind")
-# 
-# tab_dredge <- tab_complet[complete.cases(tab_complet[, vars]), ]
-# 
-# #modèle complet
-# glmm_global <- glmer(
-#   detection ~ site + session + site:session + taille_sc + phenologie_verif + recouvrement_PC1 +
-#     (1 | ID_ind),
-#   data = tab_dredge,
-#   family = binomial,
-#   control = glmerControl(optimizer = "bobyqa",
-#                          optCtrl = list(maxfun = 2e5))
-# )
-# 
-# # Autoriser MuMIn à travailler avec glmer
-# options(na.action = "na.fail")
-# 
-# # Sélection de modèle (toutes combinaisons de variables fixes)
-# model_set <- dredge(glmm_global, trace = TRUE)
-# 
-# # Afficher les modèles triés par AICc
-# model_set
-# 
-# model_set_df <- as.data.frame(model_set)
-# 
-# write.csv(
-#   model_set_df,
-#   file = "selection.csv",
-#   row.names = FALSE
-# )
 
 ```
+
 
 ## V_ii Détection de la phénologie
 
@@ -4694,3 +4531,244 @@ model.1 <- mark(
 
 
 ```
+
+## --------------
+
+# Annexes
+
+## --------------
+
+## I ACP strates végétales
+
+```{r}
+# Extraire juste les colonnes numériques pour la PCA
+recouvrement_num <- tab_complet %>%
+  ungroup() %>%  # enlever le grouping
+  dplyr::select(S_muscinale:S_arborescente) %>%
+  mutate(across(everything(), as.numeric)) %>%
+  as.data.frame()
+
+# Vérifier
+str(recouvrement_num)
+
+acp1 <- dudi.pca(recouvrement_num, scale=T, center=T, scannf=F, nf=4)
+
+#Calcul des % de chaque axe :
+pc<-round(acp1$eig/sum(acp1$eig)*100,2)
+pc
+
+# % cumulés
+cumsum(pc) 
+
+#visualisation sur un graph
+barplot(acp1$eig)
+
+###Graphique de l'ACP####
+s.corcircle(acp1$co, xax=1, yax=2, box = F, clabel = 0.5) 
+
+# Ajouter la première et deuxième composante au tableau
+tab_complet$recouvrement_PC1 <- acp1$li[,1]
+tab_complet$recouvrement_PC2 <- acp1$li[,2]
+```
+
+##II.GLMM modèle Taille 
+```{r}
+#Modèle taille
+glmm_final_taille <- glmer(
+  detection ~ site + session + site:session + taille_sc + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
+  data = tab_complet,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
+)
+
+summary(glmm_final_taille)
+Anova(glmm_final_taille, type = 3)
+#Effet de la session, de la taille, du risque d'erreur et de l'interaction site:session
+#Vérification surdispersion
+# Simuler les résidus
+res_glmm_final_taille <- simulateResiduals(glmm_final_taille)
+plot(res_glmm_final_taille)  # QQ-plot, résidus vs prédictions
+testDispersion(res_glmm_final_taille)
+#surdispersion <1,1 modèle valide
+
+r2(glmm_final_taille)
+#Les variables fixes du modèle expliquent 18,5% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 55% ce qui montre une forte influence des effets aléatoires.
+```
+
+###Pour l'interaction site et session
+
+```{r, message=FALSE, echo=FALSE}
+#Pour l'interaction session x site
+emm_site_session <- emmeans(
+  glmm_final_taille,
+  ~ site * session,          # prédire toutes les combinaisons
+  type = "response"          # retourne la probabilité (échelle 0-1)
+)
+
+# Convertir en data.frame pour ggplot
+emm_site_session_df <- as.data.frame(emm_site_session)
+
+ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
+  geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
+  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+                position = position_dodge(width = 0.8),
+                width = 0.2) +
+  scale_y_continuous(limits = c(0,1)) +
+  labs(
+    x = "Site",
+    y = "Probabilité de détection",
+    fill = "Session",
+    title = "Probabilité marginale de détection par site et session"
+  ) +
+  theme_classic(base_size = 14)
+```
+
+###Pour la taille
+
+```{r, message=FALSE, echo=FALSE}
+#pour la taille
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_taille <- mean(tab_complet$taille, na.rm = T)
+sd_taille <- sd(tab_complet$taille, na.rm = T)
+mu_taille
+sd_taille
+
+emm_taille <- emmeans(
+  glmm_final_taille,
+  ~ taille_sc,
+  at = list(
+    taille_sc = seq(
+      min(tab_complet$taille_sc, na.rm = TRUE),
+      max(tab_complet$taille_sc, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_taille_df <- as.data.frame(emm_taille)
+
+emm_taille_df$taille_reelle <-
+  emm_taille_df$taille_sc * sd_taille + mu_taille
+
+ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Taille des individus (cm)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+```
+
+###Pour le nombre de ramets par quadrat
+
+```{r}
+#pour la densité d'individus
+#Préparer moyenne et écart type pour détransformer ma variable
+mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
+sd_densite <- sd(tab_complet$nb_individus, na.rm = T)
+mu_densite
+sd_densite
+
+emm_densite <- emmeans(
+  glmm_final_taille,
+  ~ nb_individus_sc,
+  at = list(
+    nb_individus_sc = seq(
+      min(tab_complet$nb_individus_sc, na.rm = TRUE),
+      max(tab_complet$nb_individus_sc, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_densite_df <- as.data.frame(emm_densite)
+
+emm_densite_df$densite_reelle <-
+  emm_densite_df$nb_individus_sc * sd_densite + mu_densite
+
+ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
+  geom_line(linewidth = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Nombre d'individus dans un quadrat",
+       y = "Probabilité de détection")+
+  theme_minimal()
+```
+
+###Pour le risque d'erreur
+
+```{r, message=FALSE, echo=FALSE}
+#pour le risque d'erreur lié à l'autonotation
+emm_risque_erreur <- emmeans(
+  glmm_final_taille,
+  ~ risque_erreur,
+  at = list(
+    risque_erreur = seq(
+      min(tab_complet$risque_erreur, na.rm = TRUE),
+      max(tab_complet$risque_erreur, na.rm = TRUE),
+      length.out = 100
+    )
+  ),
+  type = "response"
+)
+
+emm_risque_erreur_df <- as.data.frame(emm_risque_erreur)
+
+ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Risque d'erreur (basé sur autonotation des observateurs",
+       y = "Probabilité de détection")+
+  theme_minimal()
+```
+
+###Pour la strate herbacée
+
+```{r, message=FALSE, echo=FALSE}
+#prédictions marginales du modèle
+#Pour la strate herbacée
+emm_S_herbacee <- emmeans(
+  glmm_final_taille,
+  ~ S_herbacee,
+  at = list(
+    S_herbacee = seq(
+      from=1, to=10 , by = 1
+    )
+  ),
+  type = "response"
+)
+
+emm_S_herbacee_df <- as.data.frame(emm_S_herbacee)
+
+ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
+  geom_line(size = 1) +
+  geom_ribbon(aes(ymin = asymp.LCL, ymax = asymp.UCL),
+              alpha = 0.25) +
+  labs(x = "Recouvrement herbacé (en %)",
+       y = "Probabilité de détection")+
+  theme_minimal()
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
