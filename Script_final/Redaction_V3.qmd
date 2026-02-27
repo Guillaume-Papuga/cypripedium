@@ -1,8 +1,15 @@
 ---
-title: "Rédaction_V3"
-format: html
+title: "Analyse du sabot de vénus au parc national des forêts"
+format:
+  html:
+    toc: true
+    toc-location: right
+    toc-title: "Sommaire"
+    toc-depth: 3
 editor: visual
 execute-dir: project
+execute:
+  freeze: auto   # <-- Quarto essaie de ne pas recalculer les chunks inchangés
 ---
 
 ```{r setup, include = FALSE}
@@ -15,152 +22,235 @@ knitr::opts_chunk$set(
 
 ```
 
-# -------------------------------
+<div style="
+  border: 2px solid #8B0000;        
+  border-radius: 10px;
+  padding: 10px;                     
+  background-color: #FDECEA;         
+  font-family: Arial, sans-serif;
+  line-height: 1.2;                   
+  color: #333;
+  margin-bottom: 10px;              
+">
+  <strong>Travail collaboratif :</strong> Ce travail a été réalisé dans le cadre de l'enseignement du <strong>Master 2 RAINET</strong> de l'Université de Montpellier.
+  <br>
+  <strong>Étudiants :</strong> Galadriel Fourtier et Elian Vuillemot
+  <br>
+  <strong>En collaboration avec :</strong> Parc national de Forêts, Guillaume Papuga et Thibaut Couturier
+  <br>
+  <strong>Contact :</strong> Pour toute question, nous sommes disponibles aux emails suivants : 
+  <a href="mailto:vuillemotelian@gmail.com">vuillemotelian@gmail.com</a>, 
+  <a href="mailto:galadriel.fourtier@gmail.com">galadriel.fourtier@gmail.com</a>
+</div>
 
-# INTRODUCTION /OK
 
-Le Sabot de Vénus (Cypripedium calceolus L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu : - Au niveau international par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ; - Au niveau européen par la Directive Habitat en tant qu’espèce d’intérêt communautaire devant être protégée (Annexe II et IV) ; - Au niveau national en tant qu’espèce protégée en France (Arrêté du 20 janvier 1982). Enfin, le Sabot de Vénus est présent sur la liste rouge nationale de 2019 en tant qu’espèce « Quasi-menacée » en accord avec son statut sur la liste rouge européenne de l’UICN. Bien que majoritairement situé en contexte de plaine, le territoire du Parc national de forêts, avec son microclimat froid et humide et ses reliefs variés abrite plusieurs populations du Sabot de Vénus. Ce parc est situé à la frontière entre les départements de la Côte-d’Or dans la région Bourgogne-Franche-Comté et de la Haute-Marne dans la région Grand-Est. Son statut de parc national depuis 2019 lui confère le devoir de protéger la biodiversité notamment en développant la connaissance des espèces et leur suivi scientifique. C’est dans ce cadre qu’un suivi de Cypripedium calceolus est requis. Pour cela, une étude pilote a été réalisée en 2025 pour émettre des points de vigilance méthodologique quant à l’établissement d’un nouveau protocole de suivi robuste et standardisé à l’échelle du territoire du Parc national de forêts. Cette étude a permis le suivi de 5 sites présents dans le Cœur du parc. Dans chaque site, des quadrats de 100 m² ont été placés en suivant un échantillonnage stratifié permettant de prendre en compte des différences de densité d’individus observées. Chaque quadrat a été prospecté sur trois sessions permettant de couvrir plusieurs stades phénologiques de l’espèce et de faire varier sa détectabilité : - La session 1 du 22 au 24 mai correspondant au stade phénologique attendu de végétatif ; - La session 2 du 3 au 5 juin correspondant au stade phénologique attendu du pic de floraison ; - La session 3 du 2 au 4 juillet correspondant au stade phénologique attendu de fructification. Deux opérateurs ont réalisé le suivi en notant pour chaque individu le stade phénologique, la taille, le nombre de fleurs et de fruits et la présence de prédation. De plus, ils ont aussi évalué pour chaque quadrat le recouvrement de cinq strates végétales. Enfin, lors de chaque session, entre 4 et 6 observateurs ont prospecté chaque quadrat pendant une durée contrainte de 10 à 15 minutes. Pour chaque individu observé, ils ont renseigné le stade phénologique. Cette approche permet d’évaluer à la fois les erreurs d’attribution des stades phénologiques et les taux de détection, en comparaison avec le nombre total d’individus recensés par les opérateurs. Un premier rapport auquel il faut se référer est celui de Léa DESCLOS en 2025 qui permet d’aborder le protocole plus en profondeur et qui donne déjà des clés sur les résultats de cette étude pilote. L’objectif de ce rapport d’analyse est de mettre en lumière l’écologie du Sabot de Vénus sur le parc puis de mieux comprendre les contraintes liées à la détection du sabot de Vénus. Cela pourra servir d’appui à la mise en place d’un protocole de suivi de Cypripedium calceolus.
+# INTRODUCTION
 
-# -------------------------------
+<div style="text-align: justify;">
+   Le Sabot de Vénus (*Cypripedium calceolus* L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu : 
+   
+- Au niveau **international**  par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ; 
 
-# INFORMATIONS /OK
+- Au niveau **européen** par la Directive Habitat en tant qu’espèce d’intérêt communautaire devant être protégée (Annexe II et IV) ; 
 
-1\_ Pour l’interprétation, les tests de significativité reposent généralement sur la p‑value. Les seuils couramment utilisés sont : p \< 0.001 : très hautement significatif ; p \< 0.01 : hautement significatif ; p \< 0.05 : significatif ; p \< 0.1 : tendance ; p ≥ 0.1 : non significatif.
+- Au niveau **national**  en tant qu’espèce protégée en France (Arrêté du 20 janvier 1982). Enfin, le Sabot de Vénus est présent sur la liste rouge nationale de 2019 en tant qu’espèce « Quasi-menacée » en accord avec son statut sur la liste rouge européenne de l’UICN. 
 
-2\_ Le chargement complet des packages est indispensable. Si un package n’est pas reconnu, il peut être installé avec : install.packages("nom_du_package")
+Bien que majoritairement situé en contexte de plaine, le territoire du Parc national de forêts, avec son microclimat froid et humide et ses reliefs variés abrite plusieurs populations du Sabot de Vénus. Ce parc est situé à la frontière entre les départements de la Côte-d’Or dans la région Bourgogne-Franche-Comté et de la Haute-Marne dans la région Grand-Est. Son statut de parc national depuis 2019 lui confère le devoir de protéger la biodiversité notamment en développant la connaissance des espèces et leur suivi scientifique. 
 
-3\_ Si un élément du script ne fonctionne pas, vérifiez que la structure des vecteurs correspond bien au format attendu. De même, assurez‑vous que les fichiers de données sont correctement formatés avant leur importation.
+C’est dans ce cadre qu’un suivi de Cypripedium calceolus est requis. Pour cela, une étude pilote a été réalisée en 2025 pour émettre des points de vigilance méthodologique quant à l’établissement d’un nouveau protocole de suivi robuste et standardisé à l’échelle du territoire du Parc national de forêts. Cette étude a permis le suivi de 5 sites présents dans le Cœur du parc. 
+
+Dans chaque site, des quadrats de 100 m² ont été placés en suivant un échantillonnage stratifié permettant de prendre en compte des différences de densité d’individus observées. Chaque quadrat a été prospecté sur trois sessions permettant de couvrir plusieurs stades phénologiques de l’espèce et de faire varier sa détectabilité : 
+
+- La *session* 1 du 22 au 24 mai correspondant au stade phénologique attendu de végétatif.
+- La *session* 2 du 3 au 5 juin correspondant au stade phénologique attendu du pic de floraison.
+- La *session* 3 du 2 au 4 juillet correspondant au stade phénologique attendu de fructification. 
+
+Deux opérateurs ont réalisé le suivi en notant pour chaque individu le stade phénologique, la taille, le nombre de fleurs et de fruits et la présence de prédation. De plus, ils ont aussi évalué pour chaque quadrat le recouvrement de cinq strates végétales. Enfin, lors de chaque session, entre 4 et 6 observateurs ont prospecté chaque quadrat pendant une durée contrainte de 10 à 15 minutes. Pour chaque individu observé, ils ont renseigné le stade phénologique. Cette approche permet d’évaluer à la fois les erreurs d’attribution des stades phénologiques et les taux de détection, en comparaison avec le nombre total d’individus recensés par les opérateurs. Un premier rapport auquel il faut se référer est celui de Léa DESCLOS en 2025 qui permet d’aborder le protocole plus en profondeur et qui donne déjà des clés sur les résultats de cette étude pilote. 
+
+L’objectif de ce rapport d’analyse est de mettre en lumière l’écologie du Sabot de Vénus sur le parc puis de mieux comprendre les contraintes liées à la détection du sabot de Vénus. Cela pourra servir d’appui à la mise en place d’un protocole de suivi de Cypripedium calceolus.
+</div>
+
+
+# INFORMATIONS
+
+**1**. Pour l’interprétation, les tests de significativité reposent généralement sur la p‑value. Les seuils couramment utilisés sont : 
+
+- p$_{value}$ \< 0.001 : très hautement significatif
+- p$_{value}$ \< 0.01 : hautement significatif 
+- p$_{value}$ \< 0.05 : significatif 
+- p$_{value}$ \< 0.1 : tendance 
+- p$_{value}$ ≥ 0.1 : non significatif.
+
+**2**. Le chargement complet des packages est indispensable. Si un package n’est pas reconnu, il peut être installé avec : `install.packages("nom_du_package")`.
+
+**3**. Si un élément du script ne fonctionne pas, vérifiez que la structure des vecteurs correspond bien au format attendu. De même, assurez‑vous que les fichiers de données sont correctement formatés avant leur importation.
 
 La méthode d’analyse présentée suit toujours la même logique :
 
--   Préparation des données (nettoyage, transformation, mise en forme).
+-   **Préparation** des données (nettoyage, transformation, mise en forme).
 
--   Analyse sous forme de graphiques et/ou tableaux. Les tableaux affichés sont souvent simplifiés, mais les versions complètes restent accessibles via les objets R correspondants.
+-   **Analyse statistique** sous forme de graphiques et/ou tableaux. Les tableaux affichés sont souvent simplifiés, mais les versions complètes restent accessibles via les objets R correspondants.
 
--   Interprétation, comprenant une explication de la méthode utilisée et des critères de lecture.
+-   **Méthode d'interprétation**, comprenant une explication de la méthode utilisée et des critères de lecture.
 
--   Résultats, où l’on discute spécifiquement ce que montrent les analyses réalisées sur notre jeu de données.
+-   **Résultats**, où l’on discute spécifiquement ce que montrent les analyses réalisées sur notre jeu de données.
 
-# --------------------------------------------------
 
-# Chargement des packages /OK
+# PACKAGES
+
+**Chargement des packages**
 
 Le chargement des packages peut être très long selon l'ordinateur, prévoir à l'avance l'installation des packages.
 
-```{r, message = FALSE, warning = FALSE}
-library(tidyverse)
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 
-library(ggalluvial)   # diagrammes alluviaux (transitions, flux entre catégories)
-library(lme4) #modèle mixtes
-
-library(emmeans) #prédictions de modèles linéaires
-library(DHARMa) #dispersions pour glm
-library(performance) #r^2 pour glm
-
-library(stats)
-library(plotly)
-library(ggrepel)      # étiquettes non superposées sur graphiques ggplot
-library(ggpmisc)      # annotations statistiques (équations, R²) sur ggplot
-
-library(MASS)         # outils statistiques avancés (LDA, glm, distributions)
-library(ade4)         # analyses multivariées écologiques (PCA, CA, RLQ)
-
-library(tidyr)
-library(dplyr)
-library(stringr)
-
-library(vegan)        # écologie numérique : RDA, CCA, NMDS, PERMANOVA
-library(car)          # diagnostics de modèles (VIF, tests de type II/III)
-
-library(RMark)        # modèles capture-marquage-recapture (interface MARK)
-library(DiagrammeR)   # graphes et diagrammes (flowcharts, DAG)
-library(rstatix)      # Tables propres
-library(nnet)         # Régression multionomiale
-library(kableExtra)   # Tableau propre
+library(tidyverse)      # manipulation de données, ggplot2, dplyr, tidyr, etc.
+library(ggalluvial)     # diagrammes alluviaux (transitions, flux entre catégories)
+library(lme4)           # modèles linéaires et mixtes
+library(emmeans)        # prédictions de modèles linéaires
+library(DHARMa)         # diagnostics de dispersion pour GLM/GLMM
+library(performance)    # R² et autres métriques de performance de modèles
+library(stats)          # fonctions statistiques de base
+library(plotly)         # graphiques interactifs
+library(ggrepel)        # étiquettes non superposées sur ggplot
+library(ggpmisc)        # annotations statistiques sur ggplot
+library(MASS)           # outils statistiques avancés (LDA, GLM, distributions)
+library(ade4)           # analyses multivariées écologiques (PCA, CA, RLQ)
+library(tidyr)          # manipulation de tableaux
+library(dplyr)          # manipulation de données
+library(stringr)        # manipulation de chaînes de caractères
+library(vegan)          # analyses écologiques : RDA, CCA, NMDS, PERMANOVA
+library(car)            # diagnostics de modèles (VIF, tests type II/III)
+library(RMark)          # interface pour capture-marquage-recapture
+library(DiagrammeR)     # graphes et diagrammes (flowcharts, DAG)
+library(rstatix)        # tables et tests statistiques propres
+library(nnet)           # régression multinomiale
+library(kableExtra)     # tableaux esthétiques pour HTML/PDF
+library(broom.mixed)    # tidy pour modèles mixtes
 ```
 
-# --------------------------------------------------
 
-# Ouverture des tableaux de données /OK
+# DONNÉES
 
-## --------------
+*Ouverture des tableaux de données*
 
 Les tableaux sont ouverts chacun de leur côté afin de pouvoir réaliser les analyses ci-dessous indépendamment, dans le cas où toutes les données n’ont pas été entièrement relevées.
 
-### Tableau : recouvrement /OK
+### Tableau : recouvrement 
 
-Ce tableau donne pour chaque quadrat du protocole un recouvrement de 1 à 10 de différentes strates végétales, initialement exprimé en % 10 par 10 : - strate muscinale - strate herbacée \< à 1m de hauteur - strate arbustive basse entre 1 et 3m de hauteur - strate arbustive haute entre 3 et 7m de hauteur - strate arborescente \> à 7m de hauteur
+Ce tableau donne pour chaque quadrat du protocole un recouvrement de *1* à *10* de différentes strates végétales, initialement exprimé en *%*, 10 par 10 : 
 
-```{r, message=FALSE, echo=FALSE}
+- *strate muscinale* 
+- *strate herbacée* \< à 1m de hauteur 
+- *strate arbustive basse* entre 1 et 3m de hauteur 
+- *strate arbustive haute* entre 3 et 7m de hauteur 
+- *strate arborescente* \> à 7m de hauteur
+
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Lire le fichier CSV
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv", sep = ";")
-#Premières lignes du tableau pour lecteur
-head(recouvrement)
-#Remettre le bon nom de site
+
+# Corriger les noms de site
 recouvrement <- recouvrement %>%
   mutate(
-    Site = ifelse(grepl("^TCb", ID_Quadrat),
-                  "Tete Cendree Bas",
-                  Site)
+    Site = ifelse(
+      grepl("^TCb", ID_Quadrat),  # si l'ID du quadrat commence par "TCb"
+      "Tete Cendree Bas",          # alors nom correct
+      Site                        # sinon garder le nom existant
+    )
   )
+
+# Vérifier la structure finale du tableau
+str(recouvrement)
+
 ```
 
-### Tableau : détections individuelles /OK
+
+### Tableau : détections individuelles
 
 Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe sur le stade phénologique de l'individu qu'il observe. Une ligne du tableau correspond à un individu, son appartenance à un site, un quadrat et une session. La variable marquage correspond au numéro de l'individu.
 
-```{r, message=FALSE, echo=FALSE}
-verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Lire le fichier CSV
+verification <- read.csv(
+  "data/raw/detections_individuelles_verifsTC+LD_18dec.csv",
+  sep = ";"
+)
 
-# Certains noms des sites ont des espaces invisibles, correction :
+# Supprimer les espaces invisibles autour des noms de sites
 verification$site <- trimws(verification$site)
 
-#Premières lignes du tableau pour lecteur
-head(verification)
+# Vérifier la structure finale du tableau
+str(verification)
 ```
 
-### Tableau : taille et phénologie vérifiées /OK
+### Tableau : taille et phénologie vérifiées
 
 Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour chaque individu la phénologie et la taille ont été renseigné par session, le nombre de fleurs et de fruits et la présence de prédation ont aussi été renseignés.
 
-```{r, message=FALSE, echo=FALSE}
-data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
 
-# Certains noms contiennent des accents non pris en charge
-data_original <- data_original %>% 
-  mutate(site
-         = case_when(
-    site == "Combe Michaut" ~ "Combe Michaut",
-    site == "Tête Cendrée Bas" ~ "Tete Cendree Bas",
-    site == "Tête Cendrée Haut" ~ "Tete Cendree Haut",
-    site == "Vigne au Renard" ~ "Vigne au Renard",
-    site == "Val Clavin" ~ "Val Clavin"
-  ))
+# Lire le fichier CSV
+data_original <- read.csv(
+  "data/raw/Taille et phéno verif LD.csv",
+  sep = ";"
+)
 
-#Premières lignes du tableau pour lecteur
-head(data_original)
+# Corriger les noms de sites contenant des accents ou caractères spéciaux
+data_original <- data_original %>%
+  mutate(
+    site = case_when(
+      site == "Combe Michaut"        ~ "Combe Michaut",
+      site == "Tête Cendrée Bas"     ~ "Tete Cendree Bas",
+      site == "Tête Cendrée Haut"    ~ "Tete Cendree Haut",
+      site == "Vigne au Renard"      ~ "Vigne au Renard",
+      site == "Val Clavin"           ~ "Val Clavin",
+      TRUE                           ~ site  # garder les autres tels quels
+    )
+  )
+
+# Vérifier la structure finale du tableau
+str(data_original)
+
 ```
 
-### Tableau : autonotation des observateurs /OK
+### Tableau : autonotation des observateurs
 
-Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique : - Question A : Niveau de connaissances naturalistes, hors botanique - Question B : Niveau de connaissances en botanique - Question C : Niveau d'expérience pratique du suivi de l’espèce - Question D : Niveau de connaissances théoriques de l’espèce - Question E : Niveau de connaissance pratique des sites d’étude - Question F : Liste des sites d’étude connus Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
+Ce tableau correspond à l'autonotation (de 1 à 10) que s'est attribué chaque observateur en répondant à cinq questions de A à E sur différentes thématiques autours du suivi botanique : 
 
-```{r, message=FALSE, echo=FALSE}
-experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
+- *Question A* : Niveau de connaissances naturalistes, hors botanique 
+- *Question B* : Niveau de connaissances en botanique 
+- *Question C* : Niveau d'expérience pratique du suivi de l’espèce 
+- *Question D* : Niveau de connaissances théoriques de l’espèce 
+- *Question E* : Niveau de connaissance pratique des sites d’étude 
+- *Question F* : Liste des sites d’étude connus 
 
-# Pour les analyses suivantes nous avons rajouté la colonne sexe à partir des informations trouvées sur internet:
-experience$sexe <- c("m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m")
+Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur les différents sites. L'informations du nombre de quadrat prospectés par session et au total ainsi que le sexe de l'observateur est renseignée.
 
-#Premières lignes du tableau pour lecteur
-head(experience)
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Lire le fichier CSV
+experience <- read.csv(
+  "data/raw/Experience_des_observateurs_VF.csv",
+  sep = ";"
+)
+
+# Ajouter la colonne 'sexe' à partir des informations disponibles
+experience$sexe <- c(
+  "m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m"
+)
+
+# Vérifier la structure finale du tableau
+str(experience)
+
 ```
 
-# --------------------------------------------------
 
-# Compilation tableau complet /OK
+### Tableau complet : jointures
 
 Pour les analyses suivantes, nous avons compilé l’ensemble des tableaux en un seul tableau récapitulatif.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
+```{r, echo = FALSE, message = FALSE, cache=TRUE, warning = FALSE, include =FALSE}
 
 # Ajouter une colonne d'identifiant individuel en ajoutant la session
   ## Pour le tableau "vérification" des observateurs
@@ -433,11 +523,11 @@ tab_complet <- tab_complet %>%
 
 ```
 
-### Joindre des données supplémentaires /OK
+### Joindre des données supplémentaires
 
-Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau 'recouvrement' contenant les différentes strates.
+Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau *recouvrement* contenant les différentes strates.
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
+```{r, echo = FALSE, message = FALSE, cache=TRUE, warning = FALSE, include =FALSE}
 # Faire le left_join pour ajouter les colonnes S_ au tableau complet
 tab_complet <- tab_complet %>%
   left_join(recouvrement, by = join_by("ID_quadrat" == "ID_Quadrat")) %>% 
@@ -462,25 +552,24 @@ check_sessions %>%
 
 ```
 
-# --------------------------------------------------
 
-# ANALYSES PRELIMINAIRES /OK
+# I. Analyses préliminaires
 
-## --------------
 
-Avant de commencer des analyses complexes, difficiles à interpréter ou qui fournissent une compilation des informations, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets.
 
-# I\_ Analyse générale avec modélisation /OK
+Avant de commencer des analyses complexes et difficiles à interpréter, il est important d’étudier chaque variable indépendamment afin d’en expliquer les effets. Les deux premiers axes présentent une analyse simple avec et sans modélisation pour identifier les effets de chaque variables.
 
-## --------------
 
-## Modèle taille /OK
+# I.i Analyse générale avec modélisation
 
-## --------------
 
-### Preparation de données
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+## I.i.i Modèle taille
+
+
+**Preparation de données**
+
+```{r, echo = FALSE, message = FALSE, cache=TRUE, warning = FALSE, include = FALSE}
 
 data_original_obs
 unique(data_original_obs$phenologie_verif)
@@ -523,17 +612,25 @@ data_taille$quadrat <- factor(data_taille$quadrat)
 head(data_taille)
 ```
 
-### Construction modèle
+**Construction modèle**
 
 Un modèle linéaire généralisé mixte a été réalisé pour étudier la variation de la taille des individus.
 
-Les variables explicatives du modèle sont : - le site : on s'attend à ce que certains site aient des individus plus grands que d'autres - la session : on s'attend à voir les individus grandir au cours du temps - l'interaction du site et de la session : on s'attend à ce que la taille dans les sites ne réagisse pas de la même manière au cours du temps - la phénologie : les premiers stades devraient être plus petits
+Les **variables explicatives** du modèle sont :
 
-De plus, des variables avec un effet ont été ajoutées : - les individus emboités dans les quadrats emboités dans les sites : un même individu étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle - les quadrat emboités dans les sites : un même quadrat étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle
+- le *site* : on s'attend à ce que certains site aient des individus plus grands que d'autres 
+- la *session* : on s'attend à voir les individus grandir au cours du temps 
+- l'interaction du *site* et de la *session* : on s'attend à ce que la taille dans les sites ne réagisse pas de la même manière au cours du temps 
+- la *phénologie* : les premiers stades devraient être plus petits
 
-```{r}
+De plus, des **variables avec un effet** ont été ajoutées : 
+
+- les *individus* emboités dans les *quadrats* emboités dans les *sites* : un même individu étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle .
+- les *quadrats* emboités dans les *sites* : un même quadrat étant mesuré à trois intervalles il faut enlever cette autocorrélation temporelle.
+
+```{r, echo=FALSE, cache=TRUE, message=FALSE, warning=FALSE, include=FALSE}
+
 #Modèle
-
 mod_glmm_gamma <- glmer(
   taille ~ phenologie_verif + site * session + (1|site:quadrat:marquage) + (1|site:quadrat),
   family = Gamma(link = "log"),
@@ -546,17 +643,25 @@ mod_glmm_gamma <- glmer(
 
 summary(mod_glmm_gamma)
 Anova(mod_glmm_gamma, type = 3)
+```
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 
 #Vérification de la surdispersion
 res <- simulateResiduals(mod_glmm_gamma)
 testDispersion(res)
+```
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
+
 plot(res)
 #Le diagnostic de dispersion effectué avec DHARMa n’a montré aucune surdispersion (dispersion = 0,007, p < 0,001).
-
+```
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 #Ajustement du modèle
 r2(mod_glmm_gamma)
 #Le modèle présente un bon ajustement, avec un R² marginal de 0,52 et un R² conditionnel de 0,81, indiquant que les effets fixes expliquaient environ la moitié de la variabilité observée, tandis que l’effet aléatoire individuel en expliquait une part supplémentaire importante.
 
+```
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #prédictions du modèle
 emm <- emmeans(
   mod_glmm_gamma,
@@ -567,7 +672,7 @@ emm <- emmeans(
 #tableau pour lecture
 emm_clean <- emm %>%
   as.data.frame() %>%
-  select(site, phenologie_verif, session, response) %>%
+  dplyr::select(site, phenologie_verif, session, response) %>%
   mutate(response = round(response, 2)) %>%
   pivot_wider(
     names_from = session,
@@ -584,11 +689,23 @@ emm_clean %>%
 
 ```
 
-Méthode d'interprétation : Ce tableau présente les tailles prédites par le modèle pour chaque combinaison de site, phénologie et session. Les valeurs correspondent aux prédictions moyennes, ce qui permet de comparer facilement l’évolution de la taille entre les sessions et entre les stades phénologiques. Des valeurs plus élevées indiquent des individus plus grands, et les différences entre colonnes (sessions) montrent comment la taille progresse au cours du temps.
+**Méthode d'interprétation** : Ce tableau présente les tailles prédites par le modèle pour chaque combinaison de site, phénologie et session. Les valeurs correspondent aux prédictions moyennes, ce qui permet de comparer facilement l’évolution de la taille entre les sessions et entre les stades phénologiques. Des valeurs plus élevées indiquent des individus plus grands, et les différences entre colonnes (sessions) montrent comment la taille progresse au cours du temps.
 
-### Préparation Graphique
 
-```{r, echo = FALSE, message = FALSE, warning = FALSE, include = FALSE}
+**Résultats** : Les prédictions du modèle indiquent des différences nettes de taille moyenne selon la phénologie, la session et le site.
+
+*Phénologie* : Les individus en floraison ou en fruit présentent les tailles moyennes les plus élevées, tandis que les stades juvéniles ou non fleuris sont systématiquement plus petits. Les fleurs fanées occupent des valeurs intermédiaires.
+
+*Sessions* : Pour tous les sites et stades phénologiques, on observe une augmentation progressive de la taille estimée au fil des sessions, ce qui reflète la croissance des individus dans le temps.
+
+*Sites* : La taille prédite varie également selon le site : par exemple, Vigne au Renard et Val Clavin présentent globalement des tailles plus élevées, tandis que Combe Michaut et Tête Cendrée Haut ont des tailles plus faibles.
+
+
+Ces résultats montrent que la taille des individus est fortement influencée par leur stade phénologique et leur localisation, et qu’une croissance continue est observée au fil des sessions, ce qui correspond aux attentes biologiques pour ces populations.
+
+**Préparation Graphique**
+
+```{r, echo = FALSE, message = FALSE, cache=TRUE, warning = FALSE, include = FALSE}
 #préparation graphique
 emm_df <- as.data.frame(emm)
 
@@ -601,7 +718,7 @@ emm_df$phenologie_verif <- factor(
 
 ## Effet Taille, Site, Phénologie, Session
 
-```{r}
+```{r, echo=FALSE, warning=FALSE, cache=TRUE, message=FALSE}
 
 #graphique avec tous les effets
 ggplot(emm_df, aes(
@@ -634,13 +751,15 @@ ggplot(emm_df, aes(
   theme_minimal()
 ```
 
-Ce graphique montre que la taille prédite augmente clairement entre les sessions 1, 2 et 3, quel que soit le site ou le stade phénologique. Les individus en phases avancées de phénologie (fleurs fanées, fruits) sont systématiquement plus grands, et cette tendance est cohérente dans tous les sites.
+**Méthode d’interprétation** : Le graphique présente les tailles moyennes prédites par le modèle pour chaque combinaison de site, phénologie et session, avec les barres d’erreur représentant la variabilité estimée. Chaque panel correspond à un site et chaque groupe de barres indique les sessions 1 à 3. Les couleurs reflètent les stades phénologiques. Ce graphique permet de comparer à la fois l’évolution de la taille entre les sessions et les différences de taille entre stades phénologiques et sites. Des barres plus hautes indiquent des tailles moyennes plus importantes, et la progression des barres entre les sessions illustre l’augmentation de la taille prévue au fil du temps pour chaque stade et site.
+
+**Résultats** : Ce graphique montre que la taille prédite augmente clairement entre les sessions 1, 2 et 3, quel que soit le site ou le stade phénologique. Les individus en phases avancées de phénologie (fleurs fanées, fruits) sont systématiquement plus grands, et cette tendance est cohérente dans tous les sites.
 
 ## Effet Session
 
 Effet propre de la session, toutes phénologies et tous sites confondus (prédiction marginale).
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 emm_session <- emmeans(
   mod_glmm_gamma,
@@ -687,15 +806,15 @@ tab %>%
 
 ```
 
-Méthode d'interprétation : Ce tableau présente les contrastes entre sessions à partir des moyennes marginales estimées. Le ratio indique l’effet multiplicatif entre deux sessions : un ratio inférieur à 1 signifie que la première session a une valeur plus faible que la seconde. Le z‑ratio et la p‑value testent si cette différence est statistiquement significative. Les comparaisons avec p \< 0.05 sont considérées comme significatives.
+**Méthode d'interprétation** : Ce tableau présente les contrastes entre sessions à partir des moyennes marginales estimées. Le ratio indique l’effet multiplicatif entre deux sessions : un ratio inférieur à 1 signifie que la première session a une valeur plus faible que la seconde. Le z‑ratio et la p‑value testent si cette différence est statistiquement significative. Les comparaisons avec p$_{value}$ \< 0.05 sont considérées comme significatives.
 
-Résultats : Les comparaisons montrent que la session 1 a des valeurs significativement plus faibles que les sessions 2 et 3 (ratios \< 1 et p \< 0.001). La session 2 est également légèrement mais significativement plus faible que la session 3 (p = 0.0015). Les tailles prédites augmentent significativement donc d’une session à l’autre.
+**Résultats** : Les comparaisons montrent que la session 1 a des valeurs significativement plus faibles que les sessions 2 et 3 (ratios \< 1 et p$_{value}$ \< 0.001). La session 2 est également légèrement mais significativement plus faible que la session 3 (p$_{value}$ = 0.0015). Les tailles prédites augmentent significativement donc d’une session à l’autre.
 
 ## Effet Phénologie
 
 Effet propre de la phénologie, toutes sessions et tous sites confondus (prédiction marginale).
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 emm_phenologie <- emmeans(
   mod_glmm_gamma,
@@ -745,15 +864,15 @@ tab %>%
 
 ```
 
-Méthode d'interprétation : Ce tableau compare les tailles prédites entre les différents stades phénologiques. Le ratio indique combien la première catégorie est plus grande (ratio \> 1) ou plus petite (ratio \< 1) que la seconde. Les valeurs de p montrent si ces différences sont statistiquement significatives. Les contrastes avec p \< 0.05 révèlent des différences nettes entre phénologies, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires entre stades.
+**Méthode d'interprétation** : Ce tableau compare les tailles prédites entre les différents stades phénologiques. Le ratio indique combien la première catégorie est plus grande (ratio \> 1) ou plus petite (ratio \< 1) que la seconde. Les valeurs de p montrent si ces différences sont statistiquement significatives. Les contrastes avec p$_{value}$ \< 0.05 révèlent des différences nettes entre phénologies, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires entre stades.
 
-Résultats : Les contrastes montrent une progression nette de la taille au cours de la phénologie. Les stades juvénile et non fleuri sont significativement plus petits que tous les stades floraux et post‑floraux. En revanche, les stades fleur, fleurs fanées et fruit présentent des tailles similaires, sans différences significatives entre eux. Globalement, le modèle met en évidence une augmentation marquée de la taille entre les phases précoces et les phases florales, suivie d’une stabilisation une fois la floraison engagée.
+**Résultats** : Les contrastes montrent une progression nette de la taille au cours de la phénologie. Les stades juvénile et non fleuri sont significativement plus petits que tous les stades floraux et post‑floraux. En revanche, les stades fleur, fleurs fanées et fruit présentent des tailles similaires, sans différences significatives entre eux. Globalement, le modèle met en évidence une augmentation marquée de la taille entre les phases précoces et les phases florales, suivie d’une stabilisation une fois la floraison engagée.
 
 ## Effet Site
 
 Effet propre du site , toutes sessions et toutes phénologies confondus (prédiction marginale).
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 emm_site <- emmeans(
   mod_glmm_gamma,
@@ -799,19 +918,19 @@ tab %>%
 
 ```
 
-Méthode d'interprétation : Ce tableau présente les contrastes entre sites à partir des moyennes marginales estimées. Le ratio indique si la taille prédite est plus élevée dans le premier site du contraste (ratio \> 1) ou plus faible (ratio \< 1). Le z‑ratio et la p‑value testent la significativité statistique de cette différence. Les contrastes dont la p‑value est faible (p \< 0.05) révèlent des différences nettes entre sites, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires. Ce type de tableau permet donc d’identifier rapidement quels sites se distinguent réellement les uns des autres.
+**Méthode d'interprétation** : Ce tableau présente les contrastes entre sites à partir des moyennes marginales estimées. Le ratio indique si la taille prédite est plus élevée dans le premier site du contraste (ratio \> 1) ou plus faible (ratio \< 1). Le z‑ratio et la p‑value testent la significativité statistique de cette différence. Les contrastes dont la p$_{value}$ est faible (p$_{value}$ \< 0.05) révèlent des différences nettes entre sites, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires. Ce type de tableau permet donc d’identifier rapidement quels sites se distinguent réellement les uns des autres.
 
-Résultats : Les contrastes montrent que la plupart des sites présentent des tailles prédictes similaires, avec peu de différences statistiquement significatives. Seuls quelques écarts ressortent, notamment des tailles plus élevées à Tête Cendrée Haut et Vigne au Renard par rapport à certains autres sites. Dans l’ensemble, la variabilité entre sites reste limitée, et seules quelques comparaisons isolées indiquent des différences marquées.
+**Résultats** : Les contrastes montrent que la plupart des sites présentent des tailles prédictes similaires, avec peu de différences statistiquement significatives. Seuls quelques écarts ressortent, notamment des tailles plus élevées à Tête Cendrée Haut et Vigne au Renard par rapport à certains autres sites. Dans l’ensemble, la variabilité entre sites reste limitée, et seules quelques comparaisons isolées indiquent des différences marquées.
 
-## --------------
 
-# I\_ Analyse générale sans modélisation
 
-## --------------
+# I.ii Analyse générale sans modélisation
 
-## I_i Relation taille et phénologie
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+## I.ii.i Relation taille et phénologie
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Mise en forme des données en format long :
 # empilement des données de taille et de phénologie
@@ -873,326 +992,18 @@ tab_pheno %>%
 
 ```
 
-Méthode d'interprétation : Ce type de tableau présente les comparaisons deux à deux entre groupes, ici entre phénologies, à l’aide d’un test de Wilcoxon. Pour chaque paire, on indique les deux groupes comparés ainsi que la p‑value brute et la p‑value ajustée, cette dernière tenant compte du nombre total de comparaisons. Cela permet d’identifier rapidement quelles paires de groupes diffèrent réellement de manière significative.
+**Méthode d'interprétation** : Ce type de tableau présente les comparaisons deux à deux entre groupes, ici entre phénologies, à l’aide d’un test de Wilcoxon. Pour chaque paire, on indique les deux groupes comparés ainsi que la p$_{value}$ brute et la p$_{value}$ ajustée, cette dernière tenant compte du nombre total de comparaisons. Cela permet d’identifier rapidement quelles paires de groupes diffèrent réellement de manière significative.
 
-Résultats : Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg ; Tableau X). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p_adj ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
-
-## I_ii Relation recouvrement végétal et site
-
-### RDA
-
-L’analyse factorielle discriminante (AFD) est une méthode statistique qui permet de déterminer si des groupes prédéfinis peuvent être différenciés à partir de variables explicatives. Elle cherche à identifier les combinaisons de variables qui séparent le mieux ces groupes.
-
-Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuvent être distingués en fonction de la structure de la végétation, décrite par les recouvrements des différentes strates (muscinale, herbacée, arbustive et arborescente). L’objectif est donc de vérifier si chaque site présente une signature de recouvrement particulière et d’identifier quelles strates contribuent le plus à cette différenciation.
-
-Cette méthode suppose une variable réponse continue et des relations linéaires
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# -------------------------------
-# 1. LDA sur les données originales
-# -------------------------------
-afd_recouvrement <- lda(
-  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
-  data = recouvrement
-)
-
-# -------------------------------
-# 2. Centrage et normalisation des variables
-# -------------------------------
-newdata <- as.data.frame(scale(recouvrement[, 4:8]))
-
-# On ajoute la variable de groupe (Site) pour l'analyse
-newdata$Site <- recouvrement$Site
-
-# -------------------------------
-# 3. LDA sur les données centrées-réduites
-# -------------------------------
-afd2 <- lda(
-  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
-  data = newdata
-)
-
-# -------------------------------
-# 4. MANOVA pour tester les différences entre groupes
-# -------------------------------
-manova_res <- manova(as.matrix(recouvrement[, 4:8]) ~ recouvrement$Site)
-
-# -------------------------------
-# 5. Prédiction avec LDA
-# -------------------------------
-pred <- predict(afd2)
-a<- table(Site = recouvrement$Site, Predicted = pred$class)
-
-# -------------------------------
-# 6. Validation croisée (jackknife)
-# -------------------------------
-afd_cv <- lda(
-  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
-  data = newdata,
-  CV = TRUE
-)
-b<- table(Site = newdata$Site, Predicted = afd_cv$class)
-
-# -------------------------------
-# 7. AFD basée sur l'ACP centrée-réduite
-# -------------------------------
-pca_res <- dudi.pca(recouvrement[, 4:8], scannf = FALSE, nf = 3)
-afd3 <- discrimin(pca_res, factor(recouvrement$Site), scannf = FALSE, nf = 3) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
-
-# Exploration des valeurs propres et des coefficients standardisés
-valeur_propres <- afd3$eig
-
-# Projection des variables sur les fonctions discriminantes
-# Créer une nouvelle fenêtre graphique (ou plot)
-s.arrow(afd3$fa)  
-
-# Projection des individus selon leur groupe
-s.class(afd3$li, factor(recouvrement$Site))
-
-#Regarder contribution relative des strates et des variables aux axes
-# strates
-tab_afd <- afd3$fa %>%
-  as.data.frame() %>%
-  mutate(
-    DS1 = round(DS1, 3),
-    DS2 = round(DS2, 3),
-    DS3 = round(DS3, 3)
-  ) %>%
-  tibble::rownames_to_column("strate")
-
-tab_afd %>%
-  kbl(
-    booktabs = TRUE,
-    caption = "Coefficients standardisés des strates sur les fonctions discriminantes (AFD)"
-  ) %>%
-  kable_classic(full_width = FALSE)
-
-# sites
-tab_afd <- afd3$gc %>%
-  as.data.frame() %>%
-  mutate(
-    DS1 = round(DS1, 3),
-    DS2 = round(DS2, 3),
-    DS3 = round(DS3, 3)
-  ) %>%
-  tibble::rownames_to_column("strate")
-
-tab_afd %>%
-  kbl(
-    booktabs = TRUE,
-    caption = "Coefficients standardisés des sites sur les fonctions discriminantes (AFD)"
-  ) %>%
-  kable_classic(full_width = FALSE)
-
-```
-
-Méthode d'interprétation : Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.Le tableau des coefficients standardisés sur les trois premières fonctions discriminantes (DS1, DS2, DS3) permet de quantifier l’importance relative de chaque strate dans la discrimination des sites.
-
-Résultats : Les strates muscinale et arbustive basse ont les coefficients les plus élevés sur les axes principaux (DS1 et DS2). Les autres strates contribuent moins à la séparation. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative. Les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
-
-### Régression Multinomiale
-
-Modèle statistique utilisé quand la variable réponse est catégorielle avec plus de deux catégories, sans ordre naturel entre elles. Phénologie est un état discret, non ordonné, avec plusieurs modalités. On fait pas de RDA car elle suggère que la variable réponse est continue, elle cherche des relations linéaires.
-
-##### Toutes sessions
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-tab_complet$phenologie_verif <- relevel(
-  factor(tab_complet$phenologie_verif),
-  ref = "non_fleuri"
-)
+**Résultats** : Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p$_{adj}$ ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
 
 
-mod_pheno <- multinom(
-  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
-  data = tab_complet
-)
-
-#Tableau lecture simple
-# Extraction
-coef_mat <- summary(mod_pheno)$coefficients
-se_mat   <- summary(mod_pheno)$standard.errors
-z_mat    <- coef_mat / se_mat
-p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
-
-# Fonction pour étoiles 
-etoiles <- function(p){
-  ifelse(p < 0.001, "***",
-         ifelse(p < 0.01, "**",
-                ifelse(p < 0.05, "*",
-                       ifelse(p < 0.1, ".", ""))))
-}
-
-tableau <- data.frame(
-  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
-  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
-  Coefficient = as.vector(coef_mat),
-  SE = as.vector(se_mat),
-  z = as.vector(z_mat),
-  p_value = as.vector(p_mat)
-) %>%
-  mutate(
-    Coefficient = round(Coefficient, 4),
-    SE = round(SE, 4),
-    z = round(z, 3),
-    p_value = signif(p_value, 3),
-    Signif = etoiles(p_value)
-  )
-
-kable(tableau, format = "html", booktabs = TRUE,
-      caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
-  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
-
-```
-
-Méthode d'interprétation : Dans ce tableau de régression multinomiale, chaque ligne indique l’effet d’une strate de végétation sur la probabilité d’appartenir à un état phénologique donné, comparé à la catégorie de référence. La colonne *Coefficient* montre si la strate augmente (valeur positive) ou diminue (valeur négative) cette probabilité, tandis que l’erreur standard (*SE*), la statistique *z* et la *p‑value* renseignent sur la précision de l’estimation et sa significativité. La colonne *Signif* résume visuellement cette significativité. Ensemble, ces informations permettent d’identifier quelles strates influencent réellement la transition d’un état phénologique à un autre et dans quel sens.
-
-Résultats : Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
-
-La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
-
-##### Session 2 (Pour Fleurs)
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-# Sous-échantillon : session 2 uniquement
-tab_s2 <- tab_complet %>%
-  filter(session == 2)
-
-# Re-nivellement sur le sous-tableau
-tab_s2$phenologie_verif <- relevel(
-  factor(tab_s2$phenologie_verif),
-  ref = "non_fleuri"
-)
-
-# Modèle multinomial (session 2 uniquement)
-mod_pheno <- multinom(
-  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
-    S_arbustive_haute + S_arborescente,
-  data = tab_s2
-)
-
-# Extraction des résultats
-coef_mat <- summary(mod_pheno)$coefficients
-se_mat   <- summary(mod_pheno)$standard.errors
-z_mat    <- coef_mat / se_mat
-p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
-
-# Fonction étoiles
-etoiles <- function(p){
-  ifelse(p < 0.001, "***",
-         ifelse(p < 0.01, "**",
-                ifelse(p < 0.05, "*",
-                       ifelse(p < 0.1, ".", ""))))
-}
-
-# Tableau final
-tableau <- data.frame(
-  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
-  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
-  Coefficient = as.vector(coef_mat),
-  SE = as.vector(se_mat),
-  z = as.vector(z_mat),
-  p_value = as.vector(p_mat)
-) %>%
-  mutate(
-    Coefficient = round(Coefficient, 4),
-    SE = round(SE, 4),
-    z = round(z, 3),
-    p_value = signif(p_value, 3),
-    Signif = etoiles(p_value)
-  )
-
-kable(
-  tableau,
-  format = "html",
-  booktabs = TRUE,
-  caption = "Régression multinomiale (session 2 uniquement)"
-) %>%
-  kable_styling(
-    full_width = FALSE,
-    bootstrap_options = c("striped", "hover")
-  )
-```
-
-##### Session 3 (Fleurs fanées et Fruits)
-
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-
-# Sous-échantillon : session 2 uniquement
-tab_s3 <- tab_complet %>%
-  filter(session == 3)
-
-# Re-nivellement sur le sous-tableau
-tab_s3$phenologie_verif <- relevel(
-  factor(tab_s3$phenologie_verif),
-  ref = "non_fleuri"
-)
-
-# Modèle multinomial (session 2 uniquement)
-mod_pheno <- multinom(
-  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
-    S_arbustive_haute + S_arborescente,
-  data = tab_s3
-)
-
-# Extraction des résultats
-coef_mat <- summary(mod_pheno)$coefficients
-se_mat   <- summary(mod_pheno)$standard.errors
-z_mat    <- coef_mat / se_mat
-p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
-
-# Fonction étoiles
-etoiles <- function(p){
-  ifelse(p < 0.001, "***",
-         ifelse(p < 0.01, "**",
-                ifelse(p < 0.05, "*",
-                       ifelse(p < 0.1, ".", ""))))
-}
-
-# Tableau final
-tableau <- data.frame(
-  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
-  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
-  Coefficient = as.vector(coef_mat),
-  SE = as.vector(se_mat),
-  z = as.vector(z_mat),
-  p_value = as.vector(p_mat)
-) %>%
-  mutate(
-    Coefficient = round(Coefficient, 4),
-    SE = round(SE, 4),
-    z = round(z, 3),
-    p_value = signif(p_value, 3),
-    Signif = etoiles(p_value)
-  )
-
-kable(
-  tableau,
-  format = "html",
-  booktabs = TRUE,
-  caption = "Régression multinomiale (session 2 uniquement)"
-) %>%
-  kable_styling(
-    full_width = FALSE,
-    bootstrap_options = c("striped", "hover")
-  )
-```
-
-## --------------
-
-# II\_ Analyse de la variation dans le temps
+## I.ii.ii Analyse de la variation dans le temps
 
 Dans un premier temps, nous avons étudié la variation des données au cours du temps afin d’obtenir une vision dynamique de leur évolution.
 
-## --------------
-
-## II_i Effet de la session
-
 ### Effet de la session sur la taille
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Transformer les données en format long
 taille_long <- data_original %>%
@@ -1257,13 +1068,13 @@ tab_session %>%
 
 ```
 
-Méthode d'interprétation : Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau compare les sessions deux à deux pour voir si leur taille diffère significativement. Les colonnes p et p.adj indiquent la significativité du test : des valeurs très faibles montrent une différence nette entre les deux sessions, tandis qu’une valeur élevée signifie qu’elles ne diffèrent pas. Chaque ligne résume donc si la paire de sessions considérée présente ou non une différence statistiquement détectable.
+**Méthode d'interprétation** : Le graphique montre la taille moyenne des individus par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau compare les sessions deux à deux pour voir si leur taille diffère significativement. Les colonnes *p* et p$_{adj}$ indiquent la significativité du test : des valeurs très faibles montrent une différence nette entre les deux sessions, tandis qu’une valeur élevée signifie qu’elles ne diffèrent pas. Chaque ligne résume donc si la paire de sessions considérée présente ou non une différence statistiquement détectable.
 
-Résultats : Nous observons une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
+**Résultats** : Nous observons une augmentation progressive de la taille : la moyenne passe de S1 (\~13,7) à S2 (\~16,9) puis à S3 (\~17,3). L'augmentation est statistiquement significative.
 
 ### Effet de la session sur la phénologie
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Transformer les données en format long : session = S1, S2, S3
 pheno_long <- data_original %>%
@@ -1338,40 +1149,19 @@ tab_pheno %>%
 
 ```
 
-Méthode d'interprétation : Le graphique montre la taille moyenne des individus par phénologie avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque session (S1, S2, S3) et chaque type phénologique, le nombre d’individus observés (n). La colonne se indique l’erreur standard associée à cet effectif, et les colonnes ci_lower et ci_upper donnent les bornes de l’intervalle de confiance à 95 %, c’est‑à‑dire la zone dans laquelle l’effectif réel est probablement situé. Chaque ligne correspond donc à une combinaison session × phéno et résume combien d’individus ont été comptés et la précision de cette estimation.
+**Méthode d'interprétation** : Le graphique montre la taille moyenne des individus par *phénologie* avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque session (S1, S2, S3) et chaque type phénologique, le nombre d’individus observés (n). La colonne se indique l’erreur standard associée à cet effectif, et les colonnes ci_lower et ci_upper donnent les bornes de l’intervalle de confiance à 95 %, c’est‑à‑dire la zone dans laquelle l’effectif réel est probablement situé. Chaque ligne correspond donc à une combinaison *session × phéno* et résume combien d’individus ont été comptés et la précision de cette estimation.
 
-Résultats : Nous observons que S1 est dominée par les stades j et nf, avec relativement peu de fleurs et un nombre notable de données manquantes. En S2, le stade nf devient majoritaire et les stades reproducteurs (f et ff) apparaissent davantage. En S3, les stades avancés (ff et F) sont plus représentés, tandis que les stades précoces diminuent.
+**Résultats** : Nous observons que S1 est dominée par les stades *j* et *nf*, avec relativement peu de fleurs et un nombre notable de données manquantes. En S2, le stade nf devient majoritaire et les stades reproducteurs (*f* et *ff*) apparaissent davantage. En S3, les stades avancés (*ff* et *F*) sont plus représentés, tandis que les stades précoces diminuent.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
-## Même graphique mais inversé
-# ordonner les modalités
-pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
-pheno_stats$session <- factor(pheno_stats$session, levels = c("S1", "S2", "S3"))
-
-# graphique : phénologie en x, couleur = session
-ggplot(pheno_stats, aes(x = pheno, y = n, fill = session)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
-  geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
-                position = position_dodge(width = 0.8), width = 0.2, color = "black") +
-  scale_fill_manual(values = c("S1" = "#FF9999", "S2" = "#FF4D4D", "S3" = "#CC0000")) +
-  labs(title = "Distribution de la phénologie par session", x = "Type phénologique", y = "Nombre d'individus", fill = "Session") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 0, vjust = 0.5), legend.position = "right")
-```
-
-## --------------
-
-# III\_ Analyse de la variation dans l'espace
+## I.ii.iii Analyse de la variation dans l'espace
 
 Dans un second temps, nous avons étudié la variation des données dans l'espace afin d’obtenir une vision spatiale de leur évolution.
 
-## --------------
-
-## III_i Effet du site
+## Effet du site
 
 ### Effet du site sur la taille
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Transformer les données en format long pour toutes les tailles
 taille_long <- data_original %>%
@@ -1433,15 +1223,13 @@ tab_pheno %>%
 
 ```
 
-Méthode d'interprétation : Le graphique montre la taille moyenne des individus par sites avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque session et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’apprécier la précision des estimations. La lecture se fait ligne par ligne : chaque combinaison session × phéno résume combien d’individus ont été comptés et dans quelle mesure cet effectif est fiable statistiquement.
+**Méthode d'interprétation** : Le graphique montre la taille moyenne des individus par *sites* avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque *session* et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’apprécier la précision des estimations. La lecture se fait ligne par ligne : chaque combinaison *session × phéno* résume combien d’individus ont été comptés et dans quelle mesure cet effectif est fiable statistiquement.
 
-Résultats : Voici une version plus concise :
-
-Le tableau montre comment les stades phénologiques évoluent d’une session à l’autre. S1 est dominée par les stades précoces, S2 voit apparaître davantage de stades reproducteurs, et S3 présente surtout des stades avancés. Les intervalles de confiance indiquent la précision des effectifs : ils sont serrés pour les stades fréquents et plus larges pour les stades rares. En résumé, le tableau illustre une progression nette de la phénologie au fil des sessions.
+**Résultats** : S1 est dominée par les stades précoces, S2 voit apparaître davantage de stades reproducteurs, et S3 présente surtout des stades avancés. Les intervalles de confiance indiquent la précision des effectifs : ils sont serrés pour les stades fréquents et plus larges pour les stades rares. En résumé, le tableau illustre une progression nette de la phénologie au fil des sessions.
 
 ### Effet du site sur la taille selon la session
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Assurer que les colonnes de taille sont numériques
 data_original <- data_original %>%
@@ -1506,13 +1294,13 @@ tab_taille %>%
 
 ```
 
-Méthode d'interprétation : Le graphique montre la taille moyenne des individus par sites et par session avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque site et chaque session, la taille moyenne observée ainsi que les indicateurs de variabilité associés. Les colonnes indiquent l’écart‑type, le nombre d’individus mesurés, l’erreur standard et l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des moyennes. Chaque ligne correspond donc à une combinaison site × session et résume la valeur moyenne et la fiabilité statistique de cette estimation.
+**Méthode d'interprétation** : Le graphique montre la taille moyenne des individus par *sites* et par *session* avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Le tableau présente, pour chaque *site* et chaque *session*, la taille moyenne observée ainsi que les indicateurs de variabilité associés. Les colonnes indiquent l’écart‑type, le nombre d’individus mesurés, l’erreur standard et l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des moyennes. Chaque ligne correspond donc à une combinaison *site × session* et résume la valeur moyenne et la fiabilité statistique de cette estimation.
 
-Résultats : Les sites présentent des dynamiques de taille différentes. À Tête Cendrée Bas, les tailles sont globalement élevées et augmentent légèrement entre S1 et S3, mais les faibles effectifs rendent les intervalles de confiance plus larges. À Tête Cendrée Haut, les tailles sont plus faibles mais progressent régulièrement, avec des estimations précises grâce à des effectifs importants. Val Clavin est le site où les tailles sont les plus grandes, avec une forte hausse entre S1 et S2 suivie d’une stabilisation, et des intervalles de confiance raisonnables malgré des effectifs modestes. Enfin, à Vigne au Renard, les tailles sont intermédiaires, augmentent légèrement entre S1 et S2 puis se stabilisent, avec des intervalles de confiance un peu plus larges mais une tendance générale nette.
+**Résultats** : Les sites présentent des dynamiques de taille différentes. À Tête Cendrée Bas, les tailles sont globalement élevées et augmentent légèrement entre S1 et S3, mais les faibles effectifs rendent les intervalles de confiance plus larges. À Tête Cendrée Haut, les tailles sont plus faibles mais progressent régulièrement, avec des estimations précises grâce à des effectifs importants. Val Clavin est le site où les tailles sont les plus grandes, avec une forte hausse entre S1 et S2 suivie d’une stabilisation, et des intervalles de confiance raisonnables malgré des effectifs modestes. Enfin, à Vigne au Renard, les tailles sont intermédiaires, augmentent légèrement entre S1 et S2 puis se stabilisent, avec des intervalles de confiance un peu plus larges mais une tendance générale nette.
 
 ### Effet du site sur la phénologie
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Transformer les phénos en format long en gardant les NA
 pheno_long <- data_original %>%
@@ -1581,17 +1369,225 @@ tab_pheno %>%
 
 ```
 
-Méthode d'interprétation : Le graphique montre la nombre d'individu par sites et par phénologie avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque site et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des comptages. Chaque ligne correspond à une combinaison site × phéno et résume combien d’individus ont été observés dans chaque catégorie phénologique, ainsi que la fiabilité statistique de cette estimation.
+**Méthode d'interprétation** : Le graphique montre la nombre d'individu par *sites* et par *phénologie* avec les barres d’erreur représentant l’intervalle de confiance à 95 %. Ce tableau présente, pour chaque site et chaque type phénologique, le nombre d’individus observés ainsi que l’incertitude associée à ces effectifs. Les colonnes indiquent l’erreur standard et les bornes de l’intervalle de confiance à 95 %, ce qui permet d’évaluer la précision des comptages. Chaque ligne correspond à une combinaison *site × phéno* et résume combien d’individus ont été observés dans chaque catégorie phénologique, ainsi que la fiabilité statistique de cette estimation.
 
-Résultats : Les sites présentent des profils phénologiques contrastés. À Combe Michaut, tous les stades sont représentés, avec une forte présence des stades précoces et intermédiaires. À Tête Cendrée Bas, seuls les stades précoces sont observés, les stades reproducteurs étant absents, ce qui reflète une phénologie très peu avancée. À Tête Cendrée Haut, les stades précoces dominent également, avec très peu d’individus dans les stades avancés. Val Clavin présente une gamme complète de stades, incluant des stades reproducteurs plus avancés. Enfin, à Vigne au Renard, tous les stades sont présents mais en effectifs plus faibles, tout en montrant une progression phénologique plus marquée que dans les sites les plus précoces.
+**Résultats** : Les sites présentent des profils phénologiques contrastés. À Combe Michaut, tous les stades sont représentés, avec une forte présence des stades précoces et intermédiaires. À Tête Cendrée Bas, seuls les stades précoces sont observés, les stades reproducteurs étant absents, ce qui reflète une phénologie très peu avancée. À Tête Cendrée Haut, les stades précoces dominent également, avec très peu d’individus dans les stades avancés. Val Clavin présente une gamme complète de stades, incluant des stades reproducteurs plus avancés. Enfin, à Vigne au Renard, tous les stades sont présents mais en effectifs plus faibles, tout en montrant une progression phénologique plus marquée que dans les sites les plus précoces.
 
-## --------------
+## Effet de la strate
 
-## III_ii Effet de la strate
+### Relation recouvrement végétal et site
+
+**Régression Multinomiale**
+
+La *régression multinomiale* est un modèle statistique adapté aux variables réponses catégorielles comportant plus de deux modalités sans ordre naturel. La phénologie constitue un état discret et non ordonné, présentant plusieurs modalités. Une RDA n’est pas appropriée ici, car elle suppose une variable réponse continue et cherche à établir des relations linéaires.
+
+   **Toutes sessions**
+
+Nous réalisons l’analyse sur l’ensemble des sessions confondues, en prenant le stade *non fleuri* comme référence, c’est-à-dire que nous comparons les probabilités des différents états selon la *strate* par rapport à ce stade.
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
+
+tab_complet$phenologie_verif <- relevel(
+  factor(tab_complet$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = tab_complet
+)
+
+#Tableau lecture simple
+# Extraction
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction pour étoiles 
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+kable(tableau, format = "html", booktabs = TRUE,
+      caption = "Régression multinomiale : effets des strates de recouvrement sur la phénologie") %>%
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover"))
+
+```
+
+**Méthode d'interprétation** : Dans ce tableau de régression multinomiale, chaque ligne indique l’effet d’une strate de végétation sur la probabilité d’appartenir à un état phénologique donné, comparé à la catégorie de référence. La colonne *Coefficient* montre si la strate augmente (valeur positive) ou diminue (valeur négative) cette probabilité, tandis que l’erreur standard (*SE*), la statistique *z* et la p$_{value}$ renseignent sur la précision de l’estimation et sa significativité. La colonne *Signif* résume visuellement cette significativité. Ensemble, ces informations permettent d’identifier quelles strates influencent réellement la transition d’un état phénologique à un autre et dans quel sens.
+
+**Résultats** : Les résultats montrent un gradient phénologique structuré par l’ouverture du milieu : Milieux ouverts (herbacées) → stades avancés (fleurs fanées, fruits), peu de juvéniles. Milieux semi‑fermés (arbustif bas) → forte probabilité de fleurs fanées et de fruits. Milieux très fermés (arbustif haut, arborescent) → stades précoces (non fleuri, juvénile), peu de stades avancés. Mousse → effet faible ou non significatif, sauf absence quasi totale de fleurs fanées dans ces micro‑habitats.
+
+La structure verticale du recouvrement influence donc fortement la progression phénologique, avec un cycle plus avancé dans les milieux ouverts ou semi‑ouverts, et plus précoce dans les milieux fermés.
+
+   **Session 2** (Pour Fleurs)
+
+Comme nous souhaitons estimer la probabilité de présence d’un stade phénologique selon les strates, il est préférable de se concentrer sur la session où le stade étudié est le plus fréquent, afin d’éviter un biais lié au nombre d’individus, très important si toutes les sessions sont combinées. Ici, le stade *fleurs* est beaucoup plus présent lors de la session 2, ce qui permet un effort d’échantillonnage plus important et donc des estimations plus robustes.
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
+
+# Sous-échantillon : session 2 uniquement
+tab_s2 <- tab_complet %>%
+  filter(session == 2)
+
+# Re-nivellement sur le sous-tableau
+tab_s2$phenologie_verif <- relevel(
+  factor(tab_s2$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+# Modèle multinomial (session 2 uniquement)
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
+    S_arbustive_haute + S_arborescente,
+  data = tab_s2
+)
+
+# Extraction des résultats
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Tableau final
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+kable(
+  tableau,
+  format = "html",
+  booktabs = TRUE,
+  caption = "Régression multinomiale (session 2 uniquement)"
+) %>%
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+```
+
+**Résultats** : La régression multinomiale sur la session 2, avec le stade *non fleuri* comme référence, montre que la probabilité d’être au stade *fleur* est fortement favorisée par la strate *S_muscinale* et la strate *S_arborescente*, et fortement réduite par la strate *S_arbustive_haute*. Cela suggère que les plantes en fleurs se concentrent dans les zones muscinales et arborescentes, probablement en raison d’un meilleur microclimat ou d’un accès optimal à la lumière.
+
+Le stade *fleurs fanées* est favorisé dans les strates *S_arbustive_basse* et *S_arbustive_haute*, mais limité dans *S_muscinale* et *S_arborescente*, indiquant que la sénescence des fleurs est plus marquée dans les strates arbustives, peut-être liées à la densité végétale et à l’ombrage.
+
+Enfin, le stade *juv* est favorisé dans *S_arbustive_basse* mais fortement réduit dans *S_arbustive_haute* et *S_arborescente*, ce qui montre que les jeunes individus se concentrent dans les strates basses et ouvertes, probablement pour éviter la compétition et l’ombre des strates plus hautes.
+
+   **Session 3** (Fleurs fanées et Fruits)
+
+Nous réalisons la même chose à la session 3 pour les stades : *fleurs fanées* et *Fruits*
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
+
+# Sous-échantillon : session 2 uniquement
+tab_s3 <- tab_complet %>%
+  filter(session == 3)
+
+# Re-nivellement sur le sous-tableau
+tab_s3$phenologie_verif <- relevel(
+  factor(tab_s3$phenologie_verif),
+  ref = "non_fleuri"
+)
+
+# Modèle multinomial (session 2 uniquement)
+mod_pheno <- multinom(
+  phenologie_verif ~ S_muscinale + S_herbacee + S_arbustive_basse +
+    S_arbustive_haute + S_arborescente,
+  data = tab_s3
+)
+
+# Extraction des résultats
+coef_mat <- summary(mod_pheno)$coefficients
+se_mat   <- summary(mod_pheno)$standard.errors
+z_mat    <- coef_mat / se_mat
+p_mat    <- 2 * (1 - pnorm(abs(z_mat)))
+
+# Fonction étoiles
+etoiles <- function(p){
+  ifelse(p < 0.001, "***",
+         ifelse(p < 0.01, "**",
+                ifelse(p < 0.05, "*",
+                       ifelse(p < 0.1, ".", ""))))
+}
+
+# Tableau final
+tableau <- data.frame(
+  Etat = rep(rownames(coef_mat), each = ncol(coef_mat)),
+  Parametre = rep(colnames(coef_mat), times = nrow(coef_mat)),
+  Coefficient = as.vector(coef_mat),
+  SE = as.vector(se_mat),
+  z = as.vector(z_mat),
+  p_value = as.vector(p_mat)
+) %>%
+  mutate(
+    Coefficient = round(Coefficient, 4),
+    SE = round(SE, 4),
+    z = round(z, 3),
+    p_value = signif(p_value, 3),
+    Signif = etoiles(p_value)
+  )
+
+kable(
+  tableau,
+  format = "html",
+  booktabs = TRUE,
+  caption = "Régression multinomiale (session 3 uniquement)"
+) %>%
+  kable_styling(
+    full_width = FALSE,
+    bootstrap_options = c("striped", "hover")
+  )
+```
+
+**Résultats** : La régression multinomiale sur la session 3, avec le stade *non fleuri* comme référence, montre que le stade *fleurs fanées* est fortement favorisé dans la strate *S_arborescente* et fortement limité dans les strates *S_muscinale* et *S_herbacee*, indiquant que la sénescence des fleurs se concentre dans les zones boisées où les conditions microclimatiques semblent favoriser leur persistance.
+
+Pour le stade *fruit*, les probabilités sont significativement accrues dans les strates *S_muscinale*, *S_arbustive_basse* et *S_arbustive_haute*, suggérant que la fructification est plus favorable dans les zones ouvertes et arbustives, probablement en raison d’un meilleur accès à la lumière ou à la pollinisation.
+
+Le stade juv est favorisé dans les strates basses et herbacées (*S_arbustive_basse*, *S_herbacee*, *S_muscinale*) mais limité dans *S_arborescente*, indiquant que les jeunes individus se concentrent dans des habitats ouverts, probablement pour éviter l’ombre et la compétition des strates plus hautes.
 
 ### Effet de la strate sur la taille
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Joindre les données par ID_Quadrat
 data_joined <- data_original %>%
@@ -1638,13 +1634,13 @@ ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
   theme_minimal()
 ```
 
-Méthode d'interprétation : Nous cherchons simplement à vérifier s’il existe une relation entre la taille moyenne des individus et le taux de recouvrement végétal des différentes strates. La droite de régression indique la tendance générale, tandis que le R² montre à quel point cette tendance explique réellement la variation de taille, et la p‑value indique si cette relation est statistiquement fiable.
+**Méthode d'interprétation** : Nous cherchons à vérifier s’il existe une relation entre la taille moyenne des individus et le taux de recouvrement végétal des différentes strates. La droite de régression indique la tendance générale, tandis que le R² montre à quel point cette tendance explique réellement la variation de taille, et la p$_{value}$ indique si cette relation est statistiquement fiable.
 
-Résultats : La strate arborescente montre une relation positive et significative : plus le recouvrement est élevé, plus les individus sont grands (R² = 0.21, p \< 0.001), ce qui suggère un effet structurant fort. La strate arbustive basse présente aussi une relation positive, mais plus faible (R² = 0.08), indiquant un effet modéré. En revanche, les strates arbustive haute, herbacée et muscinale ne montrent pas de relation claire ou significative : les R² sont très faibles (\< 0.05) et les p‑values élevées ou marginales, ce qui signifie que le recouvrement dans ces strates n’explique pas la variation de taille.
+**Résultats** : La strate arborescente montre une relation positive et significative : plus le recouvrement est élevé, plus les individus sont grands (R² = 0.21, p$_{value}$ \< 0.001), ce qui suggère un effet structurant fort. La strate arbustive basse présente aussi une relation positive, mais plus faible (R² = 0.08), indiquant un effet modéré. En revanche, les strates arbustive haute, herbacée et muscinale ne montrent pas de relation claire ou significative : les R² sont très faibles (p$_{value}$ \< 0.05) et les p‑values élevées ou marginales, ce qui signifie que le recouvrement dans ces strates n’explique pas la variation de taille.
 
 ### Effet de la strate sur la phénologie
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 # Phénologie en format long
 pheno_long <- data_original %>%
@@ -1724,13 +1720,13 @@ a_3 %>%
 
 ```
 
-Méthode d'interpretation : La RDA permet d’évaluer si les variables environnementales, ici les différentes strates de recouvrement, expliquent la variation d’un ensemble de variables biologiques, en l’occurrence la phénologie. Le premier tableau teste l’effet global : il indique si l’ensemble des strates, prises ensemble, influence significativement la phénologie. Le second tableau examine l’effet individuel de chaque strate, en testant séparément si chacune contribue de manière significative à expliquer la variation phénologique. Enfin, le troisième tableau teste la significativité des axes RDA, c’est‑à‑dire si les gradients principaux extraits par l’analyse représentent des structures réelles dans les données ou seulement du bruit. Ensemble, ces trois tableaux permettent de savoir si le recouvrement influence la phénologie, quelles strates sont responsables de cet effet, et si les axes produits par la RDA sont interprétables
+**Méthode d'interpretation** : La RDA permet d’évaluer si les variables environnementales, ici les différentes *strates* de recouvrement, expliquent la variation d’un ensemble de variables biologiques, en l’occurrence la *phénologie*. Le premier tableau teste l’effet global : il indique si l’ensemble des *strates*, prises ensemble, influence significativement la *phénologie*. Le second tableau examine l’effet individuel de chaque *strate*, en testant séparément si chacune contribue de manière significative à expliquer la variation phénologique. Enfin, le troisième tableau teste la significativité des axes RDA, c’est‑à‑dire si les gradients principaux extraits par l’analyse représentent des structures réelles dans les données ou seulement du bruit. Ensemble, ces trois tableaux permettent de savoir si le recouvrement influence la phénologie, quelles strates sont responsables de cet effet, et si les axes produits par la RDA sont interprétables
 
-Résultats : L’effet global du recouvrement sur la phénologie n’est pas significatif (p = 0.19), ce qui indique que, dans l’ensemble, les strates végétales n’expliquent pas fortement la variation phénologique entre quadrats. Lorsqu’on examine les strates individuellement, seule la strate arbustive basse présente un effet significatif (p = 0.037), suggérant qu’elle influence modestement la distribution des stades phénologiques. Les autres strates (muscinale, herbacée, arbustive haute, arborescente) ne montrent aucun effet détectable. Enfin, aucun des axes RDA n’est significatif (tous p \> 0.15), ce qui confirme que la structure ordonnée extraite par la RDA est faible et que les gradients phénologiques ne sont pas clairement associés aux gradients de recouvrement. En résumé, le recouvrement végétal n’explique que très faiblement la phénologie, avec un signal limité provenant de la strate arbustive basse.
+**Résultats** : L’effet global du recouvrement sur la phénologie n’est pas significatif (p$_{value}$ = 0.19), ce qui indique que, dans l’ensemble, les strates végétales n’expliquent pas fortement la variation phénologique entre quadrats. Lorsqu’on examine les strates individuellement, seule la strate arbustive basse présente un effet significatif (p$_{value}$ = 0.037), suggérant qu’elle influence modestement la distribution des stades phénologiques. Les autres strates (muscinale, herbacée, arbustive haute, arborescente) ne montrent aucun effet détectable. Enfin, aucun des axes RDA n’est significatif (tous p$_{value}$ \> 0.15), ce qui confirme que la structure ordonnée extraite par la RDA est faible et que les gradients phénologiques ne sont pas clairement associés aux gradients de recouvrement. En résumé, le recouvrement végétal n’explique que très faiblement la phénologie, avec un signal limité provenant de la strate arbustive basse.
 
 ### Nombre de quadrats et d'individus par strates
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 data_long <- data_joined %>%
   select(ID_quadrat, ID_ind, starts_with("S_")) %>%
@@ -1781,9 +1777,15 @@ ggplot(data_count, aes(x = recouvrement)) +
 
 ```
 
+**Méthode d'interprétation** : Pour chaque *strate*, nous avons représenté la distribution des quadrats et des individus selon l’indice de recouvrement (0–10). Les barres grises indiquent le nombre de quadrats contenant au moins un individu pour un niveau de recouvrement donné, tandis que la ligne noire (avec points) représente le nombre d’individus, mis à l’échelle pour permettre une comparaison visuelle avec le nombre de quadrats. Cette représentation permet d’évaluer simultanément la fréquence des quadrats et la densité des individus selon le recouvrement de chaque strate, et de détecter les strates ou indices de recouvrement où les individus sont concentrés ou rares.
+
+**Résultats** : La distribution des quadrats et des individus varie selon les strates. Dans chaque strate, le nombre d’individus suit globalement le nombre de quadrats, ce qui rend difficile d’interpréter l’effet spécifique de la strate sur la densité des individus. Par exemple, dans S_arborescente, la majorité des quadrats et des individus se situent aux faibles indices de recouvrement, tandis que dans S_muscinale, ils se répartissent sur un large spectre de recouvrement avec un maximum aux recouvrements faibles et intermédiaires. Ces tendances suggèrent que la densité d’individus reflète principalement la répartition des quadrats eux-mêmes plutôt que la strate, mais elles permettent néanmoins d’identifier les plages de recouvrement où les plantes sont concentrées ou rares.
+
 ### Indices de strates végétales
 
-```{r}
+Une méthode pour intégrer le recouvrement serait de mettre en place un indice basé sur les strates et leur hauteur. En fixant une valeur seuil de hauteur pour chaque strate, on peut quantifier et pondérer les hauteurs moyennes par quadrat. Cette méthode reste à développer.
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #Préparation indice végétation
 recouvrement <- recouvrement %>% 
   mutate(hauteur_totale = S_arbustive_basse*2 + S_arbustive_haute*5 + S_arborescente*10,
@@ -1798,15 +1800,16 @@ ggplot(recouvrement, aes(x = Quadrat, y = hauteur_moy))+
 ```
 
 
-## --------------
 
-# IV\_ Niveau des observateurs
+# II. Niveau des observateurs
 
-Nous avons distingué trois variables mesurées. Le risque d’erreur correspond à l’estimation que les observateurs font de leur propre fiabilité, basée sur leur auto‑évaluation dans le questionnaire. Le taux d’erreur désigne les cas où l’observateur a bien détecté l’individu, mais a attribué une phénologie incorrecte. Enfin, le taux de détection correspond simplement au fait que l’observateur a vu et signalé l’individu.
 
-## Adéquation et fiabilité des observateurs
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE, results=FALSE}
+Nous avons distingué trois variables mesurées. Le *risque d’erreur* correspond à l’estimation que les observateurs font de leur propre fiabilité, basée sur leur auto‑évaluation dans le questionnaire. Le *taux d’erreur* désigne les cas où l’observateur a bien détecté l’individu, mais a attribué une phénologie incorrecte. Enfin, le *taux de détection* correspond simplement au fait que l’observateur a vu et signalé l’individu.
+
+## II.i Adéquation et fiabilité des observateurs
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, results=FALSE}
 
 # ------------------------------------------------------------
 # 1. Taux d’erreur d’adéquation par observateur
@@ -1896,9 +1899,11 @@ tx_erreur_fin <- experience2 %>%
 
 ```
 
-### Erreur d’attribution phénologique vs non-détection
+## II.ii Erreur d’attribution phénologique vs non-détection
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+Nous regardons ici si les personnes n'ayant pas détecté ou on fait une erreur d'attribution de la phénologie font généralement les meme erreurs
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
 ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
   geom_point(
@@ -1937,9 +1942,13 @@ ggplot(tx_erreur_fin, aes(x = tx_erreur, y = 1 - tx_detect)) +
   )
 ```
 
-### Autonotation vs erreur d'attribution phénologique
+**Résultats** : Le graphique montre que les observateurs qui ont du mal à attribuer correctement les stades phénologiques ont aussi tendance à manquer davantage d’événements.
+Cela peut indiquer : une difficulté générale avec l’identification, un effet d’expérience (moins d’habitude → plus d’erreurs), ou des différences individuelles dans la rigueur ou la méthode.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+## II.iii Autonotation vs erreur d'attribution phénologique
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
   geom_point(
     aes(color = sexe.x, size = id_total),
@@ -1977,9 +1986,11 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = tx_erreur)) +
   )
 ```
 
-### Autonotation vs non-détection
+**Résultats** : Le graphique montre que les observateurs qui s'estiment moins compétents ont tendance à faire plus d'erreur d'attribution des péhonologies.
 
-```{r, echo=FALSE, message=FALSE, warning=FALSE}
+## II.iv Autonotation vs non-détection
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   geom_point(
     aes(color = sexe.x, size = id_total),
@@ -2017,27 +2028,27 @@ ggplot(tx_erreur_fin, aes(x = risque_erreur, y = 1 - tx_detect)) +
   )
 ```
 
-## Analyses complémentaires
+**Résultats** : Le graphique montre que les observateurs qui s'estiment moins compétents ont tendance à moins détecter les individus.
 
-###Visualiser les 3 variables en 3D
+## II.v Analyses complémentaires
 
-```{r}
-# ------------------------------------------------------------
-# Visualisation des 3 axes en 3D 
-# ------------------------------------------------------------
+**Visualiser les 3 variables en 3D**
 
-# Graphique 3D interactif avec taille fixe
+Nous pouvons représenter ces trois variables dans un espace en trois dimensions afin de mieux visualiser et distinguer l’effet propre de chacune d’elles. Afin de comprendre quels facteurs influencent le risque d’erreur auto‑évalué, nous avons réalisé plusieurs analyses statistiques. Nous avons d’abord testé la relation monotone entre le taux d’erreur réel et le taux de détection à l’aide d’une corrélation de Spearman. Nous avons ensuite ajusté plusieurs modèles linéaires visant à prédire le risque d’erreur auto‑évalué à partir du taux d’erreur, du taux de non‑détection et du nombre de détections. Enfin, nous avons comparé ces modèles à l’aide du critère AIC pour identifier celui qui explique le mieux la variation observée. Ces tests permettent donc d’évaluer dans quelle mesure l’auto‑évaluation reflète réellement les performances mesurées.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 plot_ly(
   tx_erreur_fin,
   x = ~tx_erreur,
   y = ~risque_erreur,
-  z = ~ (1 - tx_detect),
+  z = ~(1 - tx_detect),
   type = "scatter3d",
   mode = "markers+text",
   text = ~Observateur,
   textposition = "top center",
   marker = list(
-    size = 5,  # taille fixe pour tous les points
+    size = 5,
     color = ~ifelse(sexe.x == "f", "#E41A1C", "#377EB8"),
     opacity = 0.8
   ),
@@ -2057,22 +2068,18 @@ plot_ly(
       yaxis = list(title = "Risque d'erreur (auto-évaluation)"),
       zaxis = list(title = "Taux de non-détection")
     ),
-    title = "Graphique 3D interactif des erreurs et non-détection"
+    title = "Graphique 3D interactif des erreurs et de la non-détection"
   )
 
-# ------------------------------------------------------------
-# Corrélation
-# ------------------------------------------------------------
+# CORRÉLATION SPEARMAN
 
-cor.test(
+cor_spear <- cor.test(
   tx_erreur_fin$tx_detect,
   tx_erreur_fin$tx_erreur,
   method = "spearman"
 )
 
-# ------------------------------------------------------------
-# Modèles linéaires
-# ------------------------------------------------------------
+# MODÈLES LINÉAIRES
 
 model1_autonotation <- lm(
   risque_erreur ~ tx_erreur + tx_detect,
@@ -2089,35 +2096,64 @@ model3_autonotation <- lm(
   data = tx_erreur_fin
 )
 
-summary(model1_autonotation)
-anova(model1_autonotation)
-
-summary(model2_autonotation)
-anova(model2_autonotation)
-
-summary(model3_autonotation)
-anova(model3_autonotation)
-
-#Avec apprentissage
+# Avec variable d’apprentissage
 model3_autonotation_app <- lm(
   risque_erreur ~ tx_erreur + nb_detect,
   data = tx_erreur_fin
 )
 
-summary(model3_autonotation_app)
-anova(model3_autonotation_app)
+# TABLEAU : COEFFICIENTS DES MODÈLES
 
-# ------------------------------------------------------------
-# Comparaison des modèles
-# ------------------------------------------------------------
+tab_modeles <- list(
+  Model1 = tidy(model1_autonotation),
+  Model2 = tidy(model2_autonotation),
+  Model3 = tidy(model3_autonotation),
+  Model3_app = tidy(model3_autonotation_app)
+)
 
-AIC(model1_autonotation, model2_autonotation, model3_autonotation)
+kable(
+  do.call(rbind, lapply(names(tab_modeles), function(n) {
+    cbind(Model = n, tab_modeles[[n]])
+  })),
+  caption = "Coefficients et significativité des modèles linéaires",
+  digits = 4
+) %>%
+  kable_styling(full_width = FALSE)
+
+# TABLEAU : R² ET AIC DES MODÈLES
+
+perf_models <- data.frame(
+  Model = c("Model1", "Model2", "Model3", "Model3_app"),
+  AIC = c(
+    AIC(model1_autonotation),
+    AIC(model2_autonotation),
+    AIC(model3_autonotation),
+    AIC(model3_autonotation_app)
+  ),
+  R2 = c(
+    summary(model1_autonotation)$r.squared,
+    summary(model2_autonotation)$r.squared,
+    summary(model3_autonotation)$r.squared,
+    summary(model3_autonotation_app)$r.squared
+  )
+)
+
+kable(
+  perf_models,
+  caption = "Comparaison des modèles (AIC et R²)",
+  digits = 3
+) %>%
+  kable_styling(full_width = FALSE)
 
 ```
 
-### Effet du sexe
+**Résultats** : Les analyses montrent que l’auto‑évaluation du risque d’erreur n’est pas entièrement déconnectée des performances réellement mesurées, mais qu’elle ne s’appuie pas uniformément sur toutes les dimensions objectives de ces performances. En particulier, le taux d’erreur observé lors du test terrain apparaît comme un prédicteur significatif et positif du risque perçu dans les modèles les plus simples. Cela signifie que les personnes qui commettent davantage d’erreurs sur le terrain ont tendance à s’attribuer un risque d’erreur plus élevé, révélant une certaine capacité à se situer par rapport à leurs performances réelles.
 
-```{r}
+**Effet du genre**
+
+La littérature en psychologie suggère, dans plusieurs contextes d’évaluation, que des différences de perception de compétence peuvent apparaître entre femmes et hommes, certaines études mettant notamment en évidence une tendance plus marquée à la sous‑estimation de soi dans certains groupes. Dans notre travail, il nous semblait donc pertinent d’examiner si un effet lié au genre pouvait également émerger dans notre jeu de données. 
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 library(ggpubr)
 
 cols_sexe <- c("f" = "#E41A1C", "m" = "#377EB8")
@@ -2128,8 +2164,8 @@ ggplot(tx_erreur_fin, aes(x = sexe.x, y = risque_erreur, fill = sexe.x)) +
   scale_fill_manual(values = cols_sexe) +
   stat_compare_means(method = "wilcox.test", label = "p.format") +
   labs(
-    title = "Risque d'erreur selon le sexe",
-    x = "Sexe",
+    title = "Risque d'erreur selon le genre",
+    x = "Genre",
     y = "Risque d'erreur"
   ) +
   theme_minimal()
@@ -2141,8 +2177,8 @@ ggplot(tx_erreur_fin, aes(x = sexe.x, y = tx_detect, fill = sexe.x)) +
   scale_fill_manual(values = cols_sexe) +
   stat_compare_means(method = "wilcox.test", label = "p.format") +
   labs(
-    title = "Taux de détection selon le sexe",
-    x = "Sexe",
+    title = "Taux de détection selon le genre",
+    x = "Genre",
     y = "Taux de détection"
   ) +
   theme_minimal()
@@ -2154,29 +2190,31 @@ ggplot(tx_erreur_fin, aes(x = sexe.x, y = tx_erreur, fill = sexe.x)) +
   scale_fill_manual(values = cols_sexe) +
   stat_compare_means(method = "wilcox.test", label = "p.format") +
   labs(
-    title = "Taux d'erreur d'attribution selon le sexe",
-    x = "Sexe",
+    title = "Taux d'erreur d'attribution selon le genre",
+    x = "Genre",
     y = "Taux d'erreur"
   ) +
   theme_minimal()
 
 ```
 
-Méthode d'interprétation : Ces graphiques permettent de comparer visuellement si les performances des observateurs diffèrent selon le sexe. Le boxplot du risque d’erreur montre si hommes et femmes s’auto‑évaluent différemment en termes de confiance ou de prudence. Celui du taux de détection indique si un sexe repère plus souvent les individus que l’autre. Enfin, le boxplot du taux d’erreur d’attribution révèle si l’un des deux groupes se trompe davantage dans l’identification de la phénologie. Les p‑values affichées sur les graphiques permettent de savoir si les différences observées sont statistiquement significatives ou si elles relèvent simplement de la variabilité individuelle.
+**Méthode d'interprétation** : Ces graphiques permettent de comparer visuellement si les performances des observateurs diffèrent selon le genre. Le boxplot du risque d’erreur montre si hommes et femmes s’auto‑évaluent différemment en termes de confiance ou de prudence. Celui du taux de détection indique si un genre repère plus souvent les individus que l’autre. Enfin, le boxplot du taux d’erreur d’attribution révèle si l’un des deux groupes se trompe davantage dans l’identification de la phénologie. Les p$_{value}$ affichées sur les graphiques permettent de savoir si les différences observées sont statistiquement significatives ou si elles relèvent simplement de la variabilité individuelle.
 
-Résultats : Nous n’avons observé aucune différence significative entre les sexes, quelle que soit la variable d’erreur considérée.
+**Résultats** : Nous n’avons observé aucune différence significative entre les genre, quelle que soit la variable d’erreur considérée. Il n'est donc pas pertinent d'utiliser cette variable.
 
-# --------------------------------------------------
 
-# PROBABILITE DE DETECTION
 
-## --------------
+# III. PROBABILITE DE DETECTION
 
-## V_i GLMM
+Dans cette partie, nous étudions la probabilité de détection du Sabot‑de‑Vénus.
 
-On a plusieurs strates et on veut seulement une covariable "recouvrement". On utilise donc une ACP pour compiler les variables avec l'inertie sur l'axe 1 et 2.
 
-```{r, message=FALSE, echo=FALSE}
+
+## III.i GLMM
+
+Nous disposons de plusieurs strates, mais nous souhaitons n’utiliser qu’une seule covariable représentant le recouvrement. Pour cela, nous avons recours à une ACP, qui permet de combiner les variables initiales en un indicateur synthétique basé sur l’inertie des axes 1 et 2. 
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 # préparation variables pour GLMM
 tab_complet <- tab_complet %>% 
   mutate(
@@ -2189,7 +2227,6 @@ tab_complet <- tab_complet %>%
     marquage = as.factor(marquage),
     quadrat = as.factor(quadrat)
   )
-str(tab_complet)
 
 tab_complet <- tab_complet %>% 
   mutate(
@@ -2237,67 +2274,95 @@ ggplot(tab_complet)+
   
 ```
 
-Pour éviter la colinéarité entre les stades phénologiques et la taille, deux modèles sont effectués en mettant à chaque fois une des deux variables. Les modèles sont des GLMM binomiaux avec comme variable réponse détection. Les variables explicatives fixes sont : - le site : On s'attend à ce que la détectabilité varie entre sites - la session : On s'attend à ce que la détectabilité augmente avec le temps - l'interaction site et session : on s'attend à ce que la détection dans les sites ne réagisse pas de la même manière au cours du temps - la phénologie observée par les opérateurs : On s'attend à ce que le stade juvénile soit détectable moins facilement et à des erreurs entre fleurs fannées et non fleuri - l'interaction site et phénologie : on s'attend à ce la détection dans les sites ne soit pas la même en fonction des stades phénologiques - les strates végétales : on s'attend à ce que la détectabilité soit moins bonnes dans des zones denses - le risque d'erreur basé sur l'autonotation des observateurs : on s'attend à ce que la détectabilité diminue avec le risque d'erreur
+Afin d’éviter la colinéarité entre les stades phénologiques et la taille des individus, nous avons ajusté deux modèles distincts, chacun incluant uniquement l’une de ces deux variables. Ces modèles sont des *GLMM binomiaux*, dont la variable réponse est la *détection* (détecté / non détecté). 
 
-Les variables explicatives aléatoires sont : - l'individu emboité dans quadra (déjà intégré dans notre écriture de l'individu) - le quadra emboité dans site (déjà intégré dans notre écriture du quadrat) - l'observateur
+Les **variables explicatives** fixes intégrées sont les suivantes :
 
-```{r, echo=FALSE}
-#Modèle stade phénologique
+le *site* : nous anticipons des différences de détectabilité entre sites en raison de conditions environnementales ou structurelles distinctes ;
+
+la *session* : la détectabilité pourrait augmenter au fil du temps, en raison d’une meilleure familiarité des observateurs ou d’une phénologie plus avancée ;
+
+l’interaction entre le *site* et la *session* : nous supposons que l’évolution de la détectabilité au cours du temps pourrait varier d’un site à l’autre ;
+
+la *phénologie* observée par les opérateurs : nous nous attendons à une détectabilité plus faible pour les stades juvéniles et à des confusions possibles entre certains stades (par exemple entre “fleurs fanées” et “non fleuri”) ;
+
+l’interaction entre le *site* et la *phénologie* : la manière dont la phénologie influence la détection pourrait différer selon les sites ;
+
+les *strates végétales* : une végétation dense devrait réduire la probabilité de détection ;
+
+le *risque d’erreur* issu de l’auto‑évaluation des observateurs : nous formulons l’hypothèse que la détectabilité diminue lorsque le risque d’erreur perçu est plus élevé.
+
+Les **effets aléatoires** inclus dans les modèles reflètent la structure hiérarchique des données :
+
+l’*individu*, emboîté dans le *quadrat* (déjà pris en compte dans la structure d’identifiant) ;
+le *quadrat*, emboîté dans le *site* ;
+l’*observateur*, afin de tenir compte des variations inter‑individuelles de compétence et de style d’observation.
+
+
+## Modèle site et session
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 glmm_final_pheno <- glmer(
-  detection ~ site + session + site:session + phenologie_verif + nb_individus_sc + risque_erreur + nb_detect_sc + hauteur_moy_sc + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
+  detection ~ site + session + site:session + phenologie_verif +
+    nb_individus_sc + risque_erreur + nb_detect_sc + hauteur_moy_sc +
+    (1 | observateur) +
+    (1 | site:quadrat:marquage) +
+    (1 | site:quadrat),
   data = tab_complet,
   family = binomial,
   control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))
 )
 
-summary(glmm_final_pheno)
-Anova(glmm_final_pheno, type = 3)
-#effet faible de la strate herbacée, effet de la phénologie, du risque d'erreur et de l'interaction site-session
-#Vérification surdispersion
-# Simuler les résidus
+# -------------------------------------------------------------------
+# Tableau kable des coefficients
+# -------------------------------------------------------------------
+
+coef_tab <- broom.mixed::tidy(glmm_final_pheno, effects = "fixed")
+
+kable(
+  coef_tab,
+  caption = "Coefficients du modèle GLMM (effets fixes) – Modèle phénologie",
+  digits = 4,
+  align = "c"
+) %>%
+  kable_styling(full_width = FALSE)
+
+# -------------------------------------------------------------------
+# Vérification de la surdispersion
+# -------------------------------------------------------------------
+
 res_bin <- simulateResiduals(glmm_final_pheno)
-plot(res_bin)  # QQ-plot, résidus vs prédictions
-testDispersion(res_bin)
-#surdispersion <1,1 modèle valide
+plot(res_bin)
+testDispersion(res_bin)  # surdispersion < 1, modèle OK
+
+# -------------------------------------------------------------------
+# R² marginal et conditionnel
+# -------------------------------------------------------------------
 
 r2(glmm_final_pheno)
-#Les variables fixes du modèle expliquent 18% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 54% ce qui montre une forte influence des effets aléatoires.
+# R² marginal = variance expliquée par les variables fixes
+# R² conditionnel = variance expliquée en incluant les effets aléatoires
 
-#Vérification surdispersion
-# Simuler les résidus
-res_bin <- simulateResiduals(glmm_final_pheno)
-plot(res_bin)  # QQ-plot, résidus vs prédictions
-testDispersion(res_bin)
-#surdispersion <1,1 modèle valide
+# -------------------------------------------------------------------
+# Effet marginal – Interaction site × session
+# -------------------------------------------------------------------
 
-r2(glmm_final_pheno)
-#Les variables fixes du modèle expliquent 35% de la variance de la détection. En incluant les effets aléatoire la part de variance expliquée monte à 64% ce qui montre une forte influence des effets aléatoires.
-
-```
-
-Pour chaque variabe ayant un effet significatif sur la détectabilité, son effet dans le modèle sur la détectabilité a été représenté graphiquement avec un intervalle de confiance à 95%. Cette modèlisation permet d'isolet l'effet propre à chaque variable du modèle.
-
-#Partie modèle phénologie
-
-##Pour l'interaction site et session
-
-```{r, message=FALSE, echo=FALSE}
-#Pour l'interaction session x site
 emm_site_session <- emmeans(
   glmm_final_pheno,
-  ~ site * session,          # prédire toutes les combinaisons
-  type = "response"          # retourne la probabilité (échelle 0-1)
+  ~ site * session,
+  type = "response"
 )
 
-# Convertir en data.frame pour ggplot
 emm_site_session_df <- as.data.frame(emm_site_session)
 
 ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8)) +
-  geom_errorbar(aes(ymin = asymp.LCL, ymax = asymp.UCL),
-                position = position_dodge(width = 0.8),
-                width = 0.2) +
-  scale_y_continuous(limits = c(0,1)) +
+  geom_errorbar(
+    aes(ymin = asymp.LCL, ymax = asymp.UCL),
+    position = position_dodge(width = 0.8),
+    width = 0.2
+  ) +
+  scale_y_continuous(limits = c(0, 1)) +
   labs(
     x = "Site",
     y = "Probabilité de détection",
@@ -2306,10 +2371,14 @@ ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
   ) +
   theme_classic(base_size = 14)
 ```
+**Méthode d'interprétation** : Le tableau des coefficients indique pour chaque variable si elle augmente ou diminue la probabilité de détection et si son effet est significatif, ce qui permet d’identifier les prédicteurs réellement influents dans le modèle. La vérification de la surdispersion sert à contrôler la validité statistique du GLMM : une surdispersion proche de 1 confirme que le modèle est bien ajusté. Les valeurs de R² marginal et conditionnel renseignent sur la part de variance expliquée par les seules variables fixes, puis par l’ensemble du modèle incluant les effets aléatoires, indiquant ainsi la contribution des différences entre observateurs et entre quadrats. Enfin, les estimations marginales (EMMEANS) permettent de visualiser comment la probabilité de détection varie selon les combinaisons site × session, en isolant l’effet propre de cette interaction et en fournissant des intervalles de confiance qui facilitent l’interprétation des différences entre groupes. 
 
-##Pour le stade phénologique
+**Résultats** : Les résultats du modèle indiquent que plusieurs variables influencent significativement la probabilité de détection du Sabot‑de‑Vénus. La phénologie présente un effet marqué : certains stades, notamment les stades jeunes ou difficiles à distinguer, réduisent clairement la détectabilité. Le risque d’erreur auto‑évalué par les observateurs a également un effet négatif significatif, suggérant que les personnes se percevant comme moins sûres d’elles détectent effectivement moins bien les individus. L’interaction entre le site et la session est également significative, indiquant que l’évolution de la détectabilité au cours du temps varie d’un site à l’autre, possiblement en lien avec des dynamiques locales de phénologie, de structure de végétation ou d’expérience acquise.
+Le modèle montre une bonne qualité d’ajustement : l’absence de surdispersion (test DHARMa) confirme sa validité statistique. Les variables fixes expliquent environ 18 % de la variance totale, tandis que l’inclusion des effets aléatoires (observateur, quadrats et leurs imbrications) porte l’explication à 54 %, ce qui souligne l’importance des effets individuels et spatiaux dans la probabilité de détection. Cela confirme que, au‑delà des caractéristiques mesurées, des différences systématiques entre observateurs et entre quadrats influencent fortement la probabilité de détecter un individu.
 
-```{r, message=FALSE, echo=FALSE}
+## Modèle stade phénologique
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #Pour le stade phénologique
 emm_phenologie <- emmeans(
   glmm_final_pheno,
@@ -2343,16 +2412,17 @@ ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
   theme_classic(base_size = 14)
 
 ```
+**Méthode d'interprétation** : L’estimation marginale issue d’*EMMEANS* pour les stades phénologiques permet d’obtenir, pour chaque stade, la probabilité moyenne de détection en contrôlant pour toutes les autres variables du modèle. Le graphique associé représente ces probabilités sur l’échelle réelle (0‑1), avec un intervalle de confiance à 95 %, ce qui permet d’évaluer visuellement les différences de détectabilité entre stades. Si une barre est plus basse ou si son intervalle de confiance ne chevauche pas celui d’un autre stade, cela indique une différence significative dans la probabilité de détection. Ce type de sortie permet donc d’isoler l’effet propre du stade phénologique sur la détectabilité, indépendamment de la structure spatiale, de l’observateur ou des autres covariables incluses dans le modèle.
 
-##Pour le nombre de ramets par quadrat
+**Résultats** : Les individus en *fleurs* sont les plus facilement détectés, suivis des stades *fleurs fanées* et *fruits*, qui restent bien visibles. Les *non‑fleuris* sont détectés moins souvent, et les *juvéniles* présentent de loin la plus faible probabilité de détection. La détectabilité diminue donc nettement pour les stades peu visibles ou de petite taille. 
 
-```{r}
+## Modèle nombre de ramets par quadrat
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la densité d'individus
 #Préparer moyenne et écart type pour détransformer ma variable
 mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
 sd_densite <- sd(tab_complet$nb_individus, na.rm = T)
-mu_densite
-sd_densite
 
 emm_densite <- emmeans(
   glmm_final_pheno,
@@ -2380,10 +2450,13 @@ ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
        y = "Probabilité de détection")+
   theme_minimal()
 ```
+**Méthode d'interprétation** : Cette sortie permet de visualiser comment la probabilité de détection varie selon le nombre réel d’individus dans un quadrat. La variable étant centrée‑réduite dans le modèle, on la retransforme pour lire la densité sur son échelle d’origine. La courbe montre la tendance moyenne (probabilité de détection) et le ruban représente l’incertitude (IC à 95%). Si la probabilité augmente avec la densité, la détection est facilitée par un plus grand nombre d’individus ; si elle reste stable ou diminue, la densité n’améliore pas ou réduit la détectabilité.
 
-##Pour le risque d'erreur
+**Résultats** : Le graphique montre que la probabilité de détection diminue clairement lorsque le nombre d’individus dans un quadrat augmente. À faible densité, la détection est presque parfaite, mais elle se dégrade progressivement avec l’augmentation du nombre d’individus, jusqu’à devenir nettement plus faible dans les quadrats les plus denses. Cette baisse suggère que la présence de nombreux individus complique le repérage précis de chacun, probablement en raison d’un effet de confusion, de saturation visuelle ou d’enchevêtrement de la végétation. L’élargissement de l’intervalle de confiance aux densités élevées indique aussi plus d’incertitude dans ces conditions, ce qui reflète une variabilité importante de la détection lorsque le quadrat est très rempli. 
 
-```{r, message=FALSE, echo=FALSE}
+## Modèle risque d'erreur
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour le risque d'erreur lié à l'autonotation
 emm_risque_erreur <- emmeans(
   glmm_final_pheno,
@@ -2408,16 +2481,15 @@ ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
        y = "Probabilité de détection")+
   theme_minimal()
 ```
+**Résultats** : La probabilité de détection diminue progressivement à mesure que le risque d’erreur auto‑évalué augmente. Les observateurs qui s’estiment peu susceptibles de se tromper détectent mieux les individus, tandis que ceux qui déclarent un risque d’erreur élevé présentent une détectabilité nettement plus faible. La pente continue du graphique indique une relation négative régulière, et l’élargissement de l’intervalle de confiance aux valeurs hautes montre une plus grande variabilité entre observateurs fortement incertains.
 
-##Pour le nombre de détection par observateur
+## Modèle nombre de détection par observateur
 
-```{r, message=FALSE, echo=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
 mu_nb_detect <- mean(tab_complet$nb_detect, na.rm = T)
 sd_nb_detect <- sd(tab_complet$nb_detect, na.rm = T)
-mu_nb_detect
-sd_nb_detect
 
 emm_nb_detect <- emmeans(
   glmm_final_pheno,
@@ -2448,15 +2520,15 @@ ggplot(emm_nb_detect_df, aes(x = nb_detect_reelle, y = prob)) +
 
 ```
 
-##Pour la densité de couvert végétal
+**Résultats** : Le graphique montre comment la probabilité de détection varie selon le nombre réel d’individus détectés par un observateur. Après transformation inverse de la variable centrée‑réduite, la courbe révèle une tendance nette : plus un observateur a détecté d’individus au total, plus sa probabilité de détection augmente. Cette relation positive traduit un effet d’apprentissage ou d’habituation : les observateurs gagnent en efficacité au fur et à mesure qu’ils détectent davantage d’individus. Le ruban gris indique l’incertitude autour de l’estimation, plus large aux extrêmes où les données sont moins nombreuses, mais la tendance reste clairement ascendante. 
 
-```{r, message=FALSE, echo=FALSE}
+## Modèle densité de couvert végétal
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
 mu_hauteur_moy <- mean(tab_complet$hauteur_moy, na.rm = T)
 sd_hauteur_moy <- sd(tab_complet$hauteur_moy, na.rm = T)
-mu_hauteur_moy
-sd_hauteur_moy
 
 emm_hauteur_moy <- emmeans(
   glmm_final_pheno,
@@ -2484,80 +2556,58 @@ ggplot(emm_hauteur_moy_df, aes(x = hauteur_moy_reelle, y = prob)) +
        y = "Probabilité de détection")+
   theme_minimal()
 
-
 ```
 
+**Résultats** : La probabilité de détection augmente légèrement lorsque la densité moyenne du couvert végétal augmente. Même si la pente reste faible, la tendance suggère que les individus situés dans des zones à couvert un peu plus dense ne sont pas plus difficiles à détecter, et pourraient même être légèrement plus visibles. L’intervalle de confiance large montre toutefois une forte variabilité, indiquant que cet effet reste modeste et moins bien contraint que d’autres variables du modèle. 
 
-## V_ii Détection de la phénologie
+## III.i Détection de la phénologie
 
-```{r}
-unique(tab_complet$phenologie)
-unique(tab_complet$phenologie_verif)
+Nous avons construit une matrice de confusion sous forme de heatmap afin d’identifier clairement l’origine des erreurs de classification de la phénologie et de visualiser leur fréquence. Cette représentation met en évidence, en un seul coup d’œil, quels stades sont correctement reconnus et lesquels sont le plus souvent confondus, tout en indiquant le nombre exact d’observations dans chaque cas. 
 
-#création tableau
-detect_comp <- tab_complet %>% 
-  ungroup() %>% 
-  filter(detection == 1) %>% #on ne garde que les individus détectés par les observateurs
-  select(id_ind_fin,session,site,quadrat,marquage,phenologie_verif,phenologie)
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 
+# Silence global
+options(dplyr.summarise.inform = FALSE)
 
-unique(detect_comp$phenologie)
-unique(detect_comp$phenologie_verif) #toujours des NA avec phénologie superviseuses
+# Nettoyage et préparation
+detect_comp <- tab_complet %>%
+  ungroup() %>%
+  filter(detection == 1) %>%
+  select(id_ind_fin, session, site, quadrat, marquage, phenologie_verif, phenologie)
 
-detect_comp %>% 
-  filter(is.na(phenologie_verif))
-#deux pheno non observées par superviseuses
-tab_complet %>% 
-  filter(id_ind_fin == "VC.Q4.45.3")
-#Vu par un observateur/6
+# Retrait des individus sans phénologie vérifiée
+detect_comp <- detect_comp %>% filter(!is.na(phenologie_verif))
 
-tab_complet %>% 
-  filter(id_ind_fin == "VC.Q4.19.3")
-#Vu par un observateur/6
-
-#j'enlève ces deux individus des analyses
-detect_comp <- detect_comp %>% 
-  filter(!is.na(phenologie_verif))
-
-#matrice de confusion
+# Matrices de confusion
 conf_mat <- table(
   phenologie_verif = tab_complet$phenologie_verif,
   phenologie = tab_complet$phenologie
 )
 
-conf_mat
-
-#Version proportions
 prop_conf_mat <- prop.table(conf_mat, margin = 1)
 
-prop_conf_mat
-
-#Transformer matrices en data frame
+# Mise en data frame
 conf_df <- as.data.frame(conf_mat)
 prop_df <- as.data.frame(prop_conf_mat)
 
-# Renommage explicite (évite TOUS les bugs)
 names(conf_df) <- c("phenologie_verif", "phenologie", "n")
 names(prop_df) <- c("phenologie_verif", "phenologie", "prob")
 
-#Tableau graphique
+# Fusion pour heatmap
 heat_df <- conf_df %>%
-  left_join(prop_df,
-            by = c("phenologie_verif", "phenologie")) %>%
+  left_join(prop_df, by = c("phenologie_verif", "phenologie")) %>%
   mutate(
     correct = phenologie_verif == phenologie,
     signed_prob = ifelse(correct, prob, -prob)
-  )
-
-#standardisation de mes probas pour que ça rende joli sur le graphique
-heat_df <- heat_df %>%
+  ) %>%
   mutate(
     signed_prob_scaled = case_when(
-      correct ~ prob / max(prob[correct]),               # 0 → 1 pour les bons
-      !correct ~ -prob / max(prob[!correct])              # 0 → -1 pour les erreurs
+      correct ~ prob / max(prob[correct]),
+      !correct ~ -prob / max(prob[!correct])
     )
   )
 
+# Ordre des niveaux
 heat_df$phenologie_verif <- factor(
   heat_df$phenologie_verif,
   levels = c("juv", "non_fleuri", "fleur", "fleurs_fanees","fruit")
@@ -2568,14 +2618,13 @@ heat_df$phenologie <- factor(
   levels = c("juv", "non_fleuri", "fleur", "fleurs_fanees","fruit")
 )
 
-#Heat map avec le nombre d'observations
-ggplot(heat_df,
-       aes(x = phenologie, y = phenologie_verif)) +
-  
+# ------------------------------------------------------------
+# HEATMAP — NOMBRE D’OBSERVATIONS
+# ------------------------------------------------------------
+
+ggplot(heat_df, aes(x = phenologie, y = phenologie_verif)) +
   geom_tile(aes(fill = signed_prob_scaled)) +
-  
   geom_text(aes(label = n), size = 4, color = "black") +
-  
   scale_fill_gradient2(
     low = "darkred",
     mid = "white",
@@ -2589,7 +2638,7 @@ ggplot(heat_df,
       juv = "Juvéniles",
       non_fleuri = "Non fleuris",
       fleur = "Fleurs",
-      fleurs_fanees = "Fleurs fannées",
+      fleurs_fanees = "Fleurs fanées",
       fruit = "Fruits"
     )
   ) +
@@ -2598,30 +2647,28 @@ ggplot(heat_df,
       juv = "Juvéniles",
       non_fleuri = "Non fleuris",
       fleur = "Fleurs",
-      fleurs_fanees = "Fleurs fannées",
+      fleurs_fanees = "Fleurs fanées",
       fruit = "Fruits"
     )
   ) +
-  
   labs(
     x = "Phénologie observée",
     y = "Phénologie réelle",
-    title = "Matrice de confusion de la phénologie"  ) +
-  
+    title = "Matrice de confusion de la phénologie"
+  ) +
   theme_minimal(base_size = 13) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     panel.grid = element_blank()
   )
 
-#Heat map avec les proportions
-ggplot(heat_df,
-       aes(x = phenologie, y = phenologie_verif)) +
-  
+# ------------------------------------------------------------
+# HEATMAP — PROPORTIONS
+# ------------------------------------------------------------
+
+ggplot(heat_df, aes(x = phenologie, y = phenologie_verif)) +
   geom_tile(aes(fill = signed_prob_scaled)) +
-  
   geom_text(aes(label = round(prob,2)), size = 4, color = "black") +
-  
   scale_fill_gradient2(
     low = "darkred",
     mid = "white",
@@ -2635,7 +2682,7 @@ ggplot(heat_df,
       juv = "Juvéniles",
       non_fleuri = "Non fleuris",
       fleur = "Fleurs",
-      fleurs_fanees = "Fleurs fannées",
+      fleurs_fanees = "Fleurs fanées",
       fruit = "Fruits"
     )
   ) +
@@ -2644,45 +2691,30 @@ ggplot(heat_df,
       juv = "Juvéniles",
       non_fleuri = "Non fleuris",
       fleur = "Fleurs",
-      fleurs_fanees = "Fleurs fannées",
+      fleurs_fanees = "Fleurs fanées",
       fruit = "Fruits"
     )
   ) +
-  
   labs(
     x = "Phénologie observée",
     y = "Phénologie réelle",
-    title = "Matrice de confusion de la phénologie"  ) +
-  
+    title = "Matrice de confusion de la phénologie"
+  ) +
   theme_minimal(base_size = 13) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
     panel.grid = element_blank()
   )
-
-#Si on veut faire la même chose par sites
-conf_par_site <- tab_complet %>%
-  group_by(site) %>%
-  summarise(
-    conf = list(table(phenologie_verif, phenologie)),
-    .groups = "drop"
-  )
-
-prop.table(conf_par_site$conf[[1]], margin = 1)
-prop.table(conf_par_site$conf[[2]], margin = 1)
-prop.table(conf_par_site$conf[[3]], margin = 1)
-prop.table(conf_par_site$conf[[4]], margin = 1)
-prop.table(conf_par_site$conf[[5]], margin = 1)
-
-
-
-
-
 ```
+**Méthode d'interprétation** : La heat map compare la phénologie réellement observée sur le terrain (axe vertical) avec celle déclarée par les observateurs (axe horizontal). Chaque case montre combien d’individus ont été classés dans chaque catégorie, et la couleur indique la qualité de l’observation : vert si la phénologie a été correctement identifiée, rouge si elle a été confondue. Plus la couleur est foncée, plus l’accord ou l’erreur est marqué. L’interprétation consiste donc à vérifier que les diagonales sont vertes (bonnes identifications) et à examiner les zones rouges pour repérer les stades les plus souvent confondus.
 
-## V_iii Détection en fonction du nombre d'observateurs
+**Résultats** : Les stades *Fleurs* et *Fruits* sont bien identifiés, avec une forte proportion de détections correctes (cases vertes). En revanche, les stades *Juvéniles* et *Non fleuris* génèrent beaucoup d’erreurs : les juvéniles sont très souvent confondus avec les non fleuris, et inversement. Le stade *Fleurs fanées* est également sujet à confusion, particulièrement vers le stade *Non fleuris*. Globalement, seuls les stades florifères sont bien reconnus, tandis que les stades précoces et intermédiaires sont régulièrement mal identifiés, ce qui met en évidence une forte difficulté d’identification hors période de floraison.
 
-```{r}
+## III.i Détection en fonction du nombre d'observateurs
+
+Nous estimons l’effet du nombre d’observateurs sur la détectabilité par bootstrap : pour chaque valeur de kkk (1 à 5), nous échantillonnons aléatoirement kkk observateurs sans remise, calculons pour chaque individu s’il a été détecté par au moins l’un d’eux, puis le taux moyen de détection du quadrat (répété B=100B=100B=100 fois). Nous obtenons ainsi, par site et par session, une courbe du taux de détection moyen avec un intervalle d’incertitude (2,5–97,5 %). En complément, nous simulons un scénario “débutants” en ne retenant que les deux observateurs au risque d’erreur le plus élevé (proxy d’un faible niveau d’expérience) et comparons leurs taux de détection par site et par session. Cette approche permet d’isoler l’apport marginal d’observateurs supplémentaires et d’évaluer l’impact potentiel d’une équipe peu expérimentée sur la détectabilité.
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #fonction bootstrap
 bootstrap_detection <- function(df, k, B = 100) {
   
@@ -2781,32 +2813,40 @@ tab_complet_debut_detect2 <- tab_complet_debut_detect %>%
   group_by()
 
 ```
+**Résultats** : 
+Effet du nombre d’observateurs : 
+Dans tous les sites et sessions, le taux de détection augmente légèrement avec le nombre d’observateurs : la pente est positive mais modeste, et l’incertitude (rubans) reste largement chevauchante, surtout aux extrêmes, ce qui suggère des rendements décroissants au‑delà de 3–4 personnes. Les niveaux de départ diffèrent selon les sites (effet de contexte) et les sessions, mais la tendance générale est cohérente : ajouter des observateurs améliore la détectabilité de quelques points, sans saut majeur.
 
-# --------------------------------------------------
+Deux observateurs débutants : 
+Le scénario “débutants” montre des taux de détection plus faibles et plus variables, surtout en début de saison et dans certains sites. On observe toutefois une amélioration au fil des sessions (effet d’apprentissage/familiarisation), avec des performances parfois proches d’un plafond dans les contextes les plus favorables. Globalement, équiper une équipe uniquement de débutants pénalise la détectabilité, de façon hétérogène selon les sites, d’où l’intérêt de panacher avec au moins un observateur expérimenté et de planifier plusieurs passages.
 
-# PROBABILITE DE TRANSITION
 
-## --------------
+# IV. PROBABILITE DE TRANSITION
 
-# CMR
+Dans cette partie, nous étudions la probabilité de transition du Sabot‑de‑Vénus.
 
-## --------------
 
-## VII_iAnalyse des transitions phénologiques avec et sans MARK
 
-###VII_i.i Toutes transitions
+# IV.i CMR
 
-#### Sans Mark
 
-```{r}
-# -------------------------------
+
+## Analyse des transitions phénologiques avec et sans MARK
+
+Nous avons estimé les probabilités de transition entre stades phénologiques en utilisant deux approches complémentaires. La première repose sur un calcul empirique simple, basé sur les fréquences observées de passage d’un stade au suivant. La seconde utilise *RMark* pour modéliser explicitement les transitions dans un cadre de type multistrate, où chaque strate correspond à un stade phénologique. Dans ce modèle, la survie a été fixée à 1, car sa valeur observée (≈ 0,98) est très élevée et n’apporte ni information écologique pertinente ni avantage statistique dans le contexte de notre étude. Cette approche permet de tenir compte de l’incertitude et de la structure des données tout en garantissant des probabilités de transition biologiquement cohérentes. 
+
+**Méthode d'interprétation** : Les valeurs de la matrice de transition représentent, pour chaque stade phénologique, la probabilité qu’un individu reste dans ce même stade ou passe à un autre lors de la session suivante. Chaque ligne correspond au stade de départ, et la somme des probabilités de chaque ligne est égale à 1 après ajout de la probabilité de rester dans le même état. Une valeur élevée indique qu’une transition est fréquente dans les données, alors qu’une valeur proche de zéro signale une transition rare ou biologiquement improbable. Le fait d’imposer une probabilité nulle pour « Fruit → Fruit » reflète simplement qu’aucune stabilité de ce stade n’a été observée dans les données. Ce type de matrice permet donc de visualiser facilement les trajectoires phénologiques dominantes et les stades les plus dynamiques.
+
+## Transitions session 1 → 2 → 3
+
+### Sans Mark
+
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
+
 # 1. Charger les données
-# -------------------------------
 data<- data_original
 
-# -------------------------------
 # 2. Préparer les données phénologiques
-# -------------------------------
 phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
 
 phenologie_transi_tot <- data %>%
@@ -2839,9 +2879,7 @@ phenologie_transi_tot %>%
 phenologie_transi_tot <- phenologie_transi_tot %>%
   mutate(phenoS2 = replace_na(phenoS2, 0))
 
-# -------------------------------
 # 3. Calcul empirique des transitions 1 → 2 → 3
-# -------------------------------
 phenologie_transi_tot_long <- phenologie_transi_tot %>%
   pivot_longer(cols = c(phenoS1, phenoS2, phenoS3),
                names_to = "session",
@@ -2859,8 +2897,6 @@ transitions_transi_tot <- phenologie_transi_tot_long %>%
 nb_transitions_transi_tot <- transitions_transi_tot %>%
   count(etat, etat_suivant, name = "n")
 
-nb_transitions_transi_tot
-
 #Probabilité de transition
 psi_transi_tot <- nb_transitions_transi_tot %>%
   group_by(etat) %>%
@@ -2868,9 +2904,6 @@ psi_transi_tot <- nb_transitions_transi_tot %>%
   mutate(psi = n / sum(n)) %>%
   ungroup()
   
-
-psi_transi_tot
-
 #Retransformer phénologie en caractères
 codes_pheno <- c(
   "1" = "j",   # juvénile
@@ -2886,8 +2919,6 @@ psi_lisible_transi_tot <- psi_transi_tot %>%
     etat_suivant = codes_pheno[as.character(etat_suivant)]
   )
 
-psi_lisible_transi_tot
-
 #Matrice de probabilité de transition
 matrice_psi_transi_tot <- psi_lisible_transi_tot %>%
   select(etat, etat_suivant, psi) %>%
@@ -2900,11 +2931,6 @@ matrice_psi_transi_tot <- psi_lisible_transi_tot %>%
 psi_matrix_transi_tot <- matrice_psi_transi_tot %>%
   column_to_rownames("etat") %>%  # 'etat' devient les noms de lignes
   as.matrix()
-
-psi_matrix_transi_tot
-
-#Vérification
-rowSums(psi_matrix_transi_tot)
 
 states <- c("j", "nf", "f", "ff", "F")
 
@@ -2921,10 +2947,10 @@ psi_matrix_full_transi_tot[
   colnames(psi_matrix_transi_tot)
 ] <- psi_matrix_transi_tot
 
-# -------------------------------
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 # 4. Visualisation avec DiagrammeR
-# -------------------------------
-library(DiagrammeR)
 
 states <- c("j", "nf", "f", "ff", "F")
 num_states <- length(states)
@@ -2950,9 +2976,9 @@ grViz(dot_code)
 
 ```
 
-#### Avec Mark
+### Avec Mark
 
-```{r}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 # Créer le champ "ch" pour MARK
 phenologie_transi_tot <- phenologie_transi_tot %>%
   mutate(ch = paste0(phenoS1, phenoS2, phenoS3))
@@ -3075,6 +3101,9 @@ diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
 #enlever la valeur pour la transition de Fruit à Fruit puisque non observée dans la réalité
 Psi_matrix["Fruit", "Fruit"] <- 0
 
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
 num_states <- length(states)
 
@@ -3108,329 +3137,16 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
 
-## --------------
+## Transitions session 1 → 2
 
-# CMR
+### Sans Mark
 
-## --------------
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 
-## VII_iAnalyse des transitions phénologiques avec et sans MARK
-
-###VII_i.i Toutes transitions
-
-#### Sans Mark
-
-```{r}
-# -------------------------------
 # 1. Charger les données
-# -------------------------------
-data<- data_original
-
-# -------------------------------
-# 2. Préparer les données phénologiques
-# -------------------------------
-phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
-
-phenologie_transi_tot <- data %>%
-  dplyr::select(ID_ind, phenoS1, phenoS2, phenoS3) %>%
-  mutate(
-    phenoS1 = phenology_codes[phenoS1],
-    phenoS2 = phenology_codes[phenoS2],
-    phenoS3 = phenology_codes[phenoS3]
-  )
-
-# transformer les individus avec NA dans phenoS1,  ou phenoS3 par des 0 en se disant qu'individu était sûrement absent ou est mort
-phenologie_transi_tot <- phenologie_transi_tot %>%
-  mutate(phenoS1 = replace_na(phenoS1, 0),
-         phenoS3 = replace_na(phenoS3, 0)
-         )
-
-#Vérification des phénologie à la session 2 = NA
-phenologie_transi_tot %>% 
-  filter(is.na(phenoS2))
-#44 lignes
-
-phenologie_transi_tot %>% 
-  filter(is.na(phenoS2) & phenoS1 == 0)
-#43 lignes
-
-phenologie_transi_tot %>% 
-  filter(is.na(phenoS2) & phenoS3 == 0)
-#1 ligne
-#Toutes les phénologies en NA à la session 2 sont collées à des phénologies en 0 soit à la S1 soit à la S3 donc on peut aussi les transformer en 0
-phenologie_transi_tot <- phenologie_transi_tot %>%
-  mutate(phenoS2 = replace_na(phenoS2, 0))
-
-# -------------------------------
-# 3. Calcul empirique des transitions 1 → 2 → 3
-# -------------------------------
-phenologie_transi_tot_long <- phenologie_transi_tot %>%
-  pivot_longer(cols = c(phenoS1, phenoS2, phenoS3),
-               names_to = "session",
-               values_to = "etat") %>%
-  mutate(session = as.integer(gsub("phenoS", "", session)))
-
-# Calculer les transitions successives
-transitions_transi_tot <- phenologie_transi_tot_long %>%
-  group_by(ID_ind) %>%
-  mutate(etat_suivant = lead(etat)) %>%
-  ungroup() %>%
-  filter(!is.na(etat_suivant))
-
-#Calculer le nombre d'individus avec les mêmes transitions
-nb_transitions_transi_tot <- transitions_transi_tot %>%
-  count(etat, etat_suivant, name = "n")
-
-nb_transitions_transi_tot
-
-#Probabilité de transition
-psi_transi_tot <- nb_transitions_transi_tot %>%
-  group_by(etat) %>%
-  filter(etat != 0 & etat_suivant !=0) %>% #on enlève les individus absents qui ne font pas partie des proba de transitions phénologiques
-  mutate(psi = n / sum(n)) %>%
-  ungroup()
-  
-
-psi_transi_tot
-
-#Retransformer phénologie en caractères
-codes_pheno <- c(
-  "1" = "j",   # juvénile
-  "2" = "nf",  # non fleuri
-  "3" = "f",   # fleuri
-  "4" = "ff",  # fleurs fanées
-  "5" = "F"    # fruit
-)
-
-psi_lisible_transi_tot <- psi_transi_tot %>%
-  mutate(
-    etat = codes_pheno[as.character(etat)],
-    etat_suivant = codes_pheno[as.character(etat_suivant)]
-  )
-
-psi_lisible_transi_tot
-
-#Matrice de probabilité de transition
-matrice_psi_transi_tot <- psi_lisible_transi_tot %>%
-  select(etat, etat_suivant, psi) %>%
-  pivot_wider(
-    names_from = etat_suivant,
-    values_from = psi,
-    values_fill = 0
-  )
-
-psi_matrix_transi_tot <- matrice_psi_transi_tot %>%
-  column_to_rownames("etat") %>%  # 'etat' devient les noms de lignes
-  as.matrix()
-
-psi_matrix_transi_tot
-
-#Vérification
-rowSums(psi_matrix_transi_tot)
-
-states <- c("j", "nf", "f", "ff", "F")
-
-psi_matrix_full_transi_tot <- matrix(
-  0,
-  nrow = length(states),
-  ncol = length(states),
-  dimnames = list(states, states)
-)
-
-# Insertion de ta matrice observée
-psi_matrix_full_transi_tot[
-  rownames(psi_matrix_transi_tot),
-  colnames(psi_matrix_transi_tot)
-] <- psi_matrix_transi_tot
-
-# -------------------------------
-# 4. Visualisation avec DiagrammeR
-# -------------------------------
-library(DiagrammeR)
-
-states <- c("j", "nf", "f", "ff", "F")
-num_states <- length(states)
-
-dot_code <- "digraph pheno_transitions { 
-  rankdir=LR;
-  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
-  j; nf; f; ff; F;
-"
-
-for(i in 1:num_states){
-  for(j in 1:num_states){
-    prob <- psi_matrix_full_transi_tot[i,j]
-    if(!is.na(prob) && prob > 0){
-      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
-                         " [label=\"", round(prob, 3), "\"];\n")
-    }
-  }
-}
-
-dot_code <- paste0(dot_code, "}")
-grViz(dot_code)
-
-```
-
-#### Avec Mark
-
-```{r}
-# Créer le champ "ch" pour MARK
-phenologie_transi_tot <- phenologie_transi_tot %>%
-  mutate(ch = paste0(phenoS1, phenoS2, phenoS3))
-
-# Vérification
-stopifnot(all(nchar(phenologie_transi_tot$ch) == 3))
-
-# Préparer les données pour RMark
-ms_data <- process.data(
-  phenologie_transi_tot,
-  model = "Multistrata",
-  strata.labels = c("1","2","3","4","5")
-)
-
-ms_ddl <- make.design.data(ms_data)
-
-# interdiction totale par défaut
-ms_ddl$Psi$fix <- 0
-
-#Mettre les présupposé pour chaque stade phénologique :
-# j (1)
-ms_ddl$Psi$fix[
-  ms_ddl$Psi$stratum == "1" &
-  ms_ddl$Psi$tostratum %in% c("1","2","3","4", "5")
-] <- NA
-
-# nf (2)
-ms_ddl$Psi$fix[
-  ms_ddl$Psi$stratum == "2" &
-  ms_ddl$Psi$tostratum %in% c("2","3","4","5")
-] <- NA
-
-# f (3)
-ms_ddl$Psi$fix[
-  ms_ddl$Psi$stratum == "3" &
-  ms_ddl$Psi$tostratum %in% c("3","4","5")
-] <- NA
-
-# ff (4) : absorbant
-ms_ddl$Psi$fix[
-  ms_ddl$Psi$stratum == "4" &
-  ms_ddl$Psi$tostratum %in% c("4","5")
-] <- NA
-
-# F (5) : terminal (aucune transition)
-# tout reste à 0
-
-#CMR multistate de type Arnason-Schwarz
-# Modèle Multistrata avec RMark
-ms_model <- mark(
-  data = ms_data,
-  ddl  = ms_ddl,
-  model.parameters = list(
-    S = list(formula = ~ stratum),
-    Psi = list(formula = ~ stratum:tostratum),
-    p   = list(formula = ~1, fixed = 1)
-  )
-)
-
-# Résultats MARK
-df<- ms_model$results$real
-
-# Les noms de transition sont en rownames
-df <- df %>%
-  rownames_to_column(var = "full_name")  # crée une colonne full_name
-
-# Séparer la colonne full_name en colonnes param, from, to, etc.
-df <- df %>%
-  separate(full_name,
-           into = c("param","from","to","group","c","a","o","t"),
-           sep = " ",
-           fill = "right") %>%
-  rename(estimate = estimate,
-         se       = se,
-         lcl      = lcl,
-         ucl      = ucl)
-
-# Filtrer les transitions Psi et extraire les numéros de strate
-df_psi <- df %>%
-  filter(param == "Psi") %>%
-  mutate(
-    from = as.character(str_extract(from, "\\d+")),
-    to   = as.character(str_extract(to, "\\d+"))
-  ) %>%
-  filter(!is.na(from) & !is.na(to))
-
-# Identifier les strates réellement présentes
-states <- sort(unique(c(df_psi$from, df_psi$to)))
-num_states <- length(states)
-
-# Construire la matrice de transition (remplie uniquement avec les estimates existants)
-Psi_matrix <- matrix(0, nrow = num_states, ncol = num_states)
-rownames(Psi_matrix) <- states
-colnames(Psi_matrix) <- states
-
-for(i in 1:nrow(df_psi)){
-  from_state <- df_psi$from[i]
-  to_state   <- df_psi$to[i]
-  Psi_matrix[from_state, to_state] <- df_psi$estimate[i]
-}
-
-#Convertir chiffres en abréviation phénologie
-pheno_labels <- c(
-  "1" = "juv",
-  "2" = "nf",
-  "3" = "f",
-  "4" = "ff",
-  "5" = "F"
-)
-
-
-# renommage lignes / colonnes
-dimnames(Psi_matrix) <- list(
-  pheno_labels[as.character(1:5)],
-  pheno_labels[as.character(1:5)]
-)
-
-#Ajouter proba de rester au même stade phéno :
-diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
-
-states <- c("j", "nf", "f", "ff", "F")
-num_states <- length(states)
-
-# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
-dot_code <- "digraph pheno_transitions { 
-  rankdir=LR;
-  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
-"
-
-for(i in 1:num_states){
-  for(j in 1:num_states){
-    prob <- Psi_matrix[i,j]
-    if(!is.na(prob) && prob >= 0.0001){   # afficher seulement prob >= 0.01
-      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
-                         " [label=\"", round(prob,2), "\"];\n")
-    }
-  }
-}
-
-dot_code <- paste0(dot_code, "}")
-grViz(dot_code)
-```
-
-### VII_i.ii Transitions session 1 → 2
-
-#### Sans Mark
-
-```{r}
-# -------------------------------
-# 1. Charger les données
-# -------------------------------
 data <- data_original
 
-# -------------------------------
 # 2. Préparer les données phénologiques
-# -------------------------------
 phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
 
 phenologie_S1_S2 <- data %>%
@@ -3444,9 +3160,7 @@ phenologie_S1_S2 <- data %>%
     phenoS2 = replace_na(phenoS2, 0)
   )
 
-# -------------------------------
 # 3. Calcul empirique des transitions S1 → S2
-# -------------------------------
 transitions_S1_S2 <- phenologie_S1_S2 %>%
   filter(phenoS1 != 0 & phenoS2 != 0) %>%  # exclure absents
   count(phenoS1, phenoS2, name = "n")
@@ -3459,9 +3173,7 @@ psi_S1_S2 <- transitions_S1_S2 %>%
 
 psi_S1_S2
 
-# -------------------------------
 # 4. Rendre les états lisibles
-# -------------------------------
 codes_pheno <- c(
   "1" = "j",
   "2" = "nf",
@@ -3478,9 +3190,7 @@ psi_lisible_S1_S2 <- psi_S1_S2 %>%
 
 psi_lisible_S1_S2
 
-# -------------------------------
 # 5. Matrice de transition S1 → S2
-# -------------------------------
 matrice_psi_S1_S2 <- psi_lisible_S1_S2 %>%
   select(etat, etat_suivant, psi) %>%
   pivot_wider(
@@ -3498,10 +3208,8 @@ psi_matrix_S1_S2
 # Vérification
 rowSums(psi_matrix_S1_S2)
 
-# -------------------------------
-# 6. Visualisation avec DiagrammeR
-# -------------------------------
-library(DiagrammeR)
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 states <- c("j", "nf", "f", "ff", "F")
 
@@ -3525,16 +3233,11 @@ for(i in rownames(psi_matrix_S1_S2)){
 
 dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
-
-
 ```
 
-#### Avec RMark
+### Avec RMark
 
-```{r}
-# -------------------------------
-# 1. Créer le champ "ch" (2 occasions)
-# -------------------------------
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 
 phenologie_S1_S2 <- phenologie_transi_tot %>%
   dplyr::select(ID_ind, phenoS1, phenoS2) %>%
@@ -3544,9 +3247,7 @@ phenologie_S1_S2 <- phenologie_transi_tot %>%
 # Vérification
 stopifnot(all(nchar(phenologie_S1_S2$ch) == 2))
 
-# -------------------------------
 # 2. Préparer les données pour RMark
-# -------------------------------
 
 ms_data <- process.data(
   phenologie_S1_S2,
@@ -3556,9 +3257,7 @@ ms_data <- process.data(
 
 ms_ddl <- make.design.data(ms_data)
 
-# -------------------------------
 # 3. Contraintes biologiques sur Psi
-# -------------------------------
 
 # interdiction totale par défaut
 ms_ddl$Psi$fix <- 0
@@ -3590,10 +3289,7 @@ ms_ddl$Psi$fix[
 # F (5) : terminal
 # tout reste à 0
 
-# -------------------------------
 # 4. Modèle multistrate (1 transition)
-# -------------------------------
-
 ms_model <- mark(
   data = ms_data,
   ddl  = ms_ddl,
@@ -3604,10 +3300,7 @@ ms_model <- mark(
   )
 )
 
-# -------------------------------
 # 5. Extraction des résultats MARK
-# -------------------------------
-
 df <- ms_model$results$real %>%
   rownames_to_column("full_name") %>%
   separate(
@@ -3623,10 +3316,7 @@ df <- ms_model$results$real %>%
   ) %>%
   filter(!is.na(from) & !is.na(to))
 
-# -------------------------------
 # 6. Matrice de transition S1 → S2
-# -------------------------------
-
 states <- c("1","2","3","4","5")
 
 Psi_matrix <- matrix(0, nrow = 5, ncol = 5,
@@ -3639,10 +3329,7 @@ for(i in 1:nrow(df)){
 # Ajouter probabilité de rester dans le même stade
 diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
 
-# -------------------------------
 # 7. Renommage des stades
-# -------------------------------
-
 pheno_labels <- c(
   "1" = "j",
   "2" = "nf",
@@ -3656,6 +3343,9 @@ dimnames(Psi_matrix) <- list(pheno_labels, pheno_labels)
 Psi_matrix
 
 states <- colnames(Psi_matrix)
+
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 dot_code <- "digraph pheno_S1_S2 {
   rankdir=LR;
@@ -3680,19 +3370,16 @@ grViz(dot_code)
 
 ```
 
-### VII_i.iii Transitions session 2 → 3
+## Transitions session 2 → 3
 
-#### Sans RMark
+### Sans RMark
 
-```{r}
-# -------------------------------
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
+
 # 1. Charger les données
-# -------------------------------
 data <- data_original
 
-# -------------------------------
 # 2. Préparer les données phénologiques
-# -------------------------------
 phenology_codes <- c("j" = 1, "nf" = 2, "f" = 3, "ff" = 4, "F" = 5)
 
 phenologie_S2_S3 <- data %>%
@@ -3706,9 +3393,7 @@ phenologie_S2_S3 <- data %>%
     phenoS3 = replace_na(phenoS3, 0)
   )
 
-# -------------------------------
 # 3. Calcul empirique des transitions S1 → S2
-# -------------------------------
 transitions_S2_S3 <- phenologie_S2_S3 %>%
   filter(phenoS2 != 0 & phenoS3 != 0) %>%  # exclure absents
   count(phenoS2, phenoS3, name = "n")
@@ -3721,9 +3406,7 @@ psi_S2_S3 <- transitions_S2_S3 %>%
 
 psi_S2_S3
 
-# -------------------------------
 # 4. Rendre les états lisibles
-# -------------------------------
 codes_pheno <- c(
   "1" = "j",
   "2" = "nf",
@@ -3740,9 +3423,7 @@ psi_lisible_S2_S3 <- psi_S2_S3 %>%
 
 psi_lisible_S2_S3
 
-# -------------------------------
 # 5. Matrice de transition S1 → S2
-# -------------------------------
 matrice_psi_S2_S3 <- psi_lisible_S2_S3 %>%
   select(etat, etat_suivant, psi) %>%
   pivot_wider(
@@ -3760,10 +3441,10 @@ psi_matrix_S2_S3
 # Vérification
 rowSums(psi_matrix_S2_S3)
 
-# -------------------------------
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
 # 6. Visualisation avec DiagrammeR
-# -------------------------------
-library(DiagrammeR)
 
 states <- c("j", "nf", "f", "ff", "F")
 
@@ -3790,12 +3471,11 @@ grViz(dot_code)
 
 ```
 
-#### Avec RMark
+### Avec RMark
 
-```{r}
-# -------------------------------
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
+
 # 1. Créer le champ "ch" (2 occasions)
-# -------------------------------
 
 phenologie_S2_S3 <- phenologie_transi_tot %>%
   dplyr::select(ID_ind, phenoS2, phenoS3) %>%
@@ -3805,10 +3485,7 @@ phenologie_S2_S3 <- phenologie_transi_tot %>%
 # Vérification
 stopifnot(all(nchar(phenologie_S2_S3$ch) == 2))
 
-# -------------------------------
 # 2. Préparer les données pour RMark
-# -------------------------------
-
 ms_data <- process.data(
   phenologie_S2_S3,
   model = "Multistrata",
@@ -3817,10 +3494,7 @@ ms_data <- process.data(
 
 ms_ddl <- make.design.data(ms_data)
 
-# -------------------------------
 # 3. Contraintes biologiques sur Psi
-# -------------------------------
-
 # interdiction totale par défaut
 ms_ddl$Psi$fix <- 0
 
@@ -3851,10 +3525,7 @@ ms_ddl$Psi$fix[
 # F (5) : terminal
 # tout reste à 0
 
-# -------------------------------
 # 4. Modèle multistrate (1 transition)
-# -------------------------------
-
 ms_model <- mark(
   data = ms_data,
   ddl  = ms_ddl,
@@ -3865,10 +3536,7 @@ ms_model <- mark(
   )
 )
 
-# -------------------------------
 # 5. Extraction des résultats MARK
-# -------------------------------
-
 df <- ms_model$results$real %>%
   rownames_to_column("full_name") %>%
   separate(
@@ -3884,10 +3552,7 @@ df <- ms_model$results$real %>%
   ) %>%
   filter(!is.na(from) & !is.na(to))
 
-# -------------------------------
 # 6. Matrice de transition S1 → S2
-# -------------------------------
-
 states <- c("1","2","3","4","5")
 
 Psi_matrix <- matrix(0, nrow = 5, ncol = 5,
@@ -3900,10 +3565,7 @@ for(i in 1:nrow(df)){
 # Ajouter probabilité de rester dans le même stade
 diag(Psi_matrix) <- 1 - rowSums(Psi_matrix)
 
-# -------------------------------
 # 7. Renommage des stades
-# -------------------------------
-
 pheno_labels <- c(
   "1" = "j",
   "2" = "nf",
@@ -3917,6 +3579,9 @@ dimnames(Psi_matrix) <- list(pheno_labels, pheno_labels)
 Psi_matrix
 
 states <- colnames(Psi_matrix)
+
+```
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 dot_code <- "digraph pheno_S1_S2 {
   rankdir=LR;
@@ -3941,11 +3606,17 @@ grViz(dot_code)
 
 ```
 
-## --------------
 
-# CRDMS
 
-## --------------
+**Résultats** : Les probabilités de transition obtenues par calcul direct et celles issues de la modélisation sous RMARK sont globalement cohérentes. Bien qu’il soit difficile de déterminer laquelle des deux approches est la plus robuste, l’utilisation de MARK reste en principe mieux adaptée pour modéliser explicitement les processus de transition et d’incertitude. Dans notre cas, les deux méthodes montrent qu’il est particulièrement pertinent de se concentrer sur la transition entre la session 1 et la session 2 pour étudier le passage vers le stade *fleuri*, tandis que la session 2 vers la session 3 est plus informative pour analyser le passage du stade *fleuri* vers les stades suivants.
+
+Ces résultats suggèrent que la floraison s’étend principalement sur l’intervalle d’environ dix jours entre les sessions 1 et 2, période durant laquelle de nombreux individus *juvéniles* évoluent vers le stade *non fleuri*. À l’inverse, entre les sessions 2 et 3, qui sont espacées d’environ quarante jours au mois de juin, les fleurs ont davantage tendance soit à faner, soit à passer au stade fruit. Ces dynamiques reflètent donc clairement une progression phénologique rapide en mai, suivie d’une transition marquée vers la sénescence ou la fructification en juin. 
+
+
+
+# IV.ii CRDMS
+
+
 
 Capture-Recapture Data for Multi-State models
 
@@ -3953,592 +3624,693 @@ Dans les modèles multistrates de capture-recapture, le format CRDMS est utilis�
 
 ### Préparation tableau
 
-```{r}
-unique(tab_complet$phenologie_verif)
-#Transformer lignes phenologie ayant des NA en 0
-tab_complet <- tab_complet %>%
-  mutate(
-    phenologie_verif = as.character(phenologie_verif),
-    phenologie_verif = replace_na(phenologie_verif, "0")
-  )
-
-
-#Faire la même chose avec les tailles
-tab_complet <- tab_complet %>%
-  mutate(
-    taille = as.numeric(gsub(",", ".", taille)),
-    taille = replace_na(taille, 0)
-  )
-
-#Regarder le nombre d'observateurs par quadra
-tab_obs <- tab_complet %>% 
-  group_by(id_quadrat_fin, observateur) %>% 
-  summarise(n = 1, .groups = "drop") %>% 
-  ungroup()
-
-#Regarder le nombre de quadra observés par observateur
-tab_obs2 <- tab_obs %>% 
-  group_by(observateur) %>% 
-  summarise(nb_quadra = n()) %>% 
-  arrange(desc(nb_quadra))
-  
-#Regarder le nombre d'observations par quadra
-tab_obs_tot <- tab_obs %>% 
-  group_by(id_quadrat_fin) %>% 
-  summarise(nb_obs = n()) %>% 
-  ungroup()
-
-#Regarder pourcentages d'observations
-nb_obs <- tab_obs_tot %>% 
-  count(nb_obs) %>% 
-  mutate(pourcentage = round((n * 100) / sum(n), 2))
-
-nb_obs
-#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
-
-#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
-enlever <- tab_obs_tot %>% 
-  filter(nb_obs <5)
-enlever
-#quadra à enlever :
-# TCb.Q9.2
-# TCb.Q7.2
-# CM.Q7.2
-Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
-
-#extraire informations quadra avec 5 et 6 obs
-tab_obs_tot_5obs <- tab_obs_tot %>% 
-  filter(nb_obs == 5)
-
-tab_obs_tot_6obs <- tab_obs_tot %>% 
-  filter(nb_obs == 6)
-
-#Transvaser ces infos dans tableau complet
-tab_complet_5obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
-
-tab_complet_6obs <- tab_complet %>% 
-  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
-
-#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
-#Extraire nb obs par observateur
-tab_complet_5obs <- tab_complet_5obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-tab_tmp <- tab_complet_6obs %>%
-  left_join(tab_obs2, by = "observateur")
-
-#Garder 5 observations par individu/session/quadra/site
-tab_complet_5obs_6 <- tab_tmp %>%
-  group_by(id_ind_fin) %>%
-  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
-  ungroup()
-
-#Vérification si nombre de lignes semble bon
-nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
-nrow(tab_complet_5obs_6)
-
-#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
-tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
-ind_av_filtrage <- nrow(tab_complet_final)
-
-#Enlever les trois quadra ayant été tpartiellement supprimés
-tab_complet_final <- tab_complet_final %>% 
-  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
-ind_ap_filtrage <- nrow(tab_complet_final)
-#pourcentage indiv perdus :
-(1-(ind_ap_filtrage/ind_av_filtrage))*100
-
-#Vérification histoires de capture
-verif_sessions <- tab_complet_final %>%
-  group_by(ID_ind) %>%
-  summarise(
-    nb_sessions = n_distinct(session),
-    sessions = paste(sort(unique(session)), collapse = ","),
-    .groups = "drop"
-  )
-
-check_sessions <- verif_sessions %>%
-  mutate(
-    ok_sessions = sessions == "1,2,3"
-  )
-
-check_sessions %>%
-  filter(!ok_sessions)
-```
-
-### Préparation CRDMS Galad
-
-```{r}
-### codage numérique
-phenology_codes <- c(
-  "juv" = 1,
-  "non_fleuri" = 2,
-  "fleur" = 3,
-  "fleurs_fanees" = 4,
-  "fruit" = 5,
-  "0" = 0
-)
-
-#Remplacer les valeurs de NA pour la phénologie en 0 : pas vu par l'observateur
-tab_complet_final <- tab_complet_final %>% 
-  mutate(phenologie = replace_na(phenologie, "0"))
-
-#Enlever un individu bizarre
-data_original %>% 
-  filter(site == "Tete Cendree Haut" & quadrat == 1 & marquage == 0)
-tab_complet_final <- tab_complet_final %>% 
-  filter(ID_ind != "TCh.Q1.00")
-
-#On travaille avec la phénologie avérée des opératrices donc il faut garder sa valeur sauf quand l'observateur n'a rien mis et dans ce cas mettre un 0
-tab_complet_final <- tab_complet_final %>%
-  mutate(
-    phenologie_final = if_else(
-      phenologie == "0",
-      "0",
-      phenologie_verif
-    )
-  )
-
-#Histoires de capture par session
-tab_session <- tab_complet_final %>%
-  
-  ungroup() %>%   # sécurité
-  
-  ### 1. conversion phéno -> chiffre
-  mutate(code = phenology_codes[as.character(phenologie_final)]) %>%
-  
-  ### 2. ordre non obs puis obs
-  arrange(site, quadrat, marquage, session, code != 0) %>%
-
-  
-  ### 3. concaténer par individu × session
-  group_by(site, quadrat, marquage, session) %>%
-  summarise(
-    ch_session = paste0(code, collapse = ""),
-    .groups = "drop"
-  )
-
-#Vérification bon nombre par histoire de capture
-tab_session %>%
-  filter(str_length(ch_session) != 5)
-
-#Compilation des histoires de capture des trois sessions
-tab_final <- tab_session %>%
-  
-  ungroup() %>%
-  
-  ### ordre chronologique
-  arrange(session) %>%
-  
-  ### concaténation des 3 sessions
-  group_by(site, quadrat, marquage) %>%
-  summarise(
-    ch_final = paste0(ch_session, collapse = ""),
-    .groups = "drop"
-  )
-
-#Vérification bon nombre par histoire de capture
-tab_final %>%
-  filter(str_length(ch_final) != 15)
-
-
-# 3 primary periods (sessions) × 5 secondary occasions (observateurs)
-# Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
-# Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
-
-t.int <- c(
- 0,0,0,0,  
-  1,          
-  0,0,0,0,  
-  1,         
- 0,0,0,0  
-)
-
-crdms_input <- tab_final %>%
-  rename(ch = ch_final) %>%
-  group_by(site, ch) %>% 
-  summarise(freq= n(), .groups = "drop")
-
-#Enlever histoires de captures avec seulement des 0
-crdms_input %>%
-  filter(grepl("^0+$", ch))
-#6 individus enlevés
-
-crdms_input <- crdms_input %>%
-  filter(!grepl("^0+$", ch))
-
-#Modèle
-crdms.data<-process.data(crdms_input,
-                         model="CRDMS",
-                         group="site",
-                         time.interval=t.int,
-			strata.labels = c("1", "2", "3", "4", "5") #on ne mets pas le 0 sinon le modèle va calculer aussi la probabilité de passer de l'état 0 aux autres états
-)
-
-crdms.ddl <- make.design.data(crdms.data)
-
-#Beaucoup de paramètres
-# S = probabilité de survie
-# Psi = proba de transition d'état
-# p = proba de capture initiale
-# c = proba de recapture
-# f0 = nombre d'individus jamais capturés
-
-# ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
-#Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
-
-# Créer un index pour fixer p = 0 et c = 0 pour les états jamais observés ("0") si besoin
-crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-crdms.ddl$f0$fix[crdms.ddl$f$stratum == "0"] <- 0   # IMPORTANT (évite f0 instable)
-
-crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
-crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
-
-#Estimer un seul psi
-#crdms.ddl$Psi$share <- TRUE
-
-# interdiction totale par défaut
-crdms.ddl$Psi$fix <- 0
-
-
-#Contraindre les transitions d'état possibles
-#Mettre les présupposé pour chaque stade phénologique :
-# j (1)
-crdms.ddl$Psi$fix[
-  crdms.ddl$Psi$stratum == "1" &
-  crdms.ddl$Psi$tostratum %in% c("1","2","3","4", "5")
-] <- NA
-
-# nf (2)
-crdms.ddl$Psi$fix[
-  crdms.ddl$Psi$stratum == "2" &
-  crdms.ddl$Psi$tostratum %in% c("2","3","4","5")
-] <- NA
-
-# f (3)
-crdms.ddl$Psi$fix[
-  crdms.ddl$Psi$stratum == "3" &
-  crdms.ddl$Psi$tostratum %in% c("3","4","5")
-] <- NA
-
-# ff (4) : absorbant
-crdms.ddl$Psi$fix[
-  crdms.ddl$Psi$stratum == "4" &
-  crdms.ddl$Psi$tostratum %in% c("4","5")
-] <- NA
-
-# F (5) : terminal (aucune transition)
-# tout reste à 0
-
-# Définir S (survie apparente) constante pour tous les états
-S.dot <- list(formula = ~1, fixed = 1)
-
-# Définir p (probabilité de détection) variable selon la session + dire que c a la même proba
-p.session <- list(formula = ~session + site, share = TRUE)
-
-# Définir psi (proba de transition) variable selon la session
-Psi.model <- list(formula = ~ ctime + site)
-
-
-#Modèle 1
-mod <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(
-    S = S.dot,
-    p = p.session,
-    Psi = Psi.model
-  )
-)
-
-mod
-
-
-
-
-
-```
-
-### Préparation CRDMS
-
-```{r}
-# 1. On associe chaque état de phénologie à une lettre
-etat_phenologie <- c(
-  "non_fleuri"    = "N",
-  "juv"           = "J",
-  "fleur"        = "F",
-  "fleurs_fanees" = "B",
-  "fruit"         = "A",
-  "0" = "0"
-)
-
-tab_complet_finalA <- tab_complet_final %>%
-  mutate(
-    phenologie_verif = as.character(phenologie_verif),
-    etat = ifelse(is.na(phenologie_verif), "0", etat_phenologie[phenologie_verif])
-  )
-
-# 2. Anonymiser les observateurs par individu et session
-tab_complet_finalA <- tab_complet_finalA %>%
-  group_by(ID_ind, session) %>%
-  mutate(obs_id = paste0("O", row_number())) %>%  # O1 à O5 par session et individu
-  ungroup() %>%
-  mutate(sec = paste0("S", session, "_", obs_id))
-
-# 3. Pivot pour avoir large
-tab_wide <- tab_complet_finalA %>%
-  ungroup() %>%
-  select(ID_ind, sec, etat) %>%
-  pivot_wider(
-    names_from  = sec,
-    values_from = etat,
-    values_fill = "0"
-  )
-
-# 4. Réordonner les colonnes par session
-cols_order <- tab_wide %>%
-  select(-ID_ind) %>%
-  names() %>%
-  {.[order(as.numeric(sub("S(\\d+)_.*", "\\1", .)), match(., unique(.)))]}
-
-tab_wide <- tab_wide %>%
-  select(ID_ind, all_of(cols_order))
-
-# 5. Créer l'histoire de capture
-tab_wide <- tab_wide %>%
-  unite("ch", -ID_ind, sep = "", remove = FALSE)
-
-##On garde seulement la colonne ch, et on rajoute un compte de fréquence
-
-#Rajouter les fréquences
-tab_ch_freq <- tab_wide %>%
-  select(ch) %>%               # on ne garde que l'histoire de capture
-  group_by(ch) %>%             # on groupe par histoire unique
-  summarise(freq = n(), .groups = "drop")  # on compte combien d'individus ont cette histoire
-
-#Sans les fréquences (Pareil)
-tab_ch_freq <- tab_wide %>%
-  select(ch) %>%               # on ne garde que l'histoire de capture
-  group_by(ch)  # on compte combien d'individus ont cette histoire
-
-# 3 primary periods (sessions) × 5 secondary occasions (observateurs)
-# Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
-# Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
-
-t.int <- c(
- 0,0,0,0,  
-  1,          
-  0,0,0,0,  
-  1,         
- 0,0,0,0  
-)
-
-
-crdms.data<-process.data(tab_ch_freq,model="CRDMS",time.interval=t.int,
-			strata.labels = c("0", "N", "J", "F", "B", "A")
-)
-
-crdms.ddl <- make.design.data(crdms.data)
-
-# Créer un index pour fixer p = 0 pour les états jamais observés ("0") si besoin
-crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-
-# Créer une variable de temps pour les Psi si on veut un modèle markovien
-crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
-# Si tu veux contraindre la dernière transition entre sessions
-# ici on peut mettre ctime = 2 pour la 3ème session comme dans l'exemple
-crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
-
-# Définir S (survie apparente) constante pour tous les états
-S.dot <- list(formula = ~1)
-
-# Définir p (probabilité de détection) variable selon la session
-p.session <- list(formula = ~session, share = TRUE)
-```
-
-#Modèle CRDMS
-
-```{r}
-# Modèle 1 - Markovien sur la phénologie
-#Hypothèse : La probabilité qu’un individu change d’état dépend de son état actuel (stratum) et du temps (session).
-Psi.markov <- list(formula = ~ctime + stratum + tostratum)  
-
-model.1 <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(
-    S = S.dot,
-    p = p.session,
-    Psi = Psi.markov
-  ),
-  threads = 2,
-  delete = TRUE
-)
-
-# Modèle 2 - mouvement aléatoire
-#Hypothèse : Les transitions entre états sont aléatoires et ne dépendent pas de l’état actuel.Les changements dépendent seulement du temps (time) – toutes les transitions sont possibles avec une probabilité qui ne dépend pas de l’état courant.
-Psi.rand <- list(formula = ~time)
-
-model.2 <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(
-    S = S.dot,
-    p = p.session,
-    Psi = Psi.rand
-  ),
-  threads = 2,
-  delete = TRUE
-)
-
-# Modèle 3 - aucun mouvement (fixe)
-#Hypothèse : Il n’y a aucun changement d’état entre sessions.
-Psi.fix <- list(formula = ~1, fixed = 0)
-
-model.3 <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(
-    S = S.dot,
-    p = p.session,
-    Psi = Psi.fix
-  ),
-  threads = 2,
-  delete = TRUE
-)
-
-# Collecte et affichage des modèles
-crdms.res <- collect.models()
-print(crdms.res)
-```
-
-##test pour covariable :
-
-```{r}
-
-# 1. Associer chaque état de phénologie à une lettre
-etat_phenologie <- c(
-  "non_fleuri"     = "N",
-  "juv"            = "J",
-  "fleur"          = "F",
-  "fleurs_fanees"  = "B",
-  "fruit"          = "A",
-  "0"              = "0"
-)
-
-tab_complet_finalA <- tab_complet_final %>%
-  mutate(
-    phenologie_verif = as.character(phenologie_verif),
-    etat = ifelse(is.na(phenologie_verif),
-                  "0",
-                  etat_phenologie[phenologie_verif])
-  )
-
-# 2. Anonymiser les observateurs par individu et session
-tab_complet_finalA <- tab_complet_finalA %>%
-  group_by(ID_ind, session) %>%
-  mutate(obs_id = paste0("O", row_number())) %>%
-  ungroup() %>%
-  mutate(sec = paste0("S", session, "_", obs_id))
-
-# 3. Pivot pour avoir les colonnes des états
-tab_wide <- tab_complet_finalA %>%
-  select(ID_ind, sec, etat) %>%
-  pivot_wider(
-    names_from  = sec,
-    values_from = etat,
-    values_fill = "0"
-  )
-
-# 4. Réordonner les colonnes par session
-cols_order <- tab_wide %>%
-  select(-ID_ind) %>%
-  names() %>%
-  {.[order(
-    as.numeric(sub("S(\\d+)_.*", "\\1", .)),
-    match(., unique(.))
-  )]}
-
-tab_wide <- tab_wide %>%
-  select(ID_ind, all_of(cols_order))
-
-# 5. Ajouter le site comme covariable
-site_ind <- tab_complet_final %>%
-  select(ID_ind, site) %>%
-  distinct()
-
-tab_wide <- tab_wide %>%
-  left_join(site_ind, by = "ID_ind")
-
-# 6. Créer l'histoire de capture uniquement avec les colonnes d'états
-state_cols <- grep("^S[0-9]+_O[0-9]+$", names(tab_wide), value = TRUE)
-
-tab_wide <- tab_wide %>%
-  unite("ch", all_of(state_cols), sep = "", remove = FALSE)
-
-# 7. Compter la fréquence des histoires par site
-tab_ch_freq <- tab_wide %>%
-  group_by(ch, site) %>%
-  summarise(freq = n(), .groups = "drop")
-
-
-t.int <- c(
-  0,0,0,0,
-  1,
-  0,0,0,0,
-  1,
-  0,0,0,0
-)
-
-crdms.data <- process.data(
-  tab_ch_freq,
-  model = "CRDMS",
-  time.interval = t.int,
-  strata.labels = c("0","N","J","F","B","A")
-)
-
-crdms.ddl <- make.design.data(crdms.data)
-crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-
-crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
-crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
-
-S.dot <- list(formula = ~1)
-
-p.session <- list(
-  formula = ~session,
-  share = TRUE
-)
-
-Psi.markov.site <- list(formula = ~stratum + tostratum + ctime + site)
-
-
-model.1 <- mark(
-  crdms.data,
-  ddl = crdms.ddl,
-  model.parameters = list(
-    S   = S.dot,
-    p   = p.session,
-    Psi = Psi.markov.site
-  ),
-  threads = 2,
-  delete = TRUE
-)
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
+# unique(tab_complet$phenologie_verif)
+# #Transformer lignes phenologie ayant des NA en 0
+# tab_complet <- tab_complet %>%
+#   mutate(
+#     phenologie_verif = as.character(phenologie_verif),
+#     phenologie_verif = replace_na(phenologie_verif, "0")
+#   )
+# 
+# #Faire la même chose avec les tailles
+# tab_complet <- tab_complet %>%
+#   mutate(
+#     taille = as.numeric(gsub(",", ".", taille)),
+#     taille = replace_na(taille, 0)
+#   )
+# 
+# #Regarder le nombre d'observateurs par quadra
+# tab_obs <- tab_complet %>%
+#   group_by(id_quadrat_fin, observateur) %>%
+#   summarise(n = 1, .groups = "drop") %>%
+#   ungroup()
+# 
+# #Regarder le nombre de quadra observés par observateur
+# tab_obs2 <- tab_obs %>%
+#   group_by(observateur) %>%
+#   summarise(nb_quadra = n()) %>%
+#   arrange(desc(nb_quadra))
+# 
+# #Regarder le nombre d'observations par quadra
+# tab_obs_tot <- tab_obs %>%
+#   group_by(id_quadrat_fin) %>%
+#   summarise(nb_obs = n()) %>%
+#   ungroup()
+# 
+# #Regarder pourcentages d'observations
+# nb_obs <- tab_obs_tot %>%
+#   count(nb_obs) %>%
+#   mutate(pourcentage = round((n * 100) / sum(n), 2))
+# 
+# nb_obs
+# #A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+# 
+# #regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+# enlever <- tab_obs_tot %>%
+#   filter(nb_obs <5)
+# enlever
+# #quadra à enlever :
+# # TCb.Q9.2
+# # TCb.Q7.2
+# # CM.Q7.2
+# Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
+# 
+# #extraire informations quadra avec 5 et 6 obs
+# tab_obs_tot_5obs <- tab_obs_tot %>%
+#   filter(nb_obs == 5)
+# 
+# tab_obs_tot_6obs <- tab_obs_tot %>%
+#   filter(nb_obs == 6)
+# 
+# #Transvaser ces infos dans tableau complet
+# tab_complet_5obs <- tab_complet %>%
+#   semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
+# 
+# tab_complet_6obs <- tab_complet %>%
+#   semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
+# 
+# #Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
+# #Extraire nb obs par observateur
+# tab_complet_5obs <- tab_complet_5obs %>%
+#   left_join(tab_obs2, by = "observateur")
+# 
+# tab_tmp <- tab_complet_6obs %>%
+#   left_join(tab_obs2, by = "observateur")
+# 
+# #Garder 5 observations par individu/session/quadra/site
+# tab_complet_5obs_6 <- tab_tmp %>%
+#   group_by(id_ind_fin) %>%
+#   slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
+#   ungroup()
+# 
+# #Vérification si nombre de lignes semble bon
+# nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
+# nrow(tab_complet_5obs_6)
+# 
+# #Fusion des deux tableaux 5 obs et 5obs issu de 6obs
+# tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+# ind_av_filtrage <- nrow(tab_complet_final)
+# 
+# #Enlever les trois quadra ayant été tpartiellement supprimés
+# tab_complet_final <- tab_complet_final %>%
+#   filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+# ind_ap_filtrage <- nrow(tab_complet_final)
+# #pourcentage indiv perdus :
+# (1-(ind_ap_filtrage/ind_av_filtrage))*100
+# 
+# #Vérification histoires de capture
+# verif_sessions <- tab_complet_final %>%
+#   group_by(ID_ind) %>%
+#   summarise(
+#     nb_sessions = n_distinct(session),
+#     sessions = paste(sort(unique(session)), collapse = ","),
+#     .groups = "drop"
+#   )
+# 
+# check_sessions <- verif_sessions %>%
+#   mutate(
+#     ok_sessions = sessions == "1,2,3"
+#   )
+# 
+# check_sessions %>%
+#   filter(!ok_sessions)
+# 
+# ### codage numérique
+# phenology_codes <- c(
+#   "juv" = 1,
+#   "non_fleuri" = 2,
+#   "fleur" = 3,
+#   "fleurs_fanees" = 4,
+#   "fruit" = 5,
+#   "0" = 0
+# )
+# 
+# #Remplacer les valeurs de NA pour la phénologie en 0 : pas vu par l'observateur
+# tab_complet_final <- tab_complet_final %>%
+#   mutate(phenologie = replace_na(phenologie, "0"))
+# 
+# #Enlever un individu bizarre
+# data_original %>%
+#   filter(site == "Tete Cendree Haut" & quadrat == 1 & marquage == 0)
+# tab_complet_final <- tab_complet_final %>%
+#   filter(ID_ind != "TCh.Q1.00")
+# 
+# #On travaille avec la phénologie avérée des opératrices donc il faut garder sa valeur sauf quand l'observateur n'a rien mis et dans ce cas mettre un 0
+# tab_complet_final <- tab_complet_final %>%
+#   mutate(
+#     phenologie_final = if_else(
+#       phenologie == "0",
+#       "0",
+#       phenologie_verif
+#     )
+#   )
+# 
+# #Histoires de capture par session
+# tab_session <- tab_complet_final %>%
+# 
+#   ungroup() %>%   # sécurité
+# 
+#   ### 1. conversion phéno -> chiffre
+#   mutate(code = phenology_codes[as.character(phenologie_final)]) %>%
+# 
+#   ### 2. ordre non obs puis obs
+#   arrange(site, quadrat, marquage, session, code != 0) %>%
+# 
+# 
+#   ### 3. concaténer par individu × session
+#   group_by(site, quadrat, marquage, session) %>%
+#   summarise(
+#     ch_session = paste0(code, collapse = ""),
+#     .groups = "drop"
+#   )
+# 
+# #Vérification bon nombre par histoire de capture
+# tab_session %>%
+#   filter(str_length(ch_session) != 5)
+# 
+# #Compilation des histoires de capture des trois sessions
+# tab_final <- tab_session %>%
+# 
+#   ungroup() %>%
+# 
+#   ### ordre chronologique
+#   arrange(session) %>%
+# 
+#   ### concaténation des 3 sessions
+#   group_by(site, quadrat, marquage) %>%
+#   summarise(
+#     ch_final = paste0(ch_session, collapse = ""),
+#     .groups = "drop"
+#   )
+# 
+# #Vérification bon nombre par histoire de capture
+# tab_final %>%
+#   filter(str_length(ch_final) != 15)
+# 
+# 
+# # 3 primary periods (sessions) × 5 secondary occasions (observateurs)
+# # Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
+# # Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
+# 
+# t.int <- c(
+#  0,0,0,0,
+#   1,
+#   0,0,0,0,
+#   1,
+#  0,0,0,0
+# )
+# 
+# crdms_input <- tab_final %>%
+#   rename(ch = ch_final) %>%
+#   group_by(site, ch) %>%
+#   summarise(freq= n(), .groups = "drop")
+# 
+# #Enlever histoires de captures avec seulement des 0
+# crdms_input %>%
+#   filter(grepl("^0+$", ch))
+# #6 individus enlevés
+# 
+# crdms_input <- crdms_input %>%
+#   filter(!grepl("^0+$", ch))
+# 
+# #Modèle
+# crdms.data<-process.data(crdms_input,
+#                          model="CRDMS",
+#                          group="site",
+#                          time.interval=t.int,
+# 			strata.labels = c("1", "2", "3", "4", "5") #on ne mets pas le 0 sinon le modèle va calculer aussi la probabilité de passer de l'état 0 aux autres états
+# )
+# 
+# crdms.ddl <- make.design.data(crdms.data)
+# 
+# #Beaucoup de paramètres
+# # S = probabilité de survie
+# # Psi = proba de transition d'état
+# # p = proba de capture initiale
+# # c = proba de recapture
+# # f0 = nombre d'individus jamais capturés
+# 
+# # ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
+# #Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
+# 
+# # Créer un index pour fixer p = 0 et c = 0 pour les états jamais observés ("0") si besoin
+# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+# crdms.ddl$f0$fix[crdms.ddl$f$stratum == "0"] <- 0   # IMPORTANT (évite f0 instable)
+# 
+# crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
+# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
+# 
+# #Estimer un seul psi
+# #crdms.ddl$Psi$share <- TRUE
+# 
+# # interdiction totale par défaut
+# crdms.ddl$Psi$fix <- 0
+# 
+# 
+# #Contraindre les transitions d'état possibles
+# #Mettre les présupposé pour chaque stade phénologique :
+# # j (1)
+# crdms.ddl$Psi$fix[
+#   crdms.ddl$Psi$stratum == "1" &
+#   crdms.ddl$Psi$tostratum %in% c("1","2","3","4", "5")
+# ] <- NA
+# 
+# # nf (2)
+# crdms.ddl$Psi$fix[
+#   crdms.ddl$Psi$stratum == "2" &
+#   crdms.ddl$Psi$tostratum %in% c("2","3","4","5")
+# ] <- NA
+# 
+# # f (3)
+# crdms.ddl$Psi$fix[
+#   crdms.ddl$Psi$stratum == "3" &
+#   crdms.ddl$Psi$tostratum %in% c("3","4","5")
+# ] <- NA
+# 
+# # ff (4) : absorbant
+# crdms.ddl$Psi$fix[
+#   crdms.ddl$Psi$stratum == "4" &
+#   crdms.ddl$Psi$tostratum %in% c("4","5")
+# ] <- NA
+# 
+# # F (5) : terminal (aucune transition)
+# # tout reste à 0
+# 
+# # Définir S (survie apparente) constante pour tous les états
+# S.dot <- list(formula = ~1, fixed = 1)
+# 
+# # Définir p (probabilité de détection) variable selon la session + dire que c a la même proba
+# p.session <- list(formula = ~session + site, share = TRUE)
+# 
+# # Définir psi (proba de transition) variable selon la session
+# Psi.model <- list(formula = ~ ctime + site)
+# 
+# 
+# #Modèle 1
+# mod <- mark(
+#   crdms.data,
+#   ddl = crdms.ddl,
+#   model.parameters = list(
+#     S = S.dot,
+#     p = p.session,
+#     Psi = Psi.model
+#   )
+# )
+# 
+# mod
+# ```
+# 
+# ### Préparation CRDMS
+# 
+# ```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+# # 1. On associe chaque état de phénologie à une lettre
+# etat_phenologie <- c(
+#   "non_fleuri"    = "N",
+#   "juv"           = "J",
+#   "fleur"        = "F",
+#   "fleurs_fanees" = "B",
+#   "fruit"         = "A",
+#   "0" = "0"
+# )
+# 
+# tab_complet_finalA <- tab_complet_final %>%
+#   mutate(
+#     phenologie_verif = as.character(phenologie_verif),
+#     etat = ifelse(is.na(phenologie_verif), "0", etat_phenologie[phenologie_verif])
+#   )
+# 
+# # 2. Anonymiser les observateurs par individu et session
+# tab_complet_finalA <- tab_complet_finalA %>%
+#   group_by(ID_ind, session) %>%
+#   mutate(obs_id = paste0("O", row_number())) %>%  # O1 à O5 par session et individu
+#   ungroup() %>%
+#   mutate(sec = paste0("S", session, "_", obs_id))
+# 
+# # 3. Pivot pour avoir large
+# tab_wide <- tab_complet_finalA %>%
+#   ungroup() %>%
+#   select(ID_ind, sec, etat) %>%
+#   pivot_wider(
+#     names_from  = sec,
+#     values_from = etat,
+#     values_fill = "0"
+#   )
+# 
+# # 4. Réordonner les colonnes par session
+# cols_order <- tab_wide %>%
+#   select(-ID_ind) %>%
+#   names() %>%
+#   {.[order(as.numeric(sub("S(\\d+)_.*", "\\1", .)), match(., unique(.)))]}
+# 
+# tab_wide <- tab_wide %>%
+#   select(ID_ind, all_of(cols_order))
+# 
+# # 5. Créer l'histoire de capture
+# tab_wide <- tab_wide %>%
+#   unite("ch", -ID_ind, sep = "", remove = FALSE)
+# 
+# ##On garde seulement la colonne ch, et on rajoute un compte de fréquence
+# 
+# #Rajouter les fréquences
+# tab_ch_freq <- tab_wide %>%
+#   select(ch) %>%               # on ne garde que l'histoire de capture
+#   group_by(ch) %>%             # on groupe par histoire unique
+#   summarise(freq = n(), .groups = "drop")  # on compte combien d'individus ont cette histoire
+# 
+# #Sans les fréquences (Pareil)
+# tab_ch_freq <- tab_wide %>%
+#   select(ch) %>%               # on ne garde que l'histoire de capture
+#   group_by(ch)  # on compte combien d'individus ont cette histoire
+# 
+# # 3 primary periods (sessions) × 5 secondary occasions (observateurs)
+# # Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
+# # Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
+# 
+# t.int <- c(
+#  0,0,0,0,
+#   1,
+#   0,0,0,0,
+#   1,
+#  0,0,0,0
+# )
+# 
+# 
+# crdms.data<-process.data(tab_ch_freq,model="CRDMS",time.interval=t.int,
+# 			strata.labels = c("0", "N", "J", "F", "B", "A")
+# )
+# 
+# crdms.ddl <- make.design.data(crdms.data)
+# 
+# # Créer un index pour fixer p = 0 pour les états jamais observés ("0") si besoin
+# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+# 
+# # Créer une variable de temps pour les Psi si on veut un modèle markovien
+# crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
+# # Si tu veux contraindre la dernière transition entre sessions
+# # ici on peut mettre ctime = 2 pour la 3ème session comme dans l'exemple
+# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
+# 
+# # Définir S (survie apparente) constante pour tous les états
+# S.dot <- list(formula = ~1)
+# 
+# # Définir p (probabilité de détection) variable selon la session
+# p.session <- list(formula = ~session, share = TRUE)
+# ```
+# 
+# #Modèle CRDMS
+# 
+# ```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# # Modèle 1 - Markovien sur la phénologie
+# #Hypothèse : La probabilité qu’un individu change d’état dépend de son état actuel (stratum) et du temps (session).
+# Psi.markov <- list(formula = ~ctime + stratum + tostratum)
+# 
+# model.1 <- mark(
+#   crdms.data,
+#   ddl = crdms.ddl,
+#   model.parameters = list(
+#     S = S.dot,
+#     p = p.session,
+#     Psi = Psi.markov
+#   ),
+#   threads = 2,
+#   delete = TRUE
+# )
+# 
+# # Modèle 2 - mouvement aléatoire
+# #Hypothèse : Les transitions entre états sont aléatoires et ne dépendent pas de l’état actuel.Les changements dépendent seulement du temps (time) – toutes les transitions sont possibles avec une probabilité qui ne dépend pas de l’état courant.
+# Psi.rand <- list(formula = ~time)
+# 
+# model.2 <- mark(
+#   crdms.data,
+#   ddl = crdms.ddl,
+#   model.parameters = list(
+#     S = S.dot,
+#     p = p.session,
+#     Psi = Psi.rand
+#   ),
+#   threads = 2,
+#   delete = TRUE
+# )
+# 
+# # Modèle 3 - aucun mouvement (fixe)
+# #Hypothèse : Il n’y a aucun changement d’état entre sessions.
+# Psi.fix <- list(formula = ~1, fixed = 0)
+# 
+# model.3 <- mark(
+#   crdms.data,
+#   ddl = crdms.ddl,
+#   model.parameters = list(
+#     S = S.dot,
+#     p = p.session,
+#     Psi = Psi.fix
+#   ),
+#   threads = 2,
+#   delete = TRUE
+# )
+# 
+# # Collecte et affichage des modèles
+# crdms.res <- collect.models()
+# print(crdms.res)
+# ```
+# 
+# ##test pour covariable :
+# 
+# ```{r}
+# 
+# # 1. Associer chaque état de phénologie à une lettre
+# etat_phenologie <- c(
+#   "non_fleuri"     = "N",
+#   "juv"            = "J",
+#   "fleur"          = "F",
+#   "fleurs_fanees"  = "B",
+#   "fruit"          = "A",
+#   "0"              = "0"
+# )
+# 
+# tab_complet_finalA <- tab_complet_final %>%
+#   mutate(
+#     phenologie_verif = as.character(phenologie_verif),
+#     etat = ifelse(is.na(phenologie_verif),
+#                   "0",
+#                   etat_phenologie[phenologie_verif])
+#   )
+# 
+# # 2. Anonymiser les observateurs par individu et session
+# tab_complet_finalA <- tab_complet_finalA %>%
+#   group_by(ID_ind, session) %>%
+#   mutate(obs_id = paste0("O", row_number())) %>%
+#   ungroup() %>%
+#   mutate(sec = paste0("S", session, "_", obs_id))
+# 
+# # 3. Pivot pour avoir les colonnes des états
+# tab_wide <- tab_complet_finalA %>%
+#   select(ID_ind, sec, etat) %>%
+#   pivot_wider(
+#     names_from  = sec,
+#     values_from = etat,
+#     values_fill = "0"
+#   )
+# 
+# # 4. Réordonner les colonnes par session
+# cols_order <- tab_wide %>%
+#   select(-ID_ind) %>%
+#   names() %>%
+#   {.[order(
+#     as.numeric(sub("S(\\d+)_.*", "\\1", .)),
+#     match(., unique(.))
+#   )]}
+# 
+# tab_wide <- tab_wide %>%
+#   select(ID_ind, all_of(cols_order))
+# 
+# # 5. Ajouter le site comme covariable
+# site_ind <- tab_complet_final %>%
+#   select(ID_ind, site) %>%
+#   distinct()
+# 
+# tab_wide <- tab_wide %>%
+#   left_join(site_ind, by = "ID_ind")
+# 
+# # 6. Créer l'histoire de capture uniquement avec les colonnes d'états
+# state_cols <- grep("^S[0-9]+_O[0-9]+$", names(tab_wide), value = TRUE)
+# 
+# tab_wide <- tab_wide %>%
+#   unite("ch", all_of(state_cols), sep = "", remove = FALSE)
+# 
+# # 7. Compter la fréquence des histoires par site
+# tab_ch_freq <- tab_wide %>%
+#   group_by(ch, site) %>%
+#   summarise(freq = n(), .groups = "drop")
+# 
+# 
+# t.int <- c(
+#   0,0,0,0,
+#   1,
+#   0,0,0,0,
+#   1,
+#   0,0,0,0
+# )
+# 
+# crdms.data <- process.data(
+#   tab_ch_freq,
+#   model = "CRDMS",
+#   time.interval = t.int,
+#   strata.labels = c("0","N","J","F","B","A")
+# )
+# 
+# crdms.ddl <- make.design.data(crdms.data)
+# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+# 
+# crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
+# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
+# 
+# S.dot <- list(formula = ~1)
+# 
+# p.session <- list(
+#   formula = ~session,
+#   share = TRUE
+# )
+# 
+# Psi.markov.site <- list(formula = ~stratum + tostratum + ctime + site)
+# 
+# 
+# model.1 <- mark(
+#   crdms.data,
+#   ddl = crdms.ddl,
+#   model.parameters = list(
+#     S   = S.dot,
+#     p   = p.session,
+#     Psi = Psi.markov.site
+#   ),
+#   threads = 2,
+#   delete = TRUE
+# )
 
 
 ```
 
-## --------------
 
-# Annexes
 
-## --------------
+# V. Annexes
 
-## I ACP strates végétales
+
+
+## V.i RDA
+
+L’analyse factorielle discriminante (AFD) est une méthode statistique qui permet de déterminer si des groupes prédéfinis peuvent être différenciés à partir de variables explicatives. Elle cherche à identifier les combinaisons de variables qui séparent le mieux ces groupes.
+
+Dans ce travail, l’AFD est utilisée pour tester si les sites étudiés peuvent être distingués en fonction de la structure de la végétation, décrite par les recouvrements des différentes strates (muscinale, herbacée, arbustive et arborescente). L’objectif est donc de vérifier si chaque site présente une signature de recouvrement particulière et d’identifier quelles strates contribuent le plus à cette différenciation.
+
+Cette méthode suppose une variable réponse continue et des relations linéaires
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# -------------------------------
+# 1. LDA sur les données originales
+# -------------------------------
+afd_recouvrement <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = recouvrement
+)
+
+# -------------------------------
+# 2. Centrage et normalisation des variables
+# -------------------------------
+newdata <- as.data.frame(scale(recouvrement[, 4:8]))
+
+# On ajoute la variable de groupe (Site) pour l'analyse
+newdata$Site <- recouvrement$Site
+
+# -------------------------------
+# 3. LDA sur les données centrées-réduites
+# -------------------------------
+afd2 <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = newdata
+)
+
+# -------------------------------
+# 4. MANOVA pour tester les différences entre groupes
+# -------------------------------
+manova_res <- manova(as.matrix(recouvrement[, 4:8]) ~ recouvrement$Site)
+
+# -------------------------------
+# 5. Prédiction avec LDA
+# -------------------------------
+pred <- predict(afd2)
+a<- table(Site = recouvrement$Site, Predicted = pred$class)
+
+# -------------------------------
+# 6. Validation croisée (jackknife)
+# -------------------------------
+afd_cv <- lda(
+  Site ~ S_muscinale + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente,
+  data = newdata,
+  CV = TRUE
+)
+b<- table(Site = newdata$Site, Predicted = afd_cv$class)
+
+# -------------------------------
+# 7. AFD basée sur l'ACP centrée-réduite
+# -------------------------------
+pca_res <- dudi.pca(recouvrement[, 4:8], scannf = FALSE, nf = 3)
+afd3 <- discrimin(pca_res, factor(recouvrement$Site), scannf = FALSE, nf = 3) ## dans le nombre d'axe, indiquer la valeur adéquate dans pca_res$nf
+
+# Exploration des valeurs propres et des coefficients standardisés
+valeur_propres <- afd3$eig
+
+# Projection des variables sur les fonctions discriminantes
+# Créer une nouvelle fenêtre graphique (ou plot)
+s.arrow(afd3$fa)  
+
+# Projection des individus selon leur groupe
+s.class(afd3$li, factor(recouvrement$Site))
+
+#Regarder contribution relative des strates et des variables aux axes
+# strates
+tab_afd <- afd3$fa %>%
+  as.data.frame() %>%
+  mutate(
+    DS1 = round(DS1, 3),
+    DS2 = round(DS2, 3),
+    DS3 = round(DS3, 3)
+  ) %>%
+  tibble::rownames_to_column("strate")
+
+tab_afd %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Coefficients standardisés des strates sur les fonctions discriminantes (AFD)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
+# sites
+tab_afd <- afd3$gc %>%
+  as.data.frame() %>%
+  mutate(
+    DS1 = round(DS1, 3),
+    DS2 = round(DS2, 3),
+    DS3 = round(DS3, 3)
+  ) %>%
+  tibble::rownames_to_column("strate")
+
+tab_afd %>%
+  kbl(
+    booktabs = TRUE,
+    caption = "Coefficients standardisés des sites sur les fonctions discriminantes (AFD)"
+  ) %>%
+  kable_classic(full_width = FALSE)
+
+```
+
+**Méthode d'interprétation** : Les résultats de l’analyse factorielle discriminante (AFD) permettent de visualiser et d’expliquer les différences de composition végétale entre les sites étudiés. Le premier graphique montre la contribution des différentes strates de végétation aux axes discriminants : la longueur et la direction des flèches indiquent quelles strates participent le plus à la séparation des sites. Le second graphique représente la projection des individus regroupés par site : une bonne séparation entre les groupes traduit des différences nettes de recouvrement des strates entre les sites.Le tableau des coefficients standardisés sur les trois premières fonctions discriminantes (DS1, DS2, DS3) permet de quantifier l’importance relative de chaque strate dans la discrimination des sites.
+
+**Résultats** : Les strates muscinale et arbustive basse ont les coefficients les plus élevés sur les axes principaux (DS1 et DS2). Les autres strates contribuent moins à la séparation. Sur le premier axe (DS1), Combe Michaut est la plus positive et Vigne au Renard la plus négative, indiquant que ces deux sites sont les plus contrastés en termes de recouvrement des strates discriminantes, notamment muscinale et arbustive basse. Les autres sites se distinguent principalement sur le deuxième axe (DS2), avec Val Clavin très positive et Tête Cendrée haut négative. Les strates muscinale et arbustive basse sont les variables les plus informatives pour expliquer les différences de composition végétale entre les sites.
+
+## V.ii ACP strates végétales
 
 ```{r}
 # Extraire juste les colonnes numériques pour la PCA
@@ -4571,8 +4343,9 @@ tab_complet$recouvrement_PC1 <- acp1$li[,1]
 tab_complet$recouvrement_PC2 <- acp1$li[,2]
 ```
 
-##II.GLMM modèle Taille 
-```{r}
+## V.iii GLMM modèle Taille
+
+```{r, cache=TRUE}
 #Modèle taille
 glmm_final_taille <- glmer(
   detection ~ site + session + site:session + taille_sc + nb_individus_sc + risque_erreur + S_herbacee + S_arbustive_basse + S_arbustive_haute + S_arborescente + (1|observateur) + (1|site:quadrat:marquage) + (1|site:quadrat),
@@ -4597,7 +4370,7 @@ r2(glmm_final_taille)
 
 ###Pour l'interaction site et session
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, cache=TRUE}
 #Pour l'interaction session x site
 emm_site_session <- emmeans(
   glmm_final_taille,
@@ -4625,7 +4398,7 @@ ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
 
 ###Pour la taille
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, cache=TRUE}
 #pour la taille
 #Préparer moyenne et écart type pour détransformer ma variable
 mu_taille <- mean(tab_complet$taille, na.rm = T)
@@ -4662,7 +4435,7 @@ ggplot(emm_taille_df, aes(x = taille_reelle, y = prob)) +
 
 ###Pour le nombre de ramets par quadrat
 
-```{r}
+```{r, cache=TRUE}
 #pour la densité d'individus
 #Préparer moyenne et écart type pour détransformer ma variable
 mu_densite <- mean(tab_complet$nb_individus, na.rm = T)
@@ -4699,7 +4472,7 @@ ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
 
 ###Pour le risque d'erreur
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, cache=TRUE}
 #pour le risque d'erreur lié à l'autonotation
 emm_risque_erreur <- emmeans(
   glmm_final_taille,
@@ -4727,7 +4500,7 @@ ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
 
 ###Pour la strate herbacée
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, echo=FALSE, cache=TRUE}
 #prédictions marginales du modèle
 #Pour la strate herbacée
 emm_S_herbacee <- emmeans(
@@ -4752,23 +4525,3 @@ ggplot(emm_S_herbacee_df, aes(x = S_herbacee*10, y = prob)) +
   theme_minimal()
 
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
