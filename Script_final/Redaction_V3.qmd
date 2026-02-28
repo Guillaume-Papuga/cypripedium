@@ -47,7 +47,7 @@ knitr::opts_chunk$set(
 # INTRODUCTION
 
 <div style="text-align: justify;">
-   Le Sabot de Vénus (*Cypripedium calceolus* L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, elle peut jouer un rôle d’espèce parapluie, contribuant indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu :  
+   Le Sabot de Vénus (*Cypripedium calceolus* L.) est une orchidée terrestre présente dans les étages collinéen à subalpin (de 300 à 1600 mètres d’altitude). On la retrouve dans des milieux à climat frais et humide, avec des sols riches en calcaire et dans des habitats semi-ouverts permettant un accès à la lumière partiel. Comme de nombreuses orchidées, l’espèce présente un cycle de vie long et dépend fortement de symbioses mycorhiziennes, ce qui renforce sa sensibilité aux perturbations du milieu. En France, cette espèce est principalement localisée dans l’arc alpin même si elle est aussi présente moins fréquemment dans les Pyrénées, le Jura, le Massif central et le Nord-Est de la France. Cette espèce présente un fort intérêt patrimonial. Par ses exigences écologiques marquées, notamment son besoin de milieux forestiers semi-ouverts, sa conservation peut contribuer indirectement à la conservation d’autres espèces végétales associées. En effet, elle nécessite souvent une gestion pour garder des structures forestières ouvertes et éviter l’embroussaillement. Cette espèce est aussi réglementée par plusieurs statuts de protection lui conférant une protection face à la cueillette et à la destruction ou dégradation de son milieu :  
    
 - Au niveau **international**  par la Convention de Berne en tant qu’espèce strictement protégée (Annexe I) ; 
 
@@ -644,17 +644,20 @@ mod_glmm_gamma <- glmer(
 summary(mod_glmm_gamma)
 Anova(mod_glmm_gamma, type = 3)
 ```
+
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 
 #Vérification de la surdispersion
 res <- simulateResiduals(mod_glmm_gamma)
 testDispersion(res)
 ```
-```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
+```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 
 plot(res)
 #Le diagnostic de dispersion effectué avec DHARMa n’a montré aucune surdispersion (dispersion = 0,007, p < 0,001).
 ```
+
+
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 #Ajustement du modèle
 r2(mod_glmm_gamma)
@@ -739,7 +742,7 @@ ggplot(emm_df, aes(
   labs(
     x = "Session",
     y = "Taille prédite",
-    fill = "Phénologie"
+    fill = "Stade phénologique"
   ) +
   scale_fill_manual(values = c(
     "juv"  = "#FF9999",
@@ -747,7 +750,14 @@ ggplot(emm_df, aes(
     "fleur"  = "#CC0000",
       "fleurs_fanees"  = "#990000",
 "fruit"   = "#660000"
-  )) +
+  ),
+labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fanées",
+      fruit = "Fruits"
+    )) +
   theme_minimal()
 ```
 
@@ -784,9 +794,7 @@ ggplot(emm_session_df, aes(
   ) +
   labs(
     x = "Session",
-    y = "Taille prédite (moyenne marginale)",
-    title = "Effet marginal de la session sur la taille"
-  ) +
+    y = "Taille prédite (moyenne marginale)") +
   theme_minimal()
 
 #tableau pour lecture
@@ -825,15 +833,15 @@ emm_phenologie <- emmeans(
 emm_phenologie_df <- as.data.frame(emm_phenologie)
 emm_phenologie_df$phenologie_verif <- factor(
   emm_phenologie_df$phenologie_verif,
-  levels = c("juv", "non_fleuri", "fleur", "fruit", "fleurs_fanees")
+  levels = c("juv", "non_fleuri", "fleur", "fleurs_fanees", "fruit")
 )
 
 ggplot(emm_phenologie_df, aes(
   x = phenologie_verif,
-  y = response
+  y = response,
+  fill = phenologie_verif
 )) +
   geom_col(
-    fill = "skyblue",
     color = "black",
     width = 0.7
   ) +
@@ -842,11 +850,38 @@ ggplot(emm_phenologie_df, aes(
     width = 0.2
   ) +
   labs(
-    x = "Phénologie",
-    y = "Taille prédite (moyenne marginale)",
-    title = "Effet marginal de la phénologie sur la taille"
+    x = "Stade phénologique",
+    y = "Taille prédite (moyenne marginale)") +
+  scale_x_discrete(
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fanées",
+      fruit = "Fruits"
+    )
   ) +
-  theme_minimal()
+  scale_fill_manual(
+    values = c(
+      juv = "#FF9999",
+      non_fleuri = "#FF4D4D",
+      fleur = "#CC0000",
+      fleurs_fanees = "#990000",
+      fruit = "#660000"
+    ),
+    labels = c(
+      juv = "Juvéniles",
+      non_fleuri = "Non fleuris",
+      fleur = "Fleurs",
+      fleurs_fanees = "Fleurs fanées",
+      fruit = "Fruits"
+    )
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )+
+  theme(legend.position = "none") 
 
 #tableau pour lecture
 tab <- pairs(emm_phenologie) %>% 
@@ -861,6 +896,7 @@ tab <- pairs(emm_phenologie) %>%
 tab %>%
   kbl(booktabs = TRUE, caption = "Contrastes entre phénologie (EMMs)") %>%
   kable_classic(full_width = FALSE)
+
 
 ```
 
@@ -897,10 +933,11 @@ ggplot(emm_site_df, aes(
   ) +
   labs(
     x = "Session",
-    y = "Taille prédite (moyenne marginale)",
-    title = "Effet marginal de la session sur la taille"
-  ) +
-  theme_minimal()
+    y = "Taille prédite (moyenne marginale)") +
+  theme_minimal()+
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1)
+  )
 
 #tableau pour lecture
 tab <- pairs(emm_site) %>% 
@@ -920,7 +957,7 @@ tab %>%
 
 **Méthode d'interprétation** : Ce tableau présente les contrastes entre sites à partir des moyennes marginales estimées. Le ratio indique si la taille prédite est plus élevée dans le premier site du contraste (ratio \> 1) ou plus faible (ratio \< 1). Le z‑ratio et la p‑value testent la significativité statistique de cette différence. Les contrastes dont la p$_{value}$ est faible (p$_{value}$ \< 0.05) révèlent des différences nettes entre sites, tandis que les ratios proches de 1 et non significatifs indiquent des tailles similaires. Ce type de tableau permet donc d’identifier rapidement quels sites se distinguent réellement les uns des autres.
 
-**Résultats** : Les contrastes montrent que la plupart des sites présentent des tailles prédictes similaires, avec peu de différences statistiquement significatives. Seuls quelques écarts ressortent, notamment des tailles plus élevées à Tête Cendrée Haut et Vigne au Renard par rapport à certains autres sites. Dans l’ensemble, la variabilité entre sites reste limitée, et seules quelques comparaisons isolées indiquent des différences marquées.
+**Résultats** : Les contrastes montrent que la plupart des sites présentent des tailles prédictes similaires, avec peu de différences statistiquement significatives. Seuls quelques écarts ressortent, notamment des tailles plus élevées à Tête Cendrée Bas, Val Clavin et Vigne au Renard par rapport aux autres sites. Dans l’ensemble, la variabilité entre sites reste limitée, et seules quelques comparaisons isolées indiquent des différences marquées.
 
 
 
@@ -954,20 +991,29 @@ data_long <- data_long %>%
 # afin de respecter la progression biologique
 data_long$pheno <- factor(
   data_long$pheno,
-  levels = c("j", "nf", "f", "F", "ff")
+  levels = c("j", "nf", "f", "ff", "F"),
+  labels = c("Juvéniles", "Non fleuris", "Fleurs", "Fleurs fanées", "Fruits")
 )
 
 # Visualisation de la distribution des tailles
 # en fonction des stades phénologiques
 # (toutes sessions confondues)
-ggplot(data = data_long, aes(x = pheno, y = taille)) +
-  geom_boxplot() +
+ggplot(data = data_long, aes(x = pheno, y = taille, fill = pheno)) +
+  geom_boxplot(color = "black") +
   labs(
     x = "Stade phénologique",
-    y = "Taille",
-    title = "Taille selon le stade phénologique (sessions confondues)"
+    y = "Taille (en cm)") +
+  scale_fill_manual(
+    values = c(
+      "Juvéniles" = "#FF9999",
+      "Non fleuris" = "#FF4D4D",
+      "Fleurs" = "#CC0000",
+      "Fleurs fanées" = "#990000",
+      "Fruits" = "#660000"
+    )
   ) +
-  theme_minimal()
+  theme_minimal()+
+  theme(legend.position = "none") 
 
 # Test global de significativité
 ktest<- kruskal.test(taille ~ pheno, data = data_long) 
@@ -994,7 +1040,7 @@ tab_pheno %>%
 
 **Méthode d'interprétation** : Ce type de tableau présente les comparaisons deux à deux entre groupes, ici entre phénologies, à l’aide d’un test de Wilcoxon. Pour chaque paire, on indique les deux groupes comparés ainsi que la p$_{value}$ brute et la p$_{value}$ ajustée, cette dernière tenant compte du nombre total de comparaisons. Cela permet d’identifier rapidement quelles paires de groupes diffèrent réellement de manière significative.
 
-**Résultats** : Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg). Les stades précoces (j et nf) présentent des différences très marquées avec tous les stades plus avancés (p$_{adj}$ ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (f, F et ff) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
+**Résultats** : Les tailles diffèrent significativement entre l’ensemble des stades phénologiques (tests de Wilcoxon deux à deux avec correction de Benjamini–Hochberg). Les stades précoces (juvéniles et non fleuris) présentent des différences très marquées avec tous les stades plus avancés (p$_{adj}$ ≪ 0,001), indiquant une augmentation nette de la taille au cours du développement. Les différences entre les stades tardifs (fleur, fruit et fleurs fanées) restent significatives, bien que plus faibles, suggérant une progression continue de la taille jusqu’aux phases finales du cycle phénologique. Ces résultats confirment une relation étroite entre la taille des individus et leur stade phénologique.
 
 
 ## I.ii.ii Analyse de la variation dans le temps
@@ -1041,12 +1087,12 @@ ggplot(taille_stats, aes(x = session, y = mean_taille, fill = session)) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "black") +
   scale_fill_manual(values = c("S1"="#FF9999", "S2"="#FF4D4D", "S3"="#CC0000")) +
   labs(
-    title = "Taille moyenne par session",
     x = "Session",
-    y = "Taille moyenne",
+    y = "Taille moyenne (en cm)",
     fill = "Session"
   ) +
-  theme_minimal()
+  theme_minimal()+
+  theme(legend.position = "none") 
 
 #tableau lecture simple
 # Comparaisons deux à deux après Kruskal-Wallis
@@ -1107,7 +1153,11 @@ pheno_stats <- pheno_long %>%
   )
 
 # Définir l'ordre des phénos
-pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
+pheno_stats$pheno <- factor(
+  pheno_stats$pheno,
+  levels = c("j", "nf", "f", "ff", "F", "NA"),
+  labels = c("Juvéniles", "Non fleuris", "Fleurs", "Fleurs fanées", "Fruits", "Non déterminé")
+)
 
 # Graphique avec barres côte à côte et IC 95%
 ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
@@ -1115,18 +1165,17 @@ ggplot(pheno_stats, aes(x = session, y = n, fill = pheno)) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
                 position = position_dodge(width = 0.8), width = 0.2, color = "black") +
   scale_fill_manual(values = c(
-    "j"  = "#FF9999",
-    "nf" = "#FF4D4D",
-    "f"  = "#CC0000",
-    "ff" = "#990000",
-    "F"  = "#660000",
-    "NA" = "#000000"  # noir pur pour NA
+    "Juvéniles"  = "#FF9999",
+    "Non fleuris" = "#FF4D4D",
+    "Fleurs"  = "#CC0000",
+    "Fleurs fanées" = "#990000",
+    "Fruits"  = "#660000",
+    "Non déterminé" = "#000000"  # noir pur pour NA
   )) +
   labs(
-    title = "Effet de la session (S1, S2, S3) sur la phénologie",
     x = "Session",
     y = "Nombre d'individus",
-    fill = "Type phénologique"
+    fill = "Stade phénologique"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -1196,9 +1245,8 @@ ggplot(taille_stats, aes(x = site, y = mean_taille)) +
   geom_bar(stat = "identity", width = 0.7) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper), width = 0.2, color = "black") +
   labs(
-    title = "Taille moyenne par site",
     x = "Site",
-    y = "Taille moyenne",
+    y = "Taille moyenne (en cm)",
     fill = "Site"
   ) +
   theme_minimal() +
@@ -1255,23 +1303,28 @@ stats_long <- data_original %>%
     ci95 = se * qt(0.975, df = n - 1)
   )
 
-# Définir des couleurs rouges avec différentes opacités
-red_colors <- c("tailleS1" = "#FF6666",  # clair
-                "tailleS2" = "#FF3333",  # moyen
-                "tailleS3" = "#CC0000")  # foncé
-
 # Graphique avec les trois tailles côte à côte par site
 ggplot(stats_long, aes(x = site, y = mean, fill = taille_type)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
   geom_errorbar(aes(ymin = mean - ci95, ymax = mean + ci95),
                 position = position_dodge(width = 0.8), width = 0.2) +
-  scale_fill_manual(values = red_colors) +
   labs(
-    title = "Taille moyenne par site avec IC 95%",
-    y = "Taille moyenne",
+    y = "Taille moyenne (en cm)",
     x = "Site",
-    fill = "Type de taille"
+    fill = "Session"
   ) +
+  scale_fill_manual(
+    values = c(
+      tailleS1 = "#FF6666",
+      tailleS2 = "#FF3333",
+      tailleS3 = "#CC0000"
+    ),
+    labels = c(
+      tailleS1 = "1",
+      tailleS2 = "2",
+      tailleS3 = "3"
+    )
+  )+
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
@@ -1326,7 +1379,11 @@ pheno_stats <- pheno_long %>%
   )
 
 # Définir l'ordre des phénos
-pheno_stats$pheno <- factor(pheno_stats$pheno, levels = c("j", "nf", "f", "ff", "F", "NA"))
+pheno_stats$pheno <- factor(
+  pheno_stats$pheno,
+  levels = c("j", "nf", "f", "ff", "F", "NA"),
+  labels = c("Juvéniles", "Non fleuris", "Fleurs", "Fleurs fanées", "Fruits", "Non déterminé")
+)
 
 # Graphique avec barres côte à côte et IC 95%
 ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
@@ -1334,18 +1391,17 @@ ggplot(pheno_stats, aes(x = site, y = n, fill = pheno)) +
   geom_errorbar(aes(ymin = ci_lower, ymax = ci_upper),
                 position = position_dodge(width = 0.8), width = 0.2, color = "black") +
   scale_fill_manual(values = c(
-    "j"  = "#FF9999",
-    "nf" = "#FF4D4D",
-    "f"  = "#CC0000",
-    "ff" = "#990000",
-    "F"  = "#660000",
-    "NA" = "#000000"  # noir pur pour NA
+    "Juvéniles"  = "#FF9999",
+    "Non fleuris" = "#FF4D4D",
+    "Fleurs"  = "#CC0000",
+    "Fleurs fanées" = "#990000",
+    "Fruits"  = "#660000",
+    "Non déterminé" = "#000000"
   )) +
   labs(
-    title = "Effet du site sur la phénologie",
     x = "Site",
     y = "Nombre d'individus",
-    fill = "Type phénologique"
+    fill = "Stade phénologique"
   ) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
@@ -1627,7 +1683,6 @@ ggplot(recouvrement_long, aes(x = recouvrement, y = taille_moyenne)) +
   eqn +
   facet_wrap(~ strate, scales = "free_x") +
   labs(
-    title = "Taille moyenne en fonction du recouvrement végétal par strate",
     x = "Recouvrement (%)",
     y = "Taille moyenne"
   ) +
@@ -1784,6 +1839,7 @@ ggplot(data_count, aes(x = recouvrement)) +
 ### Indices de strates végétales
 
 Une méthode pour intégrer le recouvrement serait de mettre en place un indice basé sur les strates et leur hauteur. En fixant une valeur seuil de hauteur pour chaque strate, on peut quantifier et pondérer les hauteurs moyennes par quadrat. Cette méthode reste à développer.
+Ici un indice de recouvrement des strates ligneuses a été mis en place. On prends la médiane de la taille pour les strates arbustives et la strate arborescente (soit 2m, 5m et 10m) qu'on multiplie par le recouvrement à chaque strate. Puis on divise par la somme des recouvrements des trois strates. On obtiens ainsi une moyenne de la hauteur des ligneux sur le quadrat.
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #Préparation indice végétation
@@ -1792,13 +1848,18 @@ recouvrement <- recouvrement %>%
          hauteur_moy = hauteur_totale / (S_arbustive_basse+S_arbustive_haute+S_arborescente)
            )
 
-ggplot(recouvrement, aes(x = Quadrat, y = hauteur_moy))+
-  geom_point()+
-  facet_wrap(~Site)
+ggplot(recouvrement, aes(x = Site, y = hauteur_moy))+
+  geom_boxplot()+
+  labs(x = "Quadrat", y = "Hauteur moyenne (en m)")+
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
 ```
 
+**Méthode d'interprétation** : Pour chaque *site*, nous avons représenté la valeur de la hauteur moyenne dans chaque quadrat. Le diagramme en boîte permet d'observer la variabilité de valeurs entre quadrats au sein d'un même site.
+
+**Résultats** : La hauteur moyenne est plus faible dans le site de Combe Michaut et plus forte dans le site de Tête Cendrée bas
 
 
 # II. Niveau des observateurs
@@ -2147,6 +2208,8 @@ kable(
 
 ```
 
+**Méthode d'interprétation** : Les p$_{value}$ < 0,05 permettent de savoir si une variable a un effet significatif
+
 **Résultats** : Les analyses montrent que l’auto‑évaluation du risque d’erreur n’est pas entièrement déconnectée des performances réellement mesurées, mais qu’elle ne s’appuie pas uniformément sur toutes les dimensions objectives de ces performances. En particulier, le taux d’erreur observé lors du test terrain apparaît comme un prédicteur significatif et positif du risque perçu dans les modèles les plus simples. Cela signifie que les personnes qui commettent davantage d’erreurs sur le terrain ont tendance à s’attribuer un risque d’erreur plus élevé, révélant une certaine capacité à se situer par rapport à leurs performances réelles.
 
 **Effet du genre**
@@ -2212,7 +2275,7 @@ Dans cette partie, nous étudions la probabilité de détection du Sabot‑de‑
 
 ## III.i GLMM
 
-Nous disposons de plusieurs strates, mais nous souhaitons n’utiliser qu’une seule covariable représentant le recouvrement. Pour cela, nous avons recours à une ACP, qui permet de combiner les variables initiales en un indicateur synthétique basé sur l’inertie des axes 1 et 2. 
+Nous disposons de plusieurs strates, mais nous souhaitons n’utiliser qu’une seule covariable représentant le recouvrement. Pour cela, nous utilisons l'indice de recouvrement végétal montré précédemment, la moyenne de la hauteur des ligneux sur le quadrat.
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 # préparation variables pour GLMM
@@ -2314,26 +2377,36 @@ glmm_final_pheno <- glmer(
 )
 
 # -------------------------------------------------------------------
-# Tableau kable des coefficients
+# Tableau kable de la significativité des variables
 # -------------------------------------------------------------------
-
-coef_tab <- broom.mixed::tidy(glmm_final_pheno, effects = "fixed")
+anova_glmm <- Anova(glmm_final_pheno, type = 2)
+anova_df <- data.frame(anova_glmm)
+anova_df$Variable <- rownames(anova_df)
+anova_df <- anova_df %>% 
+  dplyr::select(Variable,Df, Chisq, Pr..Chisq.)
+rownames(anova_df) <- NULL
+colnames(anova_df) <- c("Effet", "ddl", "Chi²", "p-value")
+anova_df$`p-value` <- formatC(
+  anova_df$`p-value`,
+  format = "e",   # pour écriture scientifique
+  digits = 2      # nombre de décimales
+)
 
 kable(
-  coef_tab,
-  caption = "Coefficients du modèle GLMM (effets fixes) – Modèle phénologie",
+  anova_df,
   digits = 4,
+  caption = "ANOVA (Type II) du modèle GLMM - Effet des variables sur la détection",
   align = "c"
-) %>%
+)%>%
   kable_styling(full_width = FALSE)
 
 # -------------------------------------------------------------------
 # Vérification de la surdispersion
 # -------------------------------------------------------------------
 
-res_bin <- simulateResiduals(glmm_final_pheno)
-plot(res_bin)
-testDispersion(res_bin)  # surdispersion < 1, modèle OK
+# res_bin <- simulateResiduals(glmm_final_pheno)
+# plot(res_bin)
+# testDispersion(res_bin)  # surdispersion < 1, modèle OK
 
 # -------------------------------------------------------------------
 # R² marginal et conditionnel
@@ -2342,7 +2415,14 @@ testDispersion(res_bin)  # surdispersion < 1, modèle OK
 r2(glmm_final_pheno)
 # R² marginal = variance expliquée par les variables fixes
 # R² conditionnel = variance expliquée en incluant les effets aléatoires
+```
+**Méthode d'interprétation** : Le tableau de l'effet fixe des variables indique pour chaque variable si elle a un effet significatif sur la détectabilité des ramets, ce qui permet d’identifier les prédicteurs réellement influents dans le modèle. Les valeurs de R² marginal et conditionnel renseignent sur la part de variance expliquée par les seules variables fixes, puis par l’ensemble du modèle incluant les effets aléatoires, indiquant ainsi la contribution des différences entre observateurs et entre quadrats. 
 
+**Résultats** : Les résultats du modèle indiquent que plusieurs variables influencent significativement la probabilité de détection du Sabot‑de‑Vénus. La phénologie présente un effet marqué : certains stades, notamment les stades jeunes ou difficiles à distinguer, réduisent clairement la détectabilité. Le risque d’erreur auto‑évalué par les observateurs a également un effet négatif significatif, suggérant que les personnes se percevant comme moins sûres d’elles détectent effectivement moins bien les individus. L’interaction entre le site et la session est également significative, indiquant que l’évolution de la détectabilité au cours du temps varie d’un site à l’autre, possiblement en lien avec des dynamiques locales de phénologie, de structure de végétation ou d’expérience acquise.
+Les variables fixes expliquent environ 18 % de la variance totale, tandis que l’inclusion des effets aléatoires (observateur, quadrats et leurs imbrications) porte l’explication à 54 %, ce qui souligne l’importance des effets individuels et spatiaux dans la probabilité de détection. Cela confirme que, au‑delà des caractéristiques mesurées, des différences systématiques entre observateurs et entre quadrats influencent fortement la probabilité de détecter un individu.
+
+## Effet du site et de la session
+```{r}
 # -------------------------------------------------------------------
 # Effet marginal – Interaction site × session
 # -------------------------------------------------------------------
@@ -2363,20 +2443,21 @@ ggplot(emm_site_session_df, aes(x = site, y = prob, fill = session)) +
     width = 0.2
   ) +
   scale_y_continuous(limits = c(0, 1)) +
+  scale_fill_manual(values = c("1"="#FF9999", "2"="#FF4D4D", "3"="#CC0000"))+
   labs(
     x = "Site",
     y = "Probabilité de détection",
-    fill = "Session",
-    title = "Probabilité marginale de détection par site et session"
-  ) +
-  theme_classic(base_size = 14)
+    fill = "Session") +
+  theme_classic(base_size = 14)+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) 
+
 ```
-**Méthode d'interprétation** : Le tableau des coefficients indique pour chaque variable si elle augmente ou diminue la probabilité de détection et si son effet est significatif, ce qui permet d’identifier les prédicteurs réellement influents dans le modèle. La vérification de la surdispersion sert à contrôler la validité statistique du GLMM : une surdispersion proche de 1 confirme que le modèle est bien ajusté. Les valeurs de R² marginal et conditionnel renseignent sur la part de variance expliquée par les seules variables fixes, puis par l’ensemble du modèle incluant les effets aléatoires, indiquant ainsi la contribution des différences entre observateurs et entre quadrats. Enfin, les estimations marginales (EMMEANS) permettent de visualiser comment la probabilité de détection varie selon les combinaisons site × session, en isolant l’effet propre de cette interaction et en fournissant des intervalles de confiance qui facilitent l’interprétation des différences entre groupes. 
 
-**Résultats** : Les résultats du modèle indiquent que plusieurs variables influencent significativement la probabilité de détection du Sabot‑de‑Vénus. La phénologie présente un effet marqué : certains stades, notamment les stades jeunes ou difficiles à distinguer, réduisent clairement la détectabilité. Le risque d’erreur auto‑évalué par les observateurs a également un effet négatif significatif, suggérant que les personnes se percevant comme moins sûres d’elles détectent effectivement moins bien les individus. L’interaction entre le site et la session est également significative, indiquant que l’évolution de la détectabilité au cours du temps varie d’un site à l’autre, possiblement en lien avec des dynamiques locales de phénologie, de structure de végétation ou d’expérience acquise.
-Le modèle montre une bonne qualité d’ajustement : l’absence de surdispersion (test DHARMa) confirme sa validité statistique. Les variables fixes expliquent environ 18 % de la variance totale, tandis que l’inclusion des effets aléatoires (observateur, quadrats et leurs imbrications) porte l’explication à 54 %, ce qui souligne l’importance des effets individuels et spatiaux dans la probabilité de détection. Cela confirme que, au‑delà des caractéristiques mesurées, des différences systématiques entre observateurs et entre quadrats influencent fortement la probabilité de détecter un individu.
+**Méthode d'interprétation** : Les estimations marginales (EMMEANS) permettent de visualiser comment la probabilité de détection varie selon les combinaisons site × session, en isolant l’effet propre de cette interaction et en fournissant des intervalles de confiance qui facilitent l’interprétation des différences entre groupes. 
 
-## Modèle stade phénologique
+**Résultats** : Il n'y a pas de réelle différence de détection entre les sites à part pour *Val Clavin* qui a une probabilité de détection de 70% au lieu de 85% environ pour les autres. De plus, la probabilité de détection varie de manière non significative en fonction des sessions. Il n'y a pas de réel effet de ces deux variables.
+
+## Effet du stade phénologique
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #Pour le stade phénologique
@@ -2406,9 +2487,7 @@ ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
   ) +
   labs(
     x = "Stades phénologiques",
-    y = "Probabilité de détection",,
-    title = "Probabilité marginale de détection par stade phénologique"
-  ) +
+    y = "Probabilité de détection") +
   theme_classic(base_size = 14)
 
 ```
@@ -2416,7 +2495,7 @@ ggplot(emm_phenologie_df, aes(x = phenologie_verif, y = prob)) +
 
 **Résultats** : Les individus en *fleurs* sont les plus facilement détectés, suivis des stades *fleurs fanées* et *fruits*, qui restent bien visibles. Les *non‑fleuris* sont détectés moins souvent, et les *juvéniles* présentent de loin la plus faible probabilité de détection. La détectabilité diminue donc nettement pour les stades peu visibles ou de petite taille. 
 
-## Modèle nombre de ramets par quadrat
+## Effet de la densité d'individus dans un quadrat
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la densité d'individus
@@ -2454,7 +2533,7 @@ ggplot(emm_densite_df, aes(x = densite_reelle, y = prob)) +
 
 **Résultats** : Le graphique montre que la probabilité de détection diminue clairement lorsque le nombre d’individus dans un quadrat augmente. À faible densité, la détection est presque parfaite, mais elle se dégrade progressivement avec l’augmentation du nombre d’individus, jusqu’à devenir nettement plus faible dans les quadrats les plus denses. Cette baisse suggère que la présence de nombreux individus complique le repérage précis de chacun, probablement en raison d’un effet de confusion, de saturation visuelle ou d’enchevêtrement de la végétation. L’élargissement de l’intervalle de confiance aux densités élevées indique aussi plus d’incertitude dans ces conditions, ce qui reflète une variabilité importante de la détection lorsque le quadrat est très rempli. 
 
-## Modèle risque d'erreur
+## Effet du risque d'erreur (autonotation des observateurs)
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour le risque d'erreur lié à l'autonotation
@@ -2483,7 +2562,7 @@ ggplot(emm_risque_erreur_df, aes(x = risque_erreur, y = prob)) +
 ```
 **Résultats** : La probabilité de détection diminue progressivement à mesure que le risque d’erreur auto‑évalué augmente. Les observateurs qui s’estiment peu susceptibles de se tromper détectent mieux les individus, tandis que ceux qui déclarent un risque d’erreur élevé présentent une détectabilité nettement plus faible. La pente continue du graphique indique une relation négative régulière, et l’élargissement de l’intervalle de confiance aux valeurs hautes montre une plus grande variabilité entre observateurs fortement incertains.
 
-## Modèle nombre de détection par observateur
+## Effet du nombre de détections par observateur
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la taille
@@ -2522,7 +2601,7 @@ ggplot(emm_nb_detect_df, aes(x = nb_detect_reelle, y = prob)) +
 
 **Résultats** : Le graphique montre comment la probabilité de détection varie selon le nombre réel d’individus détectés par un observateur. Après transformation inverse de la variable centrée‑réduite, la courbe révèle une tendance nette : plus un observateur a détecté d’individus au total, plus sa probabilité de détection augmente. Cette relation positive traduit un effet d’apprentissage ou d’habituation : les observateurs gagnent en efficacité au fur et à mesure qu’ils détectent davantage d’individus. Le ruban gris indique l’incertitude autour de l’estimation, plus large aux extrêmes où les données sont moins nombreuses, mais la tendance reste clairement ascendante. 
 
-## Modèle densité de couvert végétal
+## Effet de la densité du couvert végétal
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE}
 #pour la taille
@@ -2947,32 +3026,58 @@ psi_matrix_full_transi_tot[
   colnames(psi_matrix_transi_tot)
 ] <- psi_matrix_transi_tot
 
+#Convertir lettres en abréviation phénologie
+pheno_labels <- c(
+  "j" = "Juvénile",
+  "nf" = "Non fleuri",
+  "f" = "Fleur",
+  "ff" = "Fleur fannée",
+  "F" = "Fruit"
+)
+
+# renommage lignes / colonnes
+dimnames(psi_matrix_full_transi_tot) <- list(
+  pheno_labels[states],
+  pheno_labels[states]
+)
+
 ```
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
 # 4. Visualisation avec DiagrammeR
-
-states <- c("j", "nf", "f", "ff", "F")
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
 num_states <- length(states)
 
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
 dot_code <- "digraph pheno_transitions { 
   rankdir=LR;
-  node [shape=circle, style=filled, color=lightblue, fontname=Helvetica];
-  j; nf; f; ff; F;
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
 "
 
 for(i in 1:num_states){
   for(j in 1:num_states){
     prob <- psi_matrix_full_transi_tot[i,j]
-    if(!is.na(prob) && prob > 0){
-      dot_code <- paste0(dot_code, states[i], " -> ", states[j], 
-                         " [label=\"", round(prob, 3), "\"];\n")
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
+                         " [label=\"", round(prob,2), "\"];\n")
     }
   }
 }
 
 dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
+
+
 
 ```
 
@@ -3207,6 +3312,7 @@ psi_matrix_S1_S2
 
 # Vérification
 rowSums(psi_matrix_S1_S2)
+
 
 ```
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
@@ -3620,578 +3726,653 @@ Ces résultats suggèrent que la floraison s’étend principalement sur l’int
 
 Capture-Recapture Data for Multi-State models
 
-Dans les modèles multistrates de capture-recapture, le format CRDMS est utilisé comme structure interne de données car il permet de représenter de manière cohérente l’histoire complète de chaque individu au cours du temps, en intégrant à la fois les états occupés (strates) et les observations associées. Son principe repose sur l’encodage des trajectoires individuelles sous une forme standardisée qui décrit les transitions possibles entre strates, ainsi que les paramètres à estimer (probabilités de transition, de détection et éventuellement de survie).
+Dans les modèles multistrates de capture-recapture, le format CRDMS est utilisé comme structure interne de données car il permet de représenter de manière cohérente l’histoire complète de chaque individu au cours du temps, en intégrant à la fois les états occupés (stades phénologiques) et les observations associées. Son principe repose sur l’encodage des trajectoires individuelles sous une forme standardisée qui décrit les transitions possibles entre stades phénologiques, ainsi que les paramètres à estimer (probabilités de transition, de détection et éventuellement de survie).
 
 ### Préparation tableau
+Ajouter explication d'homogénéisation à 5 observateurs.
+Note : pas tete cendrée bas car éliminé dans le processus d'homogénéisation à 5 observateurs par quadrat et session minimum.
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
-# unique(tab_complet$phenologie_verif)
-# #Transformer lignes phenologie ayant des NA en 0
-# tab_complet <- tab_complet %>%
-#   mutate(
-#     phenologie_verif = as.character(phenologie_verif),
-#     phenologie_verif = replace_na(phenologie_verif, "0")
-#   )
-# 
-# #Faire la même chose avec les tailles
-# tab_complet <- tab_complet %>%
-#   mutate(
-#     taille = as.numeric(gsub(",", ".", taille)),
-#     taille = replace_na(taille, 0)
-#   )
-# 
-# #Regarder le nombre d'observateurs par quadra
-# tab_obs <- tab_complet %>%
-#   group_by(id_quadrat_fin, observateur) %>%
-#   summarise(n = 1, .groups = "drop") %>%
-#   ungroup()
-# 
-# #Regarder le nombre de quadra observés par observateur
-# tab_obs2 <- tab_obs %>%
-#   group_by(observateur) %>%
-#   summarise(nb_quadra = n()) %>%
-#   arrange(desc(nb_quadra))
-# 
-# #Regarder le nombre d'observations par quadra
-# tab_obs_tot <- tab_obs %>%
-#   group_by(id_quadrat_fin) %>%
-#   summarise(nb_obs = n()) %>%
-#   ungroup()
-# 
-# #Regarder pourcentages d'observations
-# nb_obs <- tab_obs_tot %>%
-#   count(nb_obs) %>%
-#   mutate(pourcentage = round((n * 100) / sum(n), 2))
-# 
-# nb_obs
-# #A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
-# 
-# #regarder si j'ai des sessions qui vont disparaître avec cette méthode :
-# enlever <- tab_obs_tot %>%
-#   filter(nb_obs <5)
-# enlever
-# #quadra à enlever :
-# # TCb.Q9.2
-# # TCb.Q7.2
-# # CM.Q7.2
-# Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
-# 
-# #extraire informations quadra avec 5 et 6 obs
-# tab_obs_tot_5obs <- tab_obs_tot %>%
-#   filter(nb_obs == 5)
-# 
-# tab_obs_tot_6obs <- tab_obs_tot %>%
-#   filter(nb_obs == 6)
-# 
-# #Transvaser ces infos dans tableau complet
-# tab_complet_5obs <- tab_complet %>%
-#   semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
-# 
-# tab_complet_6obs <- tab_complet %>%
-#   semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
-# 
-# #Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
-# #Extraire nb obs par observateur
-# tab_complet_5obs <- tab_complet_5obs %>%
-#   left_join(tab_obs2, by = "observateur")
-# 
-# tab_tmp <- tab_complet_6obs %>%
-#   left_join(tab_obs2, by = "observateur")
-# 
-# #Garder 5 observations par individu/session/quadra/site
-# tab_complet_5obs_6 <- tab_tmp %>%
-#   group_by(id_ind_fin) %>%
-#   slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
-#   ungroup()
-# 
-# #Vérification si nombre de lignes semble bon
-# nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
-# nrow(tab_complet_5obs_6)
-# 
-# #Fusion des deux tableaux 5 obs et 5obs issu de 6obs
-# tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
-# ind_av_filtrage <- nrow(tab_complet_final)
-# 
-# #Enlever les trois quadra ayant été tpartiellement supprimés
-# tab_complet_final <- tab_complet_final %>%
-#   filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
-# ind_ap_filtrage <- nrow(tab_complet_final)
-# #pourcentage indiv perdus :
-# (1-(ind_ap_filtrage/ind_av_filtrage))*100
-# 
-# #Vérification histoires de capture
-# verif_sessions <- tab_complet_final %>%
-#   group_by(ID_ind) %>%
-#   summarise(
-#     nb_sessions = n_distinct(session),
-#     sessions = paste(sort(unique(session)), collapse = ","),
-#     .groups = "drop"
-#   )
-# 
-# check_sessions <- verif_sessions %>%
-#   mutate(
-#     ok_sessions = sessions == "1,2,3"
-#   )
-# 
-# check_sessions %>%
-#   filter(!ok_sessions)
-# 
-# ### codage numérique
-# phenology_codes <- c(
-#   "juv" = 1,
-#   "non_fleuri" = 2,
-#   "fleur" = 3,
-#   "fleurs_fanees" = 4,
-#   "fruit" = 5,
-#   "0" = 0
-# )
-# 
-# #Remplacer les valeurs de NA pour la phénologie en 0 : pas vu par l'observateur
-# tab_complet_final <- tab_complet_final %>%
-#   mutate(phenologie = replace_na(phenologie, "0"))
-# 
-# #Enlever un individu bizarre
-# data_original %>%
-#   filter(site == "Tete Cendree Haut" & quadrat == 1 & marquage == 0)
-# tab_complet_final <- tab_complet_final %>%
-#   filter(ID_ind != "TCh.Q1.00")
-# 
-# #On travaille avec la phénologie avérée des opératrices donc il faut garder sa valeur sauf quand l'observateur n'a rien mis et dans ce cas mettre un 0
-# tab_complet_final <- tab_complet_final %>%
-#   mutate(
-#     phenologie_final = if_else(
-#       phenologie == "0",
-#       "0",
-#       phenologie_verif
-#     )
-#   )
-# 
-# #Histoires de capture par session
-# tab_session <- tab_complet_final %>%
-# 
-#   ungroup() %>%   # sécurité
-# 
-#   ### 1. conversion phéno -> chiffre
-#   mutate(code = phenology_codes[as.character(phenologie_final)]) %>%
-# 
-#   ### 2. ordre non obs puis obs
-#   arrange(site, quadrat, marquage, session, code != 0) %>%
-# 
-# 
-#   ### 3. concaténer par individu × session
-#   group_by(site, quadrat, marquage, session) %>%
-#   summarise(
-#     ch_session = paste0(code, collapse = ""),
-#     .groups = "drop"
-#   )
-# 
-# #Vérification bon nombre par histoire de capture
-# tab_session %>%
-#   filter(str_length(ch_session) != 5)
-# 
-# #Compilation des histoires de capture des trois sessions
-# tab_final <- tab_session %>%
-# 
-#   ungroup() %>%
-# 
-#   ### ordre chronologique
-#   arrange(session) %>%
-# 
-#   ### concaténation des 3 sessions
-#   group_by(site, quadrat, marquage) %>%
-#   summarise(
-#     ch_final = paste0(ch_session, collapse = ""),
-#     .groups = "drop"
-#   )
-# 
-# #Vérification bon nombre par histoire de capture
-# tab_final %>%
-#   filter(str_length(ch_final) != 15)
-# 
-# 
-# # 3 primary periods (sessions) × 5 secondary occasions (observateurs)
-# # Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
-# # Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
-# 
-# t.int <- c(
-#  0,0,0,0,
-#   1,
-#   0,0,0,0,
-#   1,
-#  0,0,0,0
-# )
-# 
-# crdms_input <- tab_final %>%
-#   rename(ch = ch_final) %>%
-#   group_by(site, ch) %>%
-#   summarise(freq= n(), .groups = "drop")
-# 
-# #Enlever histoires de captures avec seulement des 0
-# crdms_input %>%
-#   filter(grepl("^0+$", ch))
-# #6 individus enlevés
-# 
-# crdms_input <- crdms_input %>%
-#   filter(!grepl("^0+$", ch))
-# 
-# #Modèle
-# crdms.data<-process.data(crdms_input,
-#                          model="CRDMS",
-#                          group="site",
-#                          time.interval=t.int,
-# 			strata.labels = c("1", "2", "3", "4", "5") #on ne mets pas le 0 sinon le modèle va calculer aussi la probabilité de passer de l'état 0 aux autres états
-# )
-# 
-# crdms.ddl <- make.design.data(crdms.data)
-# 
-# #Beaucoup de paramètres
-# # S = probabilité de survie
-# # Psi = proba de transition d'état
-# # p = proba de capture initiale
-# # c = proba de recapture
-# # f0 = nombre d'individus jamais capturés
-# 
-# # ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
-# #Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
-# 
-# # Créer un index pour fixer p = 0 et c = 0 pour les états jamais observés ("0") si besoin
-# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-# crdms.ddl$f0$fix[crdms.ddl$f$stratum == "0"] <- 0   # IMPORTANT (évite f0 instable)
-# 
-# crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
-# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
-# 
-# #Estimer un seul psi
-# #crdms.ddl$Psi$share <- TRUE
-# 
-# # interdiction totale par défaut
-# crdms.ddl$Psi$fix <- 0
-# 
-# 
-# #Contraindre les transitions d'état possibles
-# #Mettre les présupposé pour chaque stade phénologique :
-# # j (1)
-# crdms.ddl$Psi$fix[
-#   crdms.ddl$Psi$stratum == "1" &
-#   crdms.ddl$Psi$tostratum %in% c("1","2","3","4", "5")
-# ] <- NA
-# 
-# # nf (2)
-# crdms.ddl$Psi$fix[
-#   crdms.ddl$Psi$stratum == "2" &
-#   crdms.ddl$Psi$tostratum %in% c("2","3","4","5")
-# ] <- NA
-# 
-# # f (3)
-# crdms.ddl$Psi$fix[
-#   crdms.ddl$Psi$stratum == "3" &
-#   crdms.ddl$Psi$tostratum %in% c("3","4","5")
-# ] <- NA
-# 
-# # ff (4) : absorbant
-# crdms.ddl$Psi$fix[
-#   crdms.ddl$Psi$stratum == "4" &
-#   crdms.ddl$Psi$tostratum %in% c("4","5")
-# ] <- NA
-# 
-# # F (5) : terminal (aucune transition)
-# # tout reste à 0
-# 
-# # Définir S (survie apparente) constante pour tous les états
-# S.dot <- list(formula = ~1, fixed = 1)
-# 
-# # Définir p (probabilité de détection) variable selon la session + dire que c a la même proba
-# p.session <- list(formula = ~session + site, share = TRUE)
-# 
-# # Définir psi (proba de transition) variable selon la session
-# Psi.model <- list(formula = ~ ctime + site)
-# 
-# 
-# #Modèle 1
-# mod <- mark(
-#   crdms.data,
-#   ddl = crdms.ddl,
-#   model.parameters = list(
-#     S = S.dot,
-#     p = p.session,
-#     Psi = Psi.model
-#   )
-# )
-# 
-# mod
-# ```
-# 
-# ### Préparation CRDMS
-# 
-# ```{r, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
-# # 1. On associe chaque état de phénologie à une lettre
-# etat_phenologie <- c(
-#   "non_fleuri"    = "N",
-#   "juv"           = "J",
-#   "fleur"        = "F",
-#   "fleurs_fanees" = "B",
-#   "fruit"         = "A",
-#   "0" = "0"
-# )
-# 
-# tab_complet_finalA <- tab_complet_final %>%
-#   mutate(
-#     phenologie_verif = as.character(phenologie_verif),
-#     etat = ifelse(is.na(phenologie_verif), "0", etat_phenologie[phenologie_verif])
-#   )
-# 
-# # 2. Anonymiser les observateurs par individu et session
-# tab_complet_finalA <- tab_complet_finalA %>%
-#   group_by(ID_ind, session) %>%
-#   mutate(obs_id = paste0("O", row_number())) %>%  # O1 à O5 par session et individu
-#   ungroup() %>%
-#   mutate(sec = paste0("S", session, "_", obs_id))
-# 
-# # 3. Pivot pour avoir large
-# tab_wide <- tab_complet_finalA %>%
-#   ungroup() %>%
-#   select(ID_ind, sec, etat) %>%
-#   pivot_wider(
-#     names_from  = sec,
-#     values_from = etat,
-#     values_fill = "0"
-#   )
-# 
-# # 4. Réordonner les colonnes par session
-# cols_order <- tab_wide %>%
-#   select(-ID_ind) %>%
-#   names() %>%
-#   {.[order(as.numeric(sub("S(\\d+)_.*", "\\1", .)), match(., unique(.)))]}
-# 
-# tab_wide <- tab_wide %>%
-#   select(ID_ind, all_of(cols_order))
-# 
-# # 5. Créer l'histoire de capture
-# tab_wide <- tab_wide %>%
-#   unite("ch", -ID_ind, sep = "", remove = FALSE)
-# 
-# ##On garde seulement la colonne ch, et on rajoute un compte de fréquence
-# 
-# #Rajouter les fréquences
-# tab_ch_freq <- tab_wide %>%
-#   select(ch) %>%               # on ne garde que l'histoire de capture
-#   group_by(ch) %>%             # on groupe par histoire unique
-#   summarise(freq = n(), .groups = "drop")  # on compte combien d'individus ont cette histoire
-# 
-# #Sans les fréquences (Pareil)
-# tab_ch_freq <- tab_wide %>%
-#   select(ch) %>%               # on ne garde que l'histoire de capture
-#   group_by(ch)  # on compte combien d'individus ont cette histoire
-# 
-# # 3 primary periods (sessions) × 5 secondary occasions (observateurs)
-# # Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
-# # Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
-# 
-# t.int <- c(
-#  0,0,0,0,
-#   1,
-#   0,0,0,0,
-#   1,
-#  0,0,0,0
-# )
-# 
-# 
-# crdms.data<-process.data(tab_ch_freq,model="CRDMS",time.interval=t.int,
-# 			strata.labels = c("0", "N", "J", "F", "B", "A")
-# )
-# 
-# crdms.ddl <- make.design.data(crdms.data)
-# 
-# # Créer un index pour fixer p = 0 pour les états jamais observés ("0") si besoin
-# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-# 
-# # Créer une variable de temps pour les Psi si on veut un modèle markovien
-# crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
-# # Si tu veux contraindre la dernière transition entre sessions
-# # ici on peut mettre ctime = 2 pour la 3ème session comme dans l'exemple
-# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
-# 
-# # Définir S (survie apparente) constante pour tous les états
-# S.dot <- list(formula = ~1)
-# 
-# # Définir p (probabilité de détection) variable selon la session
-# p.session <- list(formula = ~session, share = TRUE)
-# ```
-# 
-# #Modèle CRDMS
-# 
-# ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-# # Modèle 1 - Markovien sur la phénologie
-# #Hypothèse : La probabilité qu’un individu change d’état dépend de son état actuel (stratum) et du temps (session).
-# Psi.markov <- list(formula = ~ctime + stratum + tostratum)
-# 
-# model.1 <- mark(
-#   crdms.data,
-#   ddl = crdms.ddl,
-#   model.parameters = list(
-#     S = S.dot,
-#     p = p.session,
-#     Psi = Psi.markov
-#   ),
-#   threads = 2,
-#   delete = TRUE
-# )
-# 
-# # Modèle 2 - mouvement aléatoire
-# #Hypothèse : Les transitions entre états sont aléatoires et ne dépendent pas de l’état actuel.Les changements dépendent seulement du temps (time) – toutes les transitions sont possibles avec une probabilité qui ne dépend pas de l’état courant.
-# Psi.rand <- list(formula = ~time)
-# 
-# model.2 <- mark(
-#   crdms.data,
-#   ddl = crdms.ddl,
-#   model.parameters = list(
-#     S = S.dot,
-#     p = p.session,
-#     Psi = Psi.rand
-#   ),
-#   threads = 2,
-#   delete = TRUE
-# )
-# 
-# # Modèle 3 - aucun mouvement (fixe)
-# #Hypothèse : Il n’y a aucun changement d’état entre sessions.
-# Psi.fix <- list(formula = ~1, fixed = 0)
-# 
-# model.3 <- mark(
-#   crdms.data,
-#   ddl = crdms.ddl,
-#   model.parameters = list(
-#     S = S.dot,
-#     p = p.session,
-#     Psi = Psi.fix
-#   ),
-#   threads = 2,
-#   delete = TRUE
-# )
-# 
-# # Collecte et affichage des modèles
-# crdms.res <- collect.models()
-# print(crdms.res)
-# ```
-# 
-# ##test pour covariable :
-# 
-# ```{r}
-# 
-# # 1. Associer chaque état de phénologie à une lettre
-# etat_phenologie <- c(
-#   "non_fleuri"     = "N",
-#   "juv"            = "J",
-#   "fleur"          = "F",
-#   "fleurs_fanees"  = "B",
-#   "fruit"          = "A",
-#   "0"              = "0"
-# )
-# 
-# tab_complet_finalA <- tab_complet_final %>%
-#   mutate(
-#     phenologie_verif = as.character(phenologie_verif),
-#     etat = ifelse(is.na(phenologie_verif),
-#                   "0",
-#                   etat_phenologie[phenologie_verif])
-#   )
-# 
-# # 2. Anonymiser les observateurs par individu et session
-# tab_complet_finalA <- tab_complet_finalA %>%
-#   group_by(ID_ind, session) %>%
-#   mutate(obs_id = paste0("O", row_number())) %>%
-#   ungroup() %>%
-#   mutate(sec = paste0("S", session, "_", obs_id))
-# 
-# # 3. Pivot pour avoir les colonnes des états
-# tab_wide <- tab_complet_finalA %>%
-#   select(ID_ind, sec, etat) %>%
-#   pivot_wider(
-#     names_from  = sec,
-#     values_from = etat,
-#     values_fill = "0"
-#   )
-# 
-# # 4. Réordonner les colonnes par session
-# cols_order <- tab_wide %>%
-#   select(-ID_ind) %>%
-#   names() %>%
-#   {.[order(
-#     as.numeric(sub("S(\\d+)_.*", "\\1", .)),
-#     match(., unique(.))
-#   )]}
-# 
-# tab_wide <- tab_wide %>%
-#   select(ID_ind, all_of(cols_order))
-# 
-# # 5. Ajouter le site comme covariable
-# site_ind <- tab_complet_final %>%
-#   select(ID_ind, site) %>%
-#   distinct()
-# 
-# tab_wide <- tab_wide %>%
-#   left_join(site_ind, by = "ID_ind")
-# 
-# # 6. Créer l'histoire de capture uniquement avec les colonnes d'états
-# state_cols <- grep("^S[0-9]+_O[0-9]+$", names(tab_wide), value = TRUE)
-# 
-# tab_wide <- tab_wide %>%
-#   unite("ch", all_of(state_cols), sep = "", remove = FALSE)
-# 
-# # 7. Compter la fréquence des histoires par site
-# tab_ch_freq <- tab_wide %>%
-#   group_by(ch, site) %>%
-#   summarise(freq = n(), .groups = "drop")
-# 
-# 
-# t.int <- c(
-#   0,0,0,0,
-#   1,
-#   0,0,0,0,
-#   1,
-#   0,0,0,0
-# )
-# 
-# crdms.data <- process.data(
-#   tab_ch_freq,
-#   model = "CRDMS",
-#   time.interval = t.int,
-#   strata.labels = c("0","N","J","F","B","A")
-# )
-# 
-# crdms.ddl <- make.design.data(crdms.data)
-# crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
-# crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
-# 
-# crdms.ddl$Psi$ctime <- crdms.ddl$Psi$time
-# crdms.ddl$Psi$ctime[crdms.ddl$Psi$time == 3] <- 2
-# 
-# S.dot <- list(formula = ~1)
-# 
-# p.session <- list(
-#   formula = ~session,
-#   share = TRUE
-# )
-# 
-# Psi.markov.site <- list(formula = ~stratum + tostratum + ctime + site)
-# 
-# 
-# model.1 <- mark(
-#   crdms.data,
-#   ddl = crdms.ddl,
-#   model.parameters = list(
-#     S   = S.dot,
-#     p   = p.session,
-#     Psi = Psi.markov.site
-#   ),
-#   threads = 2,
-#   delete = TRUE
-# )
+unique(tab_complet$phenologie_verif)
+#Transformer lignes phenologie ayant des NA en 0
+tab_complet <- tab_complet %>%
+  mutate(
+    phenologie_verif = as.character(phenologie_verif),
+    phenologie_verif = replace_na(phenologie_verif, "0")
+  )
 
+#Faire la même chose avec les tailles
+tab_complet <- tab_complet %>%
+  mutate(
+    taille = as.numeric(gsub(",", ".", taille)),
+    taille = replace_na(taille, 0)
+  )
+
+#Regarder le nombre d'observateurs par quadra
+tab_obs <- tab_complet %>%
+  group_by(id_quadrat_fin, observateur) %>%
+  summarise(n = 1, .groups = "drop") %>%
+  ungroup()
+
+#Regarder le nombre de quadra observés par observateur
+tab_obs2 <- tab_obs %>%
+  group_by(observateur) %>%
+  summarise(nb_quadra = n()) %>%
+  arrange(desc(nb_quadra))
+
+#Regarder le nombre d'observations par quadra
+tab_obs_tot <- tab_obs %>%
+  group_by(id_quadrat_fin) %>%
+  summarise(nb_obs = n()) %>%
+  ungroup()
+
+#Regarder pourcentages d'observations
+nb_obs <- tab_obs_tot %>%
+  count(nb_obs) %>%
+  mutate(pourcentage = round((n * 100) / sum(n), 2))
+
+nb_obs
+#A priori seulement 7% des quadra avec moins de 5 observateurs (6 quadra sur 81 quadra) donc on garde 5 observateurs comme valeur minimale
+
+#regarder si j'ai des sessions qui vont disparaître avec cette méthode :
+enlever <- tab_obs_tot %>%
+  filter(nb_obs <5)
+enlever
+#quadra à enlever :
+# TCb.Q9.2
+# TCb.Q7.2
+# CM.Q7.2
+Qenlever <- c("TCb.Q9", "TCb.Q7", "CM.Q7")
+
+#extraire informations quadra avec 5 et 6 obs
+tab_obs_tot_5obs <- tab_obs_tot %>%
+  filter(nb_obs == 5)
+
+tab_obs_tot_6obs <- tab_obs_tot %>%
+  filter(nb_obs == 6)
+
+#Transvaser ces infos dans tableau complet
+tab_complet_5obs <- tab_complet %>%
+  semi_join(tab_obs_tot_5obs, by = "id_quadrat_fin")
+
+tab_complet_6obs <- tab_complet %>%
+  semi_join(tab_obs_tot_6obs, by = "id_quadrat_fin")
+
+#Pour données avec 6 obs par quadrat il va falloir enlever un obs en enlevant en fonction de nb obs décroissant des observateurs
+#Extraire nb obs par observateur
+tab_complet_5obs <- tab_complet_5obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+tab_tmp <- tab_complet_6obs %>%
+  left_join(tab_obs2, by = "observateur")
+
+#Garder 5 observations par individu/session/quadra/site
+tab_complet_5obs_6 <- tab_tmp %>%
+  group_by(id_ind_fin) %>%
+  slice_max(nb_quadra, n = 5, with_ties = FALSE) %>%
+  ungroup()
+
+#Vérification si nombre de lignes semble bon
+nrow(tab_complet_6obs) - (nrow(tab_complet_6obs)/6)
+nrow(tab_complet_5obs_6)
+
+#Fusion des deux tableaux 5 obs et 5obs issu de 6obs
+tab_complet_final <- rbind(tab_complet_5obs, tab_complet_5obs_6)
+ind_av_filtrage <- nrow(tab_complet_final)
+
+#Enlever les trois quadra ayant été partiellement supprimés
+tab_complet_final <- tab_complet_final %>%
+  filter(!ID_quadrat %in% c("TCb.Q9","TCb.Q7", "CM.Q7"))
+ind_ap_filtrage <- nrow(tab_complet_final)
+#pourcentage indiv perdus :
+(1-(ind_ap_filtrage/ind_av_filtrage))*100
+
+#Vérification histoires de capture
+verif_sessions <- tab_complet_final %>%
+  group_by(ID_ind) %>%
+  summarise(
+    nb_sessions = n_distinct(session),
+    sessions = paste(sort(unique(session)), collapse = ","),
+    .groups = "drop"
+  )
+
+check_sessions <- verif_sessions %>%
+  mutate(
+    ok_sessions = sessions == "1,2,3"
+  )
+
+check_sessions %>%
+  filter(!ok_sessions)
+
+### codage numérique
+phenology_codes <- c(
+  "juv" = 1,
+  "non_fleuri" = 2,
+  "fleur" = 3,
+  "fleurs_fanees" = 4,
+  "fruit" = 5,
+  "0" = 0
+)
+
+#Remplacer les valeurs de NA pour la phénologie en 0 : pas vu par l'observateur
+tab_complet_final <- tab_complet_final %>%
+  mutate(phenologie = replace_na(phenologie, "0"))
+
+#Enlever un individu bizarre
+data_original %>%
+  filter(site == "Tete Cendree Haut" & quadrat == 1 & marquage == 0)
+tab_complet_final <- tab_complet_final %>%
+  filter(ID_ind != "TCh.Q1.00")
+
+#On travaille avec la phénologie avérée des opératrices donc il faut garder sa valeur sauf quand l'observateur n'a rien mis et dans ce cas mettre un 0
+tab_complet_final <- tab_complet_final %>%
+  mutate(
+    phenologie_final = if_else(
+      phenologie == "0",
+      "0",
+      phenologie_verif
+    )
+  )
+
+#Histoires de capture par session
+tab_session <- tab_complet_final %>%
+
+  ungroup() %>%   # sécurité
+
+  ### 1. conversion phéno -> chiffre
+  mutate(code = phenology_codes[as.character(phenologie_final)]) %>%
+
+  ### 2. ordre non obs puis obs
+  arrange(site, quadrat, marquage, session, code != 0) %>%
+
+
+  ### 3. concaténer par individu × session
+  group_by(site, quadrat, marquage, session) %>%
+  summarise(
+    ch_session = paste0(code, collapse = ""),
+    .groups = "drop"
+  )
+
+#Vérification bon nombre par histoire de capture
+tab_session %>%
+  filter(str_length(ch_session) != 5)
+
+#Compilation des histoires de capture des trois sessions
+tab_final <- tab_session %>%
+
+  ungroup() %>%
+
+  ### ordre chronologique
+  arrange(session) %>%
+
+  ### concaténation des 3 sessions
+  group_by(site, quadrat, marquage) %>%
+  summarise(
+    ch_final = paste0(ch_session, collapse = ""),
+    .groups = "drop"
+  )
+
+#Vérification bon nombre par histoire de capture
+tab_final %>%
+  filter(str_length(ch_final) != 15)
+
+
+# 3 primary periods (sessions) × 5 secondary occasions (observateurs)
+# Les intervalles entre les secondaires sont 0, sauf le dernier de chaque session à la suivante qu'on met 1
+# Ici, on met 0 entre les 1ères à 4èmes secondaires et 1 entre la dernière secondaire et la prochaine session
+
+t.int <- c(
+ 0,0,0,0,
+  1,
+  0,0,0,0,
+  1,
+ 0,0,0,0
+)
+
+crdms_input <- tab_final %>%
+  rename(ch = ch_final) %>%
+  group_by(site, ch) %>%
+  summarise(freq= n(), .groups = "drop")
+
+#Enlever histoires de captures avec seulement des 0
+crdms_input %>%
+  filter(grepl("^0+$", ch))
+#6 individus enlevés
+
+crdms_input <- crdms_input %>%
+  filter(!grepl("^0+$", ch))
+
+#Modèle
+crdms.data<-process.data(crdms_input,
+                         model="CRDMS",
+                         group="site",
+                         time.interval=t.int,
+			strata.labels = c("1", "2", "3", "4", "5") #on ne mets pas le 0 sinon le modèle va calculer aussi la probabilité de passer de l'état 0 aux autres états
+)
+
+crdms.ddl <- make.design.data(crdms.data)
+
+#Beaucoup de paramètres
+# S = probabilité de survie
+# Psi = proba de transition d'état
+# p = proba de capture initiale
+# c = proba de recapture
+# f0 = nombre d'individus jamais capturés
+
+# ici on pense que la probabilité de capture ne vas pas changer la probabilité de recapture comme les plantes ne bougent pas donc on mettra p.session = list(formula=~session, share=TRUE pour dire que P et C sont pareils
+#Et f0 n'est pas pertinent donc on ne demandera pas au modèle de la calculer
+
+# Créer un index pour fixer p = 0 et c = 0 pour les états jamais observés ("0") si besoin
+crdms.ddl$p$fix <- ifelse(crdms.ddl$p$stratum == "0", 0, NA)
+crdms.ddl$c$fix <- ifelse(crdms.ddl$c$stratum == "0", 0, NA)
+crdms.ddl$f0$fix[crdms.ddl$f$stratum == "0"] <- 0   # IMPORTANT (évite f0 instable)
+
+crdms.ddl$Psi$ctime=crdms.ddl$Psi$time
+crdms.ddl$Psi$ctime[crdms.ddl$Psi$time==3]=2
+
+#Estimer un seul psi
+#crdms.ddl$Psi$share <- TRUE
+
+# interdiction totale par défaut
+crdms.ddl$Psi$fix <- 0
+
+
+#Contraindre les transitions d'état possibles
+#Mettre les présupposé pour chaque stade phénologique :
+# j (1)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "1" &
+  crdms.ddl$Psi$tostratum %in% c("1","2","3","4", "5")
+] <- NA
+
+# nf (2)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "2" &
+  crdms.ddl$Psi$tostratum %in% c("2","3","4","5")
+] <- NA
+
+# f (3)
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "3" &
+  crdms.ddl$Psi$tostratum %in% c("3","4","5")
+] <- NA
+
+# ff (4) : absorbant
+crdms.ddl$Psi$fix[
+  crdms.ddl$Psi$stratum == "4" &
+  crdms.ddl$Psi$tostratum %in% c("4","5")
+] <- NA
+
+# F (5) : terminal (aucune transition)
+# tout reste à 0
 
 ```
+
+## Modèle 1
+
+
+```{r}
+# Définir S (survie apparente) constante pour tous les états
+S.dot <- list(formula = ~1, fixed = 1)
+
+# Définir p (probabilité de détection) variable selon la session + dire que c a la même proba
+p.session <- list(formula = ~session + site, share = TRUE)
+
+# Définir psi (proba de transition) variable selon la session
+Psi.model <- list(formula = ~ ctime + site)
+
+
+#Modèle 1
+mod <- mark(
+  crdms.data,
+  ddl = crdms.ddl,
+  model.parameters = list(
+    S = S.dot,
+    p = p.session,
+    Psi = Psi.model
+  )
+)
+
+mod
+
+results <- mod$results$real
+
+p_real <- subset(mod$results$real, grepl("^p", rownames(mod$results$real)))
+
+tmp <- data.frame(
+  param = rownames(p_real),
+  estimate = p_real$estimate
+)
+
+tmp$site <- sub(".*g(.*) s[123] t.*", "\\1", tmp$param)
+tmp$session <- sub(".* (s[123]) t.*", "\\1", tmp$param)
+
+tmp$lower <- p_real$lcl
+tmp$upper <- p_real$ucl
+
+tmp$estimate_CI <- sprintf("%.3f [%.3f–%.3f]",
+                           tmp$estimate,
+                           tmp$lower,
+                           tmp$upper)
+
+p_matrix_CI <- tmp %>%
+  select(site, session, estimate_CI) %>%
+  pivot_wider(names_from = session, values_from = estimate_CI)
+
+
+
+psi_real <- subset(mod$results$real,
+                   grepl("^Psi", rownames(mod$results$real)))
+
+psi_real$name <- rownames(psi_real)
+
+pattern <- "^Psi (s[0-9]+) (to[0-9]+) (.*) (c[0-9]+) (a[0-9]+) (t[0-9]+)$"
+
+m <- regexec(pattern, psi_real$name)
+res <- regmatches(psi_real$name, m)
+
+psi_real$from <- sapply(res, `[`, 2)
+psi_real$to   <- sapply(res, `[`, 3)
+psi_real$site <- sapply(res, `[`, 4)
+psi_real$c    <- sapply(res, `[`, 5)
+psi_real$a    <- sapply(res, `[`, 6)
+psi_real$t    <- sapply(res, `[`, 7)
+
+psi_real$from <- sub("s", "", psi_real$from)
+psi_real$to   <- sub("to", "", psi_real$to)
+
+tmpPsi1 <- subset(psi_real, c == "c1" & a == "a0")
+
+#COnstruction des matrices de transition
+build_psi_matrices <- function(mod, keep_c = "c1", keep_a = "a0") {
+  
+  # 1. Extraire les Psi
+  psi_real <- subset(mod$results$real,
+                     grepl("^Psi", rownames(mod$results$real)))
+  
+  psi_real$name <- rownames(psi_real)
+  
+  # 2. Extraire from / to / site / c / a / t proprement
+  pattern <- "^Psi (s[0-9]+) (to[0-9]+) (.*) (c[0-9]+) (a[0-9]+) (t[0-9]+)$"
+  m <- regexec(pattern, psi_real$name)
+  res <- regmatches(psi_real$name, m)
+  
+  psi_real$from <- sub("s", "", sapply(res, `[`, 2))
+  psi_real$to   <- sub("to", "", sapply(res, `[`, 3))
+  psi_real$site <- sapply(res, `[`, 4)
+  psi_real$c    <- sapply(res, `[`, 5)
+  psi_real$a    <- sapply(res, `[`, 6)
+  
+  # 3. Garder uniquement la combinaison voulue
+  psi_real <- subset(psi_real, c == keep_c & a == keep_a)
+  
+  # 4. Liste des sites
+  sites <- unique(psi_real$site)
+  
+  # 5. Construire matrices
+  psi_list <- lapply(sites, function(s) {
+    
+    tmp <- subset(psi_real, site == s)
+    
+    states <- sort(unique(c(tmp$from, tmp$to)))
+    mat <- matrix(0,
+                  nrow = length(states),
+                  ncol = length(states),
+                  dimnames = list(states, states))
+    
+    # remplir transitions
+    for (i in 1:nrow(tmp)) {
+      mat[tmp$from[i], tmp$to[i]] <- tmp$estimate[i]
+    }
+    
+    # compléter diagonale (rester dans le même état)
+    for (st in states) {
+      mat[st, st] <- 1 - sum(mat[st, -which(colnames(mat) == st)])
+    }
+    
+    return(mat)
+  })
+  
+  names(psi_list) <- sites
+  return(psi_list)
+}
+
+psi_mats <- build_psi_matrices(mod)
+
+```
+###Probabilités de détection en fonction des sites et des sessions
+
+```{r}
+p_matrix_CI
+
+```
+
+### Transitions phénologiques à Combe Michaut
+
+```{r}
+psi_mat_combe_michaut <- psi_mats[["gCombe Michaut"]]
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "Juvénile",
+  "2" = "Non fleuri",
+  "3" = "Fleur",
+  "4" = "Fleur fannée",
+  "5" = "Fruit"
+)
+
+
+# renommage lignes / colonnes
+dimnames(psi_mat_combe_michaut) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Graphique
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_mat_combe_michaut[i,j]
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+
+### Transitions phénologiques à Tete Cendree Haut
+
+```{r}
+psi_mat_TCH <- psi_mats[["gTete Cendree Haut"]]
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "Juvénile",
+  "2" = "Non fleuri",
+  "3" = "Fleur",
+  "4" = "Fleur fannée",
+  "5" = "Fruit"
+)
+
+
+# renommage lignes / colonnes
+dimnames(psi_mat_TCH) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Graphique
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_mat_TCH[i,j]
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+
+
+### Transitions phénologiques à Val Clavin
+
+```{r}
+psi_mat_VC <- psi_mats[["gVal Clavin"]]
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "Juvénile",
+  "2" = "Non fleuri",
+  "3" = "Fleur",
+  "4" = "Fleur fannée",
+  "5" = "Fruit"
+)
+
+
+# renommage lignes / colonnes
+dimnames(psi_mat_VC) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Graphique
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_mat_VC[i,j]
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+
+
+### Transitions phénologiques à Vigne au Renard
+
+```{r}
+psi_mat_VR <- psi_mats[["gVigne au Renard"]]
+
+#Convertir chiffres en abréviation phénologie
+pheno_labels <- c(
+  "1" = "Juvénile",
+  "2" = "Non fleuri",
+  "3" = "Fleur",
+  "4" = "Fleur fannée",
+  "5" = "Fruit"
+)
+
+
+# renommage lignes / colonnes
+dimnames(psi_mat_VR) <- list(
+  pheno_labels[as.character(1:5)],
+  pheno_labels[as.character(1:5)]
+)
+
+#Graphique
+states <- c("Juvénile", "Non fleuri", "Fleur", "Fleur fannée", "Fruit")
+num_states <- length(states)
+
+# Créer le graphe DiagrammeR en n'affichant que les transitions >= 0.01
+dot_code <- "digraph pheno_transitions { 
+  rankdir=LR;
+
+  node [
+    shape=circle,
+    style=filled,
+    color=lightblue,
+    fontname=Helvetica,
+    fixedsize=true,
+    width=1.2,
+    height=1.2
+  ];
+"
+
+for(i in 1:num_states){
+  for(j in 1:num_states){
+    prob <- psi_mat_VR[i,j]
+    if(!is.na(prob) && prob >= 0.01){   # afficher seulement prob >= 0.0001
+      dot_code <- paste0(dot_code, 
+                         "\"", states[i], "\" -> \"", states[j], "\"",
+                         " [label=\"", round(prob,2), "\"];\n")
+    }
+  }
+}
+
+dot_code <- paste0(dot_code, "}")
+grViz(dot_code)
+
+```
+
 
 
 
