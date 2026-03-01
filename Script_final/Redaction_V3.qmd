@@ -22,21 +22,12 @@ knitr::opts_chunk$set(
 
 ```
 
-::: {style="border: 2px solid #8B0000;
-  border-radius: 10px;
-  padding: 10px;
-  background-color: #FDECEA;
-  font-family: Arial, sans-serif;
-  line-height: 1.2;
-  color: #333;
-  margin-bottom: 10px;"}
-
-**Travail collaboratif :** Ce travail a été réalisé dans le cadre de l’enseignement du **Master 2 RAINET** de l’Université de Montpellier.  
-**Étudiants :** Galadriel Fourtier et Elian Vuillemot  
-**En collaboration avec :** Parc national de Forêts, Guillaume Papuga et Thibaut Couturier  
-**Contact :** [vuillemotelian@gmail.com](mailto:vuillemotelian@gmail.com),  
-[galadriel.fourtier@gmail.com](mailto:galadriel.fourtier@gmail.com)
-
+::: {style="border: 2px solid #8B0000;   border-radius: 10px;   padding: 10px;   background-color: #FDECEA;   font-family: Arial, sans-serif;   line-height: 1.2;   color: #333;   margin-bottom: 10px;"}
+**Travail collaboratif :** Ce travail a été réalisé dans le cadre de l’enseignement du **Master 2 RAINET** de l’Université de Montpellier.\
+**Étudiants :** Galadriel Fourtier et Elian Vuillemot\
+**En collaboration avec :** Parc national de Forêts, Guillaume Papuga et Thibaut Couturier\
+**Contact :** [vuillemotelian\@gmail.com](mailto:vuillemotelian@gmail.com),\
+[galadriel.fourtier\@gmail.com](mailto:galadriel.fourtier@gmail.com)
 :::
 
 # INTRODUCTION
@@ -142,6 +133,7 @@ Ce tableau donne pour chaque quadrat du protocole un recouvrement de *1* à *10*
 # Lire le fichier CSV
 recouvrement <- read.csv("data/raw/Recouvrement VF.csv", sep = ";")
 ```
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Corriger les noms de site
 recouvrement <- recouvrement %>%
@@ -153,6 +145,7 @@ recouvrement <- recouvrement %>%
     )
   )
 ```
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Vérifier la structure finale du tableau
 str(recouvrement)
@@ -167,10 +160,12 @@ Ce tableau donne la mesure d'un individu par un observateur. Celui-ci informe su
 # Lire le fichier CSV
 verification <- read.csv("data/raw/detections_individuelles_verifsTC+LD_18dec.csv", sep = ";")
 ```
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Supprimer les espaces invisibles autour des noms de sites
 verification$site <- trimws(verification$site)
 ```
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Vérifier la structure finale du tableau
 str(verification)
@@ -185,6 +180,7 @@ Ce tableau donne la mesure des individus par les opérateurs de la manip. Pour c
 # Lire le fichier CSV
 data_original <- read.csv("data/raw/Taille et phéno verif LD.csv", sep = ";")
 ```
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Corriger les noms de sites contenant des accents ou caractères spéciaux
 data_original <- data_original %>%
@@ -199,6 +195,7 @@ data_original <- data_original %>%
     )
   )
 ```
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Vérifier la structure finale du tableau
 str(data_original)
@@ -221,12 +218,14 @@ Les colonnes de VC à TCh correspondent à la connaissance des observateurs sur 
 # Lire le fichier CSV
 experience <- read.csv("data/raw/Experience_des_observateurs_VF.csv", sep = ";")
 ```
+
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, include =FALSE}
 # Ajouter la colonne 'sexe' à partir des informations disponibles
 experience$sexe <- c(
   "m","f","m","m","m","f","m","m","m","f","f","f","f","m","f","m","m","m","m","m","f","f","f","m","f","m","f","m","f","f","f","m","f","f","m"
 )
 ```
+
 ```{r, echo=TRUE, message=FALSE, warning=FALSE}
 # Vérifier la structure finale du tableau
 str(experience)
@@ -534,7 +533,6 @@ check_sessions %>%
 # Vérifier la structure finale du tableau
 str(tab_complet)
 ```
-
 
 # I. Analyses préliminaires
 
@@ -3200,11 +3198,9 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 ```
 
+**Résultats** : Les probabilités de transition obtenues par calcul direct et celles issues de la modélisation sous RMARK sont globalement cohérentes. Bien qu’il soit difficile de déterminer laquelle des deux approches est la plus robuste, l’utilisation de MARK reste en principe mieux adaptée pour modéliser explicitement les processus de transition et d’incertitude.
 
-**Résultats** : Les probabilités de transition obtenues par calcul direct et celles issues de la modélisation sous RMARK sont globalement cohérentes. Bien qu’il soit difficile de déterminer laquelle des deux approches est la plus robuste, l’utilisation de MARK reste en principe mieux adaptée pour modéliser explicitement les processus de transition et d’incertitude. 
-
-Dans notre cas, les deux méthodes montrent qu’il est particulièrement pertinent de se concentrer sur la transition entre la session 1 et la session 2 pour étudier le passage vers le stade *fleuri*, tandis que la session 2 vers la session 3 est plus informative pour analyser le passage du stade *fleuri* vers les stades suivants. Ces transitions sont en [Annexe V.iv](#annexe-v-iv).
-``
+Dans notre cas, les deux méthodes montrent qu’il est particulièrement pertinent de se concentrer sur la transition entre la session 1 et la session 2 pour étudier le passage vers le stade *fleuri*, tandis que la session 2 vers la session 3 est plus informative pour analyser le passage du stade *fleuri* vers les stades suivants. Ces transitions sont en [Annexe V.iv](#annexe-v-iv). \`\`
 
 Ces résultats suggèrent que la floraison s’étend principalement sur l’intervalle d’environ dix jours entre les sessions 1 et 2, période durant laquelle de nombreux individus *juvéniles* évoluent vers le stade *non fleuri*. À l’inverse, entre les sessions 2 et 3, qui sont espacées d’environ quarante jours au mois de juin, les fleurs ont davantage tendance soit à faner, soit à passer au stade fruit. Ces dynamiques reflètent donc clairement une progression phénologique rapide en mai, suivie d’une transition marquée vers la sénescence ou la fructification en juin.
 
@@ -3216,8 +3212,7 @@ Dans les modèles multistrates de capture-recapture, le format CRDMS est utilis�
 
 ### Préparation tableau
 
-Le modèle CRDMS sur Rmark n'accepte pas d'avoir des histoires de capture de taille différents or en fonction des quadrats, il y a un nombre d'observateurs différents. On a donc choisit d'homogénéiser le nombre d'observateurs à 5 en elevant les quadrats avec moins d'observateurs (3 quadrats) et en tirant les 5 observateurs avec le plus de quadrats observés quand il y avait 6 observateurs dans un quadrat.
-Note : Tête cendrée bas a été éliminé dans le processus d'homogénéisation à 5 observateurs par quadrat et session minimum. Il y aura donc l'analyse de 4 sites seulement.
+Le modèle CRDMS sur Rmark n'accepte pas d'avoir des histoires de capture de taille différents or en fonction des quadrats, il y a un nombre d'observateurs différents. On a donc choisit d'homogénéiser le nombre d'observateurs à 5 en elevant les quadrats avec moins d'observateurs (3 quadrats) et en tirant les 5 observateurs avec le plus de quadrats observés quand il y avait 6 observateurs dans un quadrat. Note : Tête cendrée bas a été éliminé dans le processus d'homogénéisation à 5 observateurs par quadrat et session minimum. Il y aura donc l'analyse de 4 sites seulement.
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 unique(tab_complet$phenologie_verif)
@@ -3691,9 +3686,9 @@ table_CRDMS %>%
 
 **Méthode d'interprétation** : Ce tableau présente les coefficients du modèle CRDMS pour les paramètres de détection (*p*) et de transition entre états phénologiques (*Ψ*). Chaque ligne correspond à un effet estimé par le modèle, accompagné de son estimateur (estimate) et de son intervalle de confiance à 95 % (IC95). L’interprétation repose principalement sur le signe du coefficient et l’intervalle de confiance :
 
-- Si l’IC95 % n’inclut pas 0, l’effet est significatif : il influence réellement la détection (p) ou les transitions (Ψ).
-- Un coefficient positif indique une augmentation de la probabilité (meilleure détection ou transition plus probable).
-- Un coefficient négatif indique une diminution de la probabilité (détection plus faible, transition moins probable).
+-   Si l’IC95 % n’inclut pas 0, l’effet est significatif : il influence réellement la détection (p) ou les transitions (Ψ).
+-   Un coefficient positif indique une augmentation de la probabilité (meilleure détection ou transition plus probable).
+-   Un coefficient négatif indique une diminution de la probabilité (détection plus faible, transition moins probable).
 
 Les paramètres comme *p*:(Intercept) ou *Ψ*:(Intercept) représentent les probabilités de base (valeurs de référence), tandis que les autres lignes expriment l’effet additionnel d’un site, d’une session, ou d’une variable temporelle (ctime) par rapport à cette référence.
 
@@ -3719,6 +3714,7 @@ p_matrix_CI %>%
   kable_styling(position = "center")
 
 ```
+
 **Méthode d'interprétation**: Ce tableau présente les probabilités de détection (p) estimées par le modèle CRDMS pour chaque site et chaque session, ainsi que leur intervalle de confiance à 95 % (IC95 %). Les valeurs sont exprimées sur l’échelle réelle (de 0 à 1), ce qui permet une lecture directe : plus la probabilité est élevée, plus il est facile de détecter les individus présents dans un quadrat. L’intervalle de confiance renseigne sur la précision de l’estimation : un intervalle étroit indique une estimation fiable, tandis qu’un intervalle plus large traduit une plus grande incertitude. La comparaison entre sites permet d’identifier les zones où la détection est naturellement plus facile ou plus difficile, tandis que la comparaison entre sessions permet d’apprécier l’évolution de la détectabilité au cours de la saison.
 
 **Résultats**: Les probabilités de détection varient fortement d’un site à l’autre. Vigne au Renard présente systématiquement les valeurs les plus élevées (≈ 0.86 en S1, ≈ 0.84 en S3), indiquant une détectabilité très favorable et stable au cours de la saison. À l’inverse, Tête Cendrée Haut affiche les probabilités les plus faibles (≈ 0.55 en S1, ≈ 0.50 en S3), ce qui traduit une difficulté structurelle de détection, probablement liée à une végétation plus dense ou à une phénologie plus tardive. Combe Michaut et Val Clavin se situent dans une zone intermédiaire, avec des probabilités proches de 0.70 et une légère diminution en session 3. Cette baisse progressive entre S1, S2 et S3 est présente dans tous les sites, suggérant que la fin de saison (fruits, fanes, végétation haute) réduit globalement la visibilité des individus. Globalement, ces résultats confirment un effet combiné du site et de la session sur la détectabilité, ce qui souligne l’importance d’intégrer la variabilité spatiale et temporelle dans l’interprétation des données et dans la planification du protocole de suivi.
@@ -3891,8 +3887,6 @@ grViz(dot_code)
 
 ```
 
-
-
 ### Transitions phénologiques à Vigne au Renard
 
 ```{r, cache=TRUE}
@@ -3948,12 +3942,10 @@ dot_code <- paste0(dot_code, "}")
 grViz(dot_code)
 
 ```
-**Résultats** : Les probabilités de transition montrent des trajectoires phénologiques très contrastées entre les sites, révélant l’influence forte des conditions locales sur la progression des individus. Tête Cendrée Haut présente les dynamiques les plus contraintes : la majorité des individus restent bloqués dans les stades précoces, notamment *non fleuri* (0.82) et *juvénile* (0.78), tandis que les transitions vers les stades reproducteurs sont extrêmement faibles. Ce schéma traduit une phénologie nettement retardée, probablement liée à un habitat plus fermé ou plus froid, empêchant la progression vers la floraison. À l’opposé, Val Clavin montre les transitions les plus rapides et les plus franches vers les stades avancés : les probabilités vers *fleur fanée* (0.48) et surtout vers *fruit* (0.52) attestent d’une phénologie avancée et d’une forte réussite reproductive, suggérant des conditions écologiques particulièrement favorables.
-Les sites Vigne au Renard et Combe Michaut occupent des positions intermédiaires mais distinctes. Vigne au Renard présente une progression régulière vers la floraison (0.88) puis vers la fructification (0.06), avec une très forte rétention dans les stades avancés comme “fleurs fanées” (0.94), témoignant d’un développement reproducteur abouti mais plus étalé dans le temps. Combe Michaut, quant à lui, montre une dynamique intermédiaire mais plus diffuse, où les transitions existent mais restent moins marquées que dans les sites les plus rapides : la progression vers les fleurs (0.63) et vers les fruits (0.23) est modérée, reflétant une phénologie ni bloquée ni particulièrement accélérée.
 
-En synthèse, ces quatre sites dessinent un gradient phénologique clair :
-Tête Cendrée Haut → Combe Michaut → Vigne au Renard → Val Clavin,
-du plus retardé au plus avancé. Ces contrastes reflètent probablement des différences de luminosité, structure de végétation, et conditions microclimatiques, qui influencent directement la capacité des individus à progresser vers la floraison et la fructification.
+**Résultats** : Les probabilités de transition montrent des trajectoires phénologiques très contrastées entre les sites, révélant l’influence forte des conditions locales sur la progression des individus. Tête Cendrée Haut présente les dynamiques les plus contraintes : la majorité des individus restent bloqués dans les stades précoces, notamment *non fleuri* (0.82) et *juvénile* (0.78), tandis que les transitions vers les stades reproducteurs sont extrêmement faibles. Ce schéma traduit une phénologie nettement retardée, probablement liée à un habitat plus fermé ou plus froid, empêchant la progression vers la floraison. À l’opposé, Val Clavin montre les transitions les plus rapides et les plus franches vers les stades avancés : les probabilités vers *fleur fanée* (0.48) et surtout vers *fruit* (0.52) attestent d’une phénologie avancée et d’une forte réussite reproductive, suggérant des conditions écologiques particulièrement favorables. Les sites Vigne au Renard et Combe Michaut occupent des positions intermédiaires mais distinctes. Vigne au Renard présente une progression régulière vers la floraison (0.88) puis vers la fructification (0.06), avec une très forte rétention dans les stades avancés comme “fleurs fanées” (0.94), témoignant d’un développement reproducteur abouti mais plus étalé dans le temps. Combe Michaut, quant à lui, montre une dynamique intermédiaire mais plus diffuse, où les transitions existent mais restent moins marquées que dans les sites les plus rapides : la progression vers les fleurs (0.63) et vers les fruits (0.23) est modérée, reflétant une phénologie ni bloquée ni particulièrement accélérée.
+
+En synthèse, ces quatre sites dessinent un gradient phénologique clair : Tête Cendrée Haut → Combe Michaut → Vigne au Renard → Val Clavin, du plus retardé au plus avancé. Ces contrastes reflètent probablement des différences de luminosité, structure de végétation, et conditions microclimatiques, qui influencent directement la capacité des individus à progresser vers la floraison et la fructification.
 
 # Conclusion
 
@@ -3963,12 +3955,11 @@ Avant toute conclusion, il est essentiel que les gestionnaires adaptent le proto
 
 Les analyses montrent une progression nette et cohérente des stades phénologiques au cours des trois sessions.
 
-- S1 est dominée par les stades juvéniles et non fleuris.
-- S2 correspond au pic de floraison, avec une augmentation marquée des individus fleuris.
-- S3 voit la transition vers les fleurs fanées et les fruits.
+-   S1 est dominée par les stades juvéniles et non fleuris.
+-   S2 correspond au pic de floraison, avec une augmentation marquée des individus fleuris.
+-   S3 voit la transition vers les fleurs fanées et les fruits.
 
 Cette structuration phénologique confirme que trois passages sont nécessaires pour couvrir l’ensemble du cycle du Sabot de Vénus et éviter les biais d’interprétation associés à l’observation d’un seul stade. Toutefois, lorsque la question biologique porte spécifiquement sur un stade donné, il est possible d’adapter le calendrier. Pour étudier la floraison, il est recommandé de commencer le suivi dès le mois de mai, voire légèrement avant, car nos résultats montrent que des individus étaient déjà en fleur lors de la première session. À l’inverse, pour cibler les stades fleurs fanées ou fructification, un début de suivi en juin est plus approprié. Dans ces situations ciblées, il reste indispensable de prévoir au minimum deux sessions, permettant d’observer une transition phénologique et d’estimer des paramètres dynamiques entre deux temps d’observation.
-
 
 **2. Une croissance régulière et significative des individus**
 
@@ -3976,27 +3967,27 @@ Les modèles mixtes montrent une augmentation significative de la taille entre S
 
 Ces résultats confirment que :
 
-- la taille est un indicateur robuste du stade de développement,
-- les mesures répétées sur un même individu nécessitent impérativement de corriger l’autocorrélation (effet individu/quadrat/site),
-- la croissance est suffisamment marquée pour être utilisée comme variable de suivi écologique.
+-   la taille est un indicateur robuste du stade de développement,
+-   les mesures répétées sur un même individu nécessitent impérativement de corriger l’autocorrélation (effet individu/quadrat/site),
+-   la croissance est suffisamment marquée pour être utilisée comme variable de suivi écologique.
 
-A noter également que pour un gain de temps, et par rapport au erreurs les plus récurrente dans ce protocole, on peut regrouper les phénologies comme ceci : 
+A noter également que pour un gain de temps, et par rapport au erreurs les plus récurrente dans ce protocole, on peut regrouper les phénologies comme ceci :
 
-⟶ Reproduction (Fruits  et  fleurs) + Végétatifs (ayant la plus  grosse source d'erreur d'identification de phénologie entre juvénile et non fleuri)
+⟶ Reproduction (Fruits et fleurs) + Végétatifs (ayant la plus grosse source d'erreur d'identification de phénologie entre juvénile et non fleuri)
 
 **3. Une détectabilité variable selon les sessions, les stades et les observateurs**
 
 Les données issues des observateurs montrent :
 
-- une détectabilité plus faible en S1 (stades précoces, individus petits, végétation dense),
-- une meilleure détection en S2, lorsque les fleurs sont visibles,
-- une détection plus hétérogène en S3, liée à la transition vers les fruits et à la variabilité inter‑observateurs.
+-   une détectabilité plus faible en S1 (stades précoces, individus petits, végétation dense),
+-   une meilleure détection en S2, lorsque les fleurs sont visibles,
+-   une détection plus hétérogène en S3, liée à la transition vers les fruits et à la variabilité inter‑observateurs.
 
 Les analyses confirment que :
 
-- la détectabilité dépend fortement du stade phénologique,
-- les différences de détection entre observateurs sont réelles et doivent être intégrées dans le protocole (formation, calibration, double prospection),
-- les quadrats doivent être prospectés avec un temps standardisé pour limiter les biais.
+-   la détectabilité dépend fortement du stade phénologique,
+-   les différences de détection entre observateurs sont réelles et doivent être intégrées dans le protocole (formation, calibration, double prospection),
+-   les quadrats doivent être prospectés avec un temps standardisé pour limiter les biais.
 
 Les modèles montrent qu’un binôme d’observateurs est suffisant pour obtenir une probabilité de détection satisfaisante, à condition qu’au moins l’un des deux soit un botaniste expérimenté. L’ajout d’observateurs supplémentaires améliore certes la détectabilité, mais de manière marginale dans notre cas, probablement parce que l’espèce reste relativement facile à repérer pour les novices comme pour les experts. Ainsi, au regard des ressources disponibles, un binôme comprenant un expert apparaît comme le compromis optimal entre efficacité du suivi et coût humain.
 
@@ -4008,16 +3999,16 @@ des conditions écologiques plus favorables (lumière, structure forestière), o
 
 Cette variabilité justifie :
 
-- un échantillonnage stratifié,
-- la prise en compte des strates végétales dans les analyses futures.
+-   un échantillonnage stratifié,
+-   la prise en compte des strates végétales dans les analyses futures.
 
-Recommandations opérationnelles pour la gestion et le suivi : 
+Recommandations opérationnelles pour la gestion et le suivi :
 
-- Maintenir trois sessions annuelles (si nécéssaires), car chacune apporte une information complémentaire indispensable.
-- Standardiser la formation des observateurs pour réduire les écarts de détectabilité.
-- Conserver un échantillonnage stratifié intégrant les strates végétales, car elles influencent la visibilité et potentiellement la dynamique de l’espèce.
-- Inclure systématiquement les effets individu/quadrat/site dans les modèles pour éviter les biais liés aux mesures répétées.
-- Prioriser la gestion des milieux semi‑ouverts, confirmée comme condition favorable à la croissance et à la détection des individus.
+-   Maintenir trois sessions annuelles (si nécéssaires), car chacune apporte une information complémentaire indispensable.
+-   Standardiser la formation des observateurs pour réduire les écarts de détectabilité.
+-   Conserver un échantillonnage stratifié intégrant les strates végétales, car elles influencent la visibilité et potentiellement la dynamique de l’espèce.
+-   Inclure systématiquement les effets individu/quadrat/site dans les modèles pour éviter les biais liés aux mesures répétées.
+-   Prioriser la gestion des milieux semi‑ouverts, confirmée comme condition favorable à la croissance et à la détection des individus.
 
 # V. Annexes
 
@@ -4814,7 +4805,7 @@ for(i in states){
         dot_code,
         i, " -> ", j,
         " [label=\"", round(prob, 2), "\"];\n"
-      # )
+      )
     }
   }
 }
