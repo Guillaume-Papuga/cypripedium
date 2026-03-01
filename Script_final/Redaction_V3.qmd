@@ -506,14 +506,6 @@ tab_complet <- tab_complet %>%
   ) %>% 
   dplyr::select(id_ind_fin,id_quadrat_fin, ID_quadrat, ID_ind,site, quadrat, marquage, session,observateur, detection, phenologie_verif, phenologie, adequation, adequation_reel, taille)
 
-
-```
-
-**Joindre des données supplémentaires**
-
-Pour la construction des modèles, intégrer l’ensemble des données disponibles est pertinent afin de sélectionner les variables qui constitueront nos modèles. Ainsi, il est possible d’ajouter progressivement des données supplémentaires en utilisant les colonnes communes aux différents tableaux comme repère pour les jointures. Par exemple, ici, nous souhaitons inclure le tableau *recouvrement* contenant les différentes strates.
-
-```{r, echo = FALSE, message = FALSE, cache=TRUE, warning = FALSE, include =FALSE}
 # Faire le left_join pour ajouter les colonnes S_ au tableau complet
 tab_complet <- tab_complet %>%
   left_join(recouvrement, by = join_by("ID_quadrat" == "ID_Quadrat")) %>% 
@@ -537,6 +529,12 @@ check_sessions %>%
   filter(!ok_sessions)
 
 ```
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE}
+# Vérifier la structure finale du tableau
+str(tab_complet)
+```
+
 
 # I. Analyses préliminaires
 
@@ -3981,9 +3979,9 @@ Ces résultats confirment que :
 - les mesures répétées sur un même individu nécessitent impérativement de corriger l’autocorrélation (effet individu/quadrat/site),
 - la croissance est suffisamment marquée pour être utilisée comme variable de suivi écologique.
 
-A noter également que pour un gain de temps, et par rapport au erreurs les plus récurrente dans ce protocole de regrouper les phénologies comme ceci : 
+A noter également que pour un gain de temps, et par rapport au erreurs les plus récurrente dans ce protocole, on peut regrouper les phénologies comme ceci : 
 
-⟶ Reproduction (Fruits  et  fleurs) + Végétatifs
+⟶ Reproduction (Fruits  et  fleurs) + Végétatifs (ayant la plus  grosse source d'erreur d'identification de phénologie entre juvénile et non fleuri)
 
 **3. Une détectabilité variable selon les sessions, les stades et les observateurs**
 
@@ -3996,7 +3994,7 @@ Les données issues des observateurs montrent :
 Les analyses confirment que :
 
 - la détectabilité dépend fortement du stade phénologique,
-- les différences entre observateurs sont réelles et doivent être intégrées dans le protocole (formation, calibration, double prospection),
+- les différences de détection entre observateurs sont réelles et doivent être intégrées dans le protocole (formation, calibration, double prospection),
 - les quadrats doivent être prospectés avec un temps standardisé pour limiter les biais.
 
 Les modèles montrent qu’un binôme d’observateurs est suffisant pour obtenir une probabilité de détection satisfaisante, à condition qu’au moins l’un des deux soit un botaniste expérimenté. L’ajout d’observateurs supplémentaires améliore certes la détectabilité, mais de manière marginale dans notre cas, probablement parce que l’espèce reste relativement facile à repérer pour les novices comme pour les experts. Ainsi, au regard des ressources disponibles, un binôme comprenant un expert apparaît comme le compromis optimal entre efficacité du suivi et coût humain.
