@@ -3216,7 +3216,8 @@ Dans les modèles multistrates de capture-recapture, le format CRDMS est utilis�
 
 ### Préparation tableau
 
-Ajouter explication d'homogénéisation à 5 observateurs. Note : pas tete cendrée bas car éliminé dans le processus d'homogénéisation à 5 observateurs par quadrat et session minimum.
+Le modèle CRDMS sur Rmark n'accepte pas d'avoir des histoires de capture de taille différents or en fonction des quadrats, il y a un nombre d'observateurs différents. On a donc choisit d'homogénéiser le nombre d'observateurs à 5 en elevant les quadrats avec moins d'observateurs (3 quadrats) et en tirant les 5 observateurs avec le plus de quadrats observés quand il y avait 6 observateurs dans un quadrat.
+Note : Tête cendrée bas a été éliminé dans le processus d'homogénéisation à 5 observateurs par quadrat et session minimum. Il y aura donc l'analyse de 4 sites seulement.
 
 ```{r, echo=FALSE, message=FALSE, cache=TRUE, warning=FALSE, include=FALSE}
 unique(tab_complet$phenologie_verif)
